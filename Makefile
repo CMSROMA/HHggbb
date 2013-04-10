@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.8 2013/01/25 15:40:49 micheli Exp $
+# $Id: Makefile,v 1.1 2013/04/08 12:38:59 crovelli Exp $
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --libs)
 ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
 
@@ -175,6 +175,7 @@ all : ${PROGRAMS}
 
 clean:
 	rm -Rf $(OBJDIR)/*.o
-
+	rm drawRadion
+	rm finalize2012_radion
 
 #.PHONY : shlib lib default clean
