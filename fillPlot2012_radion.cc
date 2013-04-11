@@ -114,34 +114,34 @@ void fillPlot2012_radion::finalize() {
   h1_nbjets_medium->Sumw2();
   TH1D*  h1_nbjets_tight = new TH1D("nbjets_tight", "", 11, -0.5, 10.5);
   h1_nbjets_tight->Sumw2();
-  TH1D*  h1_nbjets_loose_2jets = new TH1D("nbjets_loose_2jets", "", 11, -0.5, 10.5);
-  h1_nbjets_loose_2jets->Sumw2();
-  TH1D*  h1_nbjets_medium_2jets = new TH1D("nbjets_medium_2jets", "", 11, -0.5, 10.5);
-  h1_nbjets_medium_2jets->Sumw2();
-  TH1D*  h1_nbjets_tight_2jets = new TH1D("nbjets_tight_2jets", "", 11, -0.5, 10.5);
-  h1_nbjets_tight_2jets->Sumw2();
 
   TH1D* h1_ptphot0 = new TH1D("ptphot0", "", 100, 0., 200.);
   h1_ptphot0->Sumw2();
   TH1D* h1_ptphot1 = new TH1D("ptphot1", "", 100, 0., 200.);
   h1_ptphot1->Sumw2();
 
-  TH1D* h1_ptjet0 = new TH1D("ptjet0", "", 100, 0., 200.);
+  TH1D* h1_runptphot0 = new TH1D("runptphot0", "", 100, 0., 200.);
+  h1_runptphot0->Sumw2();
+
+  TH1D* h1_mgg_preselG = new TH1D("mgg_preselG", "", 80, 100., 180.);
+  h1_mgg_preselG->Sumw2();
+  TH1D* h1_mgg_preselJ = new TH1D("mgg_preselJ", "", 80, 100., 180.);
+  h1_mgg_preselJ->Sumw2();
+  TH1D* h1_mjj_preselJ = new TH1D("mjj_preselJ", "", 200, 0., 500.);
+  h1_mjj_preselJ->Sumw2();
+
+  TH1D* h1_ptjet0 = new TH1D("ptjet0", "", 60, 0., 400.);
   h1_ptjet0->Sumw2();
-  TH1D* h1_ptjet1 = new TH1D("ptjet1", "", 100, 0., 200.);
+  TH1D* h1_ptjet1 = new TH1D("ptjet1", "", 30, 0., 200.);
   h1_ptjet1->Sumw2();
-  TH1D* h1_etajet0 = new TH1D("etajet0", "", 100, -5., 5.);
+  TH1D* h1_etajet0 = new TH1D("etajet0", "", 30, -3., 3.);
   h1_etajet0->Sumw2();
-  TH1D* h1_etajet1 = new TH1D("etajet1", "", 100, -5., 5.);
+  TH1D* h1_etajet1 = new TH1D("etajet1", "", 30, -3., 3.);
   h1_etajet1->Sumw2();
 
   TH1D* h1_kinfit_chiSquareProbH = new TH1D("kinfit_chiSquareProbH", "", 1000, 0., 1.0001);
   h1_kinfit_chiSquareProbH->Sumw2();
-  TH1D* h1_kinfit_chiSquareProbH_mjjWindow = new TH1D("kinfit_chiSquareProbH_mjjWindow", "", 1000, 0., 1.0001);
-  h1_kinfit_chiSquareProbH_mjjWindow->Sumw2();
 
-  TH1D* h1_mjj = new TH1D("mjj", "", 200, 0., 500.);
-  h1_mjj->Sumw2();
   TH1D* h1_mjj_0btag = new TH1D("mjj_0btag", "", 200, 0., 500.);
   h1_mjj_0btag->Sumw2();
   TH1D* h1_mjj_1btag = new TH1D("mjj_1btag", "", 200, 0., 500.);
@@ -149,27 +149,14 @@ void fillPlot2012_radion::finalize() {
   TH1D* h1_mjj_2btag = new TH1D("mjj_2btag", "", 200, 0., 500.);
   h1_mjj_2btag->Sumw2();
 
-  TH1D* h1_mjj_cutMgg_0btag = new TH1D("mjj_cutMgg_0btag", "", 200, 0., 500.);
-  h1_mjj_cutMgg_0btag->Sumw2();
-  TH1D* h1_mjj_cutMgg_1btag = new TH1D("mjj_cutMgg_1btag", "", 200, 0., 500.);
-  h1_mjj_cutMgg_1btag->Sumw2();
-  TH1D* h1_mjj_cutMgg_2btag = new TH1D("mjj_cutMgg_2btag", "", 200, 0., 500.);
-  h1_mjj_cutMgg_2btag->Sumw2();
-
-  TH1D* h1_mggjj_0btag = new TH1D("mggjj_0btag", "", 200, 0., 2000.);
+  TH1D* h1_mggjj = new TH1D("mggjj", "", 100, 0., 1000.);
+  h1_mggjj->Sumw2();
+  TH1D* h1_mggjj_0btag = new TH1D("mggjj_0btag", "", 100, 0., 1000.);
   h1_mggjj_0btag->Sumw2();
-  TH1D* h1_mggjj_1btag = new TH1D("mggjj_1btag", "", 200, 0., 2000.);
+  TH1D* h1_mggjj_1btag = new TH1D("mggjj_1btag", "", 100, 0., 1000.);
   h1_mggjj_1btag->Sumw2();
-  TH1D* h1_mggjj_2btag = new TH1D("mggjj_2btag", "", 200, 0., 2000.);
+  TH1D* h1_mggjj_2btag = new TH1D("mggjj_2btag", "", 100, 0., 1000.);
   h1_mggjj_2btag->Sumw2();
-
-  TH1D* h1_mgg_prepresel = new TH1D("mgg_prepresel", "", 80, 100., 180.);
-  h1_mgg_prepresel->Sumw2();
-  TH1D* h1_mgg_presel = new TH1D("mgg_presel", "", 80, 100., 180.);
-  h1_mgg_presel->Sumw2();
-
-  TH1D* h1_mgg= new TH1D("mgg", "", 80, 100., 180.);
-  h1_mgg->Sumw2();
 
   TH1D* h1_mgg_0btag = new TH1D("mgg_0btag", "", 80, 100., 180.);
   h1_mgg_0btag->Sumw2();
@@ -194,13 +181,19 @@ void fillPlot2012_radion::finalize() {
 
   TH1D*  h1_ptDiphot = new TH1D("ptDiphot", "", 100, 0., 500.);
   h1_ptDiphot->Sumw2();
+  TH1D*  h1_etaDiphot = new TH1D("etaDiphot", "", 40, -10., 10.);
+  h1_etaDiphot->Sumw2();
+  TH1D* h1_deltaEtaDiphot = new TH1D("deltaEtaDiphot", "", 40, -5., 5.);
+  h1_deltaEtaDiphot->Sumw2();
 
   TH1D*  h1_deltaPhi = new TH1D("deltaPhi", "", 100, 0., 3.1416);
   h1_deltaPhi->Sumw2();
-  TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 100, -10., 10.);
+  TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 50, -5., 5.);
   h1_deltaEta->Sumw2();
   TH1D*  h1_ptDijet = new TH1D("ptDijet", "", 100, 0., 500.);
   h1_ptDijet->Sumw2();
+  TH1D*  h1_etaDijet = new TH1D("etaDijet", "", 40, -10., 10.);
+  h1_etaDijet->Sumw2();
   TH1D*  h1_ptRatio = new TH1D("ptRatio", "", 100, 0., 3.);
   h1_ptRatio->Sumw2();
   TH1D*  h1_ptDifference = new TH1D("ptDifference", "", 100, -200., 200.);
@@ -208,11 +201,11 @@ void fillPlot2012_radion::finalize() {
   TH1D* h1_zeppen = new TH1D("zeppen", "", 100, -8., 8.);
   h1_zeppen->Sumw2();
 
-  TH1D* h1_deltaPhiJets = new TH1D("deltaPhiJets", "", 100, -10., 10.);
+  TH1D* h1_deltaPhiJets = new TH1D("deltaPhiJets", "", 50, -5., 5.);
   h1_deltaPhiJets->Sumw2();
-  TH1D* h1_deltaEtaJets = new TH1D("deltaEtaJets", "", 100, -10., 10.);
+  TH1D* h1_deltaEtaJets = new TH1D("deltaEtaJets", "", 40, -5., 5.);
   h1_deltaEtaJets->Sumw2();
-  TH1D* h1_deltaFabsEtaJets = new TH1D("deltaFabsEtaJets", "", 100, -5., 5.);
+  TH1D* h1_deltaFabsEtaJets = new TH1D("deltaFabsEtaJets", "", 50, -5., 5.);
   h1_deltaFabsEtaJets->Sumw2();
 
   TH1D*  h1_deltaPhi_kinfit = new TH1D("deltaPhi_kinfit", "", 100, 0., 3.1416);
@@ -226,29 +219,29 @@ void fillPlot2012_radion::finalize() {
   TH1D* h1_zeppen_kinfit = new TH1D("zeppen_kinfit", "", 100, -8., 8.);
   h1_zeppen_kinfit->Sumw2();
 
-  TH1D* h1_deltaEtaJets_kinfit = new TH1D("deltaEtaJets_kinfit", "", 100, -10., 10.);
+  TH1D* h1_deltaEtaJets_kinfit = new TH1D("deltaEtaJets_kinfit", "", 50, -5., 5.);
   h1_deltaEtaJets_kinfit->Sumw2();
-  TH1D* h1_deltaFabsEtaJets_kinfit = new TH1D("deltaFabsEtaJets_kinfit", "", 100, -5., 5.);
+  TH1D* h1_deltaFabsEtaJets_kinfit = new TH1D("deltaFabsEtaJets_kinfit", "", 50, -5., 5.);
   h1_deltaFabsEtaJets_kinfit->Sumw2();
 
-  TH1D* h1_cosTheta1 = new TH1D("cosTheta1", "", 100, -1.0001, 1.0001);
+  TH1D* h1_cosTheta1 = new TH1D("cosTheta1", "", 50, -1.0001, 1.0001);
   h1_cosTheta1->Sumw2();
-  TH1D* h1_cosTheta2 = new TH1D("cosTheta2", "", 100, -1.0001, 1.0001);
+  TH1D* h1_cosTheta2 = new TH1D("cosTheta2", "", 25, 0., 1.0001);
   h1_cosTheta2->Sumw2();
-  TH1D* h1_cosThetaStar = new TH1D("cosThetaStar", "", 100, -1.0001, 1.0001);
+  TH1D* h1_cosThetaStar = new TH1D("cosThetaStar", "", 50, -1.0001, 1.0001);
   h1_cosThetaStar->Sumw2();
   TH1D* h1_helphi = new TH1D("helphi", "", 100, 0., 3.1416);
   h1_helphi->Sumw2();
   TH1D* h1_helphi1 = new TH1D("helphi1", "", 100, 0., 3.1416);
   h1_helphi1->Sumw2();
 
-  TH1D* h1_cosThetaStar_jets = new TH1D("cosThetaStar_jets", "", 100, -1.0001, 1.0001);
+  TH1D* h1_cosThetaStar_jets = new TH1D("cosThetaStar_jets", "", 50, -1.0001, 1.0001);
   h1_cosThetaStar_jets->Sumw2();
 
   TH1D* h1_helicityAngle_V = new TH1D("helicityAngle_V", "", 100, -1.0001, 1.0001);
   h1_helicityAngle_V->Sumw2();
 
-  TH1D* h1_mVstar = new TH1D("mVstar", "", 1000, 0., 1000.);
+  TH1D* h1_mVstar = new TH1D("mVstar", "", 500, 0., 1000.);
   h1_mVstar->Sumw2();
   TH1D* h1_ptVstar = new TH1D("ptVstar", "", 500, 0., 500.);
   h1_ptVstar->Sumw2();
@@ -257,7 +250,7 @@ void fillPlot2012_radion::finalize() {
   TH1D* h1_phiVstar = new TH1D("phiVstar", "", 100, 0., 3.1416);
   h1_phiVstar->Sumw2();
 
-  TH1D* h1_mVstar_kinfit = new TH1D("mVstar_kinfit", "", 1000, 0., 1000.);
+  TH1D* h1_mVstar_kinfit = new TH1D("mVstar_kinfit", "", 500, 0., 1000.);
   h1_mVstar_kinfit->Sumw2();
   TH1D* h1_ptVstar_kinfit = new TH1D("ptVstar_kinfit", "", 500, 0., 500.);
   h1_ptVstar_kinfit->Sumw2();
@@ -271,14 +264,14 @@ void fillPlot2012_radion::finalize() {
   //-----------------------------------------------------------------------------
   // for the tree with selected events
   float massggnewvtx_t;
-  float ptphot1_t,  ptphot2_t;
+  float ptphot1_t, runptphot1_t, ptphot2_t;
   float etaphot1_t, etaphot2_t;
-  float ptgg_t;
+  float ptgg_t, etagg_t, absetagg_t;
   int njets_t;
   float ptcorrjet1_t, ptcorrjet2_t;
   float etajet1_t, etajet2_t;
   float deltaphijj_t, deltaetajj_t;
-  float invmassjet_t, ptjj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
+  float invmassjet_t, ptjj_t, etajj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;  
   float zeppen_t; 
   float chiSquareProbH_t, absCosThetaStar_t;
@@ -295,10 +288,13 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "event", &event, "event/I" );
   myTrees->Branch( "massggnewvtx", &massggnewvtx_t, "massggnewvtx_t/F" );
   myTrees->Branch( "ptPhot1", &ptphot1_t, "ptphot1_t/F" );
+  myTrees->Branch( "runptPhot1", &runptphot1_t, "runptPhot1_t/F" );
   myTrees->Branch( "ptPhot2", &ptphot2_t, "ptphot2_t/F" );
   myTrees->Branch( "etaPhot1", &etaphot1_t, "etaphot1_t/F" );
   myTrees->Branch( "etaPhot2", &etaphot2_t, "etaphot2_t/F" );
   myTrees->Branch( "ptgg", &ptgg_t, "ptgg_t/F" );
+  myTrees->Branch( "etagg", &etagg_t, "etagg_t/F" );
+  myTrees->Branch( "absetagg", &absetagg_t, "absetagg_t/F" );
   myTrees->Branch( "njets", &njets_t, "njets_t/I" );
   myTrees->Branch( "ptCorrJet1", &ptcorrjet1_t, "ptcorrJet1_t/F" );
   myTrees->Branch( "ptCorrJet2", &ptcorrjet2_t, "ptcorrJet2_t/F" );
@@ -308,6 +304,7 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "deltaetajj", &deltaetajj_t, "deltaetajj_t/F");
   myTrees->Branch( "mjj", &invmassjet_t, "invmassjet_t/F" );
   myTrees->Branch( "ptjj", &ptjj_t, "ptjj_t/F" );
+  myTrees->Branch( "etajj", &etajj_t, "etajj_t/F" );
   myTrees->Branch( "mggjj", &massggjj_t, "massggjj_t/F" );
   myTrees->Branch( "deltaphiggjj", &deltaphijjgg_t, "deltaphijjgg_t/F");
   myTrees->Branch( "deltaetaggjj", &deltaetajjgg_t, "deltaetajjgg_t/F");
@@ -398,7 +395,6 @@ void fillPlot2012_radion::finalize() {
     if( (fabs(etascphot1)>1.4442 || fabs(etascphot2)>1.4442) ) myEB=0;
     if( (fabs(etascphot1)<1.4442 && fabs(etascphot2)<1.4442) ) myEB=1;
 
-
     // the two selected photons for the analysis
     TLorentzVector t4phot1, t4phot2;  
     t4phot1.SetPtEtaPhiM(ptphot1,etaphot1,phiphot1,0.);
@@ -407,7 +403,6 @@ void fillPlot2012_radion::finalize() {
     t4diPhot.SetPtEtaPhiM( ptggnewvtx, etagg, phigg, massggnewvtx );
     TVector3 t3diPhot;
     t3diPhot.SetPtEtaPhi( ptggnewvtx, etagg, phigg );
-
 
     // cout << endl;
     // cout << "controllo gamma: " << endl;
@@ -419,22 +414,18 @@ void fillPlot2012_radion::finalize() {
 
     // invariant mass cut on photons
     if (t4diPhot.M()<100 || t4diPhot.M()>180) continue;
-
+    
     // control plots to check the preselection
     h1_ptphot0->Fill(ptphot1, weight);
     h1_ptphot1->Fill(ptphot2, weight);
+    h1_runptphot0->Fill(ptphot1*120./massggnewvtx, weight);
 
-    // photons pt cuts - chiara: vedi se mettere che scalano con pT oppure no   
+    // photons pt cuts 
     if(ptphot1<ptphot1cut* massggnewvtx/120.) continue;         // pt first photon
-    if(ptphot2<ptphot2cut* massggnewvtx/120.) continue;         // pt second photon
+    if(ptphot2<ptphot2cut)                    continue;         // pt second photon
 
     // control plots after preselection on photons (pT, acceptance and ID)
-    h1_mgg_prepresel->Fill( massggnewvtx, weight );
-
-    // extra cuts on photons: diphotons pt cut
-    if(pthiggsmincut>0 && ptgg<pthiggsmincut)  continue;        // pt H1 min
-    if(pthiggsmaxcut>0 && ptgg>=pthiggsmaxcut) continue;        // pt H2 max
-
+    h1_mgg_preselG->Fill( massggnewvtx, weight );
 
 
     // --------------------------------------------------------------------------------
@@ -575,8 +566,6 @@ void fillPlot2012_radion::finalize() {
       v_puIdJets.push_back(ij);
     }
 
-    // chiara: vedi se vale la pena di mettere il controllo sui jet buoni con i partoni 
-
     // jets passing btagging ( + eta/pT/PUid cuts)
     vector<int> v_looseJP,  v_mediumJP,  v_tightJP; 
     vector<int> v_looseCSV, v_mediumCSV, v_tightCSV;
@@ -590,7 +579,7 @@ void fillPlot2012_radion::finalize() {
       if (btagcsvjet[index]>0.898)   v_tightCSV.push_back(index);
     }
 
-    // control plots
+    // control plots (before any cuts on jets)
     h1_njets->Fill( v_puIdJets.size(), weight );
     if (bTaggerType_=="JP") {
       h1_nbjets_loose ->Fill( v_looseJP.size(),  weight );
@@ -603,30 +592,14 @@ void fillPlot2012_radion::finalize() {
     } else {
       cout << "this btag algo does not exists" << endl;
     }
-    if( v_puIdJets.size()>=2 ) {
-      if (bTaggerType_=="JP") {
-	h1_nbjets_loose_2jets ->Fill( v_looseJP.size(),  weight );
-	h1_nbjets_medium_2jets->Fill( v_mediumJP.size(), weight );
-	h1_nbjets_tight_2jets ->Fill( v_tightJP.size(),  weight );
-      } else if (bTaggerType_=="CSV") {
-	h1_nbjets_loose_2jets ->Fill( v_looseCSV.size(),  weight );
-	h1_nbjets_medium_2jets->Fill( v_mediumCSV.size(), weight );
-	h1_nbjets_tight_2jets ->Fill( v_tightCSV.size(),  weight );
-      } else {
-	cout << "this btag algo does not exists" << endl;
-      }
-    }
 
     // at least 2 preselected jets
     if (v_puIdJets.size()<2) continue;   
     std::pair<int,int> allJets_highPt = myTwoHighestPtJet(v_puIdJets);
 
-    // control plots on photons after full preselection 
-    h1_mgg_presel->Fill( massggnewvtx, weight );    
 
 
-
-    // choiche of analysis jets ---------------------
+    // choice of analysis jets ---------------------
 
     // highest pT jets
     int jet1 = allJets_highPt.first;
@@ -719,7 +692,20 @@ void fillPlot2012_radion::finalize() {
     // cout << "debug, t4jet1.Pt() = " << t4jet1.Pt() << ", t4jet1.Eta() = " << t4jet1.Eta() << ", t4jet1.Phi() = " << t4jet1.Phi() << endl;  
     // cout << "debug, t4jet2.Pt() = " << t4jet2.Pt() << ", t4jet2.Eta() = " << t4jet2.Eta() << ", t4jet2.Phi() = " << t4jet2.Phi() << endl;  
 
-    // jet related kinematic variables
+    // invariant mass cut on jets 
+    float invMassJJ = t4diJet.M();
+    if( t4diJet.M()<0. || t4diJet.M()>300. )  continue;
+
+
+    // invariant mass plots after the two preselection on jets and photons
+    h1_mgg_preselJ->Fill( massggnewvtx, weight );    
+    h1_mjj_preselJ->Fill( t4diJet.M(), weight );
+
+    
+
+
+    // -------------------------------------------------------------------------
+    // jet related kinematic variables to further study the jet selection
     float ptJ1       = t4jet1.Pt();
     float ptJ2       = t4jet2.Pt();
     float etaJ1      = t4jet1.Eta();
@@ -727,18 +713,21 @@ void fillPlot2012_radion::finalize() {
     float deltaEtaJJ = t4jet1.Eta() - t4jet2.Eta();
     float deltaPhiJJ = t4jet1.DeltaPhi(t4jet2);
     float ptJJ       = t4diJet.Pt();
-    float invMassJJ  = (t4jet1+t4jet2).M();
+    float etaJJ      = t4diJet.Eta();
 
     // jet/photon related kinematic variables
     float zeppen        = t4diPhot.Eta() - 0.5*( etaJ1 + etaJ2); 
     float deltaPhi_ggjj = t4diPhot.DeltaPhi(t4diJet);
     float deltaEta_ggjj = t4diPhot.Eta() - t4diJet.Eta();
 
+    // further diphoton variables
+    float deltaEtaGG = t4phot1.Eta() - t4phot2.Eta();
+
     // radion 4vector
     TLorentzVector t4Radion = t4diJet + t4diPhot;
     float radMass = t4Radion.M();
 
-    // control plots on basic kinematic variables after the two jets and two photons are selected
+    // control plots on basic kinematic variables after the two jets and two photons are preselected
 
     // jets
     h1_ptjet0->Fill( ptJ1, weight );
@@ -747,9 +736,8 @@ void fillPlot2012_radion::finalize() {
     h1_etajet0->Fill( etaJ1, weight );
     h1_etajet1->Fill( etaJ2, weight );
 
-    h1_mjj->Fill( t4diJet.M(), weight );
-  
     h1_ptDijet          -> Fill( ptJJ,  weight );
+    h1_etaDijet         -> Fill( etaJJ,  weight );
     h1_deltaEtaJets     -> Fill( deltaEtaJJ, weight );
     h1_deltaFabsEtaJets -> Fill( fabs(deltaEtaJJ), weight );
     h1_deltaPhiJets     -> Fill( deltaPhiJJ, weight );
@@ -762,9 +750,9 @@ void fillPlot2012_radion::finalize() {
     h1_ptDifference -> Fill( t4diJet.Pt()-t4diPhot.Pt(), weight );
 
     // gammas
-    h1_ptDiphot -> Fill( t4diPhot.Pt(), weight );
-    h1_mgg      -> Fill( massggnewvtx, weight );
-
+    h1_ptDiphot       -> Fill( t4diPhot.Pt(), weight );
+    h1_etaDiphot      -> Fill( t4diPhot.Eta(), weight );
+    h1_deltaEtaDiphot -> Fill( deltaEtaGG, weight );
 
     
     // ------------------------------------------------------------
@@ -834,9 +822,6 @@ void fillPlot2012_radion::finalize() {
     // control plots after kin fit
     h1_kinfit_chiSquareProbH->Fill( chiSquareProbH, weight );
 
-    if( t4diJet.M()>0. && t4diJet.M()<200. )    // chiara: vedi che tagli mettere - alexandra aveva 50-150
-      h1_kinfit_chiSquareProbH_mjjWindow->Fill( chiSquareProbH, weight );
-
     float zeppen_kinfit = t3diPhot.Eta() - 0.5*( jet1_kinfit.Eta() + jet2_kinfit.Eta() );
     h1_zeppen_kinfit->Fill( zeppen_kinfit, weight );
  
@@ -855,7 +840,6 @@ void fillPlot2012_radion::finalize() {
     h1_phiVstar_kinfit -> Fill( Vstar_kinfit.Phi(), weight );
 
 
-
     // -------------------------------------------------------------
     // counting the number of bjets to categorize the events
     int btagCategory = -1;
@@ -863,34 +847,35 @@ void fillPlot2012_radion::finalize() {
     else if (bTaggerType_=="CSV") { btagCategory = (v_looseCSV.size()<=2) ? v_looseCSV.size() : 2; }
     else cout << "this btag algo does not exist" << endl;
 
-    // if( btagCategory==0 ) {
-    //  if( t4diPhot.Pt() < ptgg_0btag_thresh_ ) continue;
-    //} else if( btagCategory==1 ) {
-    //  if( t4diPhot.Pt() < ptgg_1btag_thresh_ ) continue;
-    //} else {
-    //  if( t4diPhot.Pt() < ptgg_2btag_thresh_ ) continue;
-    // }
 
-    // dijet mass cut if needed
-    // if(mjjmincut>0 && invMassJJ<mjjmincut)  continue;    // mass H2 min
-    // if(mjjmaxcut>0 && invMassJJ>=mjjmaxcut) continue;    // mass H2 max
-    
-    // deltaeta
-    // if(deltaetajjcut>0 && fabs(deltaEtaJJ)<deltaetacut) continue;
+    // -------------------------------------------------------------
+    // here we apply further cuts according to the btag category
+    if (btagCategory<1 || btagCategory>2) continue;
 
-    // deltaphi
-    // if(deltaphijjcut>0 && fabs(deltaPhiJJ)<deltaphicut) continue;
+    if (btagCategory==1) {
+      if ( ptdiphotcut_1bj>0  && t4diPhot.Pt()<ptdiphotcut_1bj ) continue;
+      if ( etadiphotcut_1bj>0 && fabs(etagg)>etadiphotcut_1bj  ) continue;
+      if ( ptphot1cut_1bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_1bj ) continue;
+      if ( ptjet1cut_1bj>0    && ptJ1<ptjet1cut_1bj ) continue;
+      if ( costhetascut_1bj>0 && fabs(cosThetaStar)>costhetascut_1bj ) continue;
+
+    } else if (btagCategory==2) {
+      if ( ptdiphotcut_2bj>0  && t4diPhot.Pt()<ptdiphotcut_2bj ) continue;
+      if ( etadiphotcut_2bj>0 && fabs(etagg)>etadiphotcut_2bj  ) continue;
+      if ( ptphot1cut_2bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_2bj ) continue;
+      if ( ptjet1cut_2bj>0    && ptJ1<ptjet1cut_2bj ) continue;
+      if ( costhetascut_2bj>0 && fabs(cosThetaStar)>costhetascut_2bj ) continue;
+    }
+
+    // -------------------------------------------------------------
 
     // invariant mass of jets by btag category
     if( btagCategory==0 ) {
       h1_mjj_0btag->Fill( invMassJJ, weight );
-      if( massggnewvtx>122. && massggnewvtx<128. ) h1_mjj_cutMgg_0btag->Fill( invMassJJ, weight );
     } else if( btagCategory==1 ) {
       h1_mjj_1btag->Fill( invMassJJ, weight );
-      if( massggnewvtx>122. && massggnewvtx<128. ) h1_mjj_cutMgg_1btag->Fill( invMassJJ, weight );
     } else {
       h1_mjj_2btag->Fill( invMassJJ, weight );
-      if( massggnewvtx>122. && massggnewvtx<128. ) h1_mjj_cutMgg_2btag->Fill( invMassJJ, weight );
     }
 
     // invariant mass of photons by btag category
@@ -909,6 +894,7 @@ void fillPlot2012_radion::finalize() {
     }
 
     // invariant mass of radion by btag category 
+    h1_mggjj->Fill( radMass, weight );
     if( btagCategory==0 ) {
       h1_mggjj_0btag->Fill( radMass, weight );
     } else if( btagCategory==1 ) {
@@ -920,10 +906,13 @@ void fillPlot2012_radion::finalize() {
     // filling the tree for selected events 
     massggnewvtx_t = massggnewvtx;
     ptphot1_t  = ptphot1;
+    runptphot1_t = (120./massggnewvtx)*ptphot1;
     ptphot2_t  = ptphot2;
     etaphot1_t = etaphot1;
     etaphot2_t = etaphot2;
     ptgg_t  = ptgg;
+    etagg_t = etagg; 
+    absetagg_t = fabs(etagg); 
     njets_t = v_puIdJets.size();
     ptcorrjet1_t = ptJ1;
     ptcorrjet2_t = ptJ2;
@@ -933,6 +922,7 @@ void fillPlot2012_radion::finalize() {
     deltaetajj_t = deltaEtaJJ;
     invmassjet_t = invMassJJ;
     ptjj_t = ptJJ;
+    etajj_t = etaJJ;
     massggjj_t      = radMass;
     deltaphijjgg_t  = deltaPhi_ggjj;
     deltaetajjgg_t  = deltaEta_ggjj;
@@ -969,42 +959,55 @@ void fillPlot2012_radion::finalize() {
   h1_nbjets_loose->Write();
   h1_nbjets_medium->Write();
   h1_nbjets_tight->Write();
-  h1_nbjets_loose_2jets->Write();
-  h1_nbjets_medium_2jets->Write();
-  h1_nbjets_tight_2jets->Write();
   
   h1_ptphot0->Write();
   h1_ptphot1->Write();
+  h1_runptphot0->Write();
+
+  h1_mgg_preselG->Write();
+  h1_mgg_preselJ->Write();
+  h1_mjj_preselJ->Write();
+
   h1_ptjet0->Write();
   h1_ptjet1->Write();
   h1_etajet0->Write();
   h1_etajet1->Write();
   
   h1_kinfit_chiSquareProbH->Write();
-  h1_kinfit_chiSquareProbH_mjjWindow->Write();
-  
-  h1_mjj->Write();
   
   h1_mjj_0btag->Write();
   h1_mjj_1btag->Write();
   h1_mjj_2btag->Write();
   
-  h1_mjj_cutMgg_0btag->Write();
-  h1_mjj_cutMgg_1btag->Write();
-  h1_mjj_cutMgg_2btag->Write();
-  
+  h1_mggjj->Write();
   h1_mggjj_0btag->Write();
   h1_mggjj_1btag->Write();
   h1_mggjj_2btag->Write();
 
+  h1_mgg_0btag->Write();
+  h1_mgg_1btag->Write();
+  h1_mgg_2btag->Write();
+
+  h1_mgg_0btag_ebeb->Write();
+  h1_mgg_1btag_ebeb->Write();
+  h1_mgg_2btag_ebeb->Write();
+
+  h1_mgg_0btag_nebeb->Write();
+  h1_mgg_1btag_nebeb->Write();
+  h1_mgg_2btag_nebeb->Write();
+
   h1_ptDiphot->Write();
+  h1_etaDiphot->Write();
+  h1_deltaEtaDiphot->Write();
   
   h1_deltaPhi->Write();
   h1_deltaEta->Write();
   h1_ptDijet->Write();
+  h1_etaDijet->Write();
   h1_ptRatio->Write();
   h1_ptDifference->Write();
   
+  h1_deltaPhiJets->Write();
   h1_deltaEtaJets->Write();
   h1_deltaFabsEtaJets->Write();
   h1_zeppen->Write();
@@ -1017,21 +1020,6 @@ void fillPlot2012_radion::finalize() {
   h1_deltaEtaJets_kinfit->Write();
   h1_deltaFabsEtaJets_kinfit->Write();
   h1_zeppen_kinfit->Write();
-  
-  h1_mgg_prepresel->Write();
-  h1_mgg_presel->Write();
-  h1_mgg->Write();
-
-  h1_mgg_0btag->Write();
-  h1_mgg_1btag->Write();
-  h1_mgg_2btag->Write();
-  h1_mgg_0btag_ebeb->Write();
-  h1_mgg_1btag_ebeb->Write();
-  h1_mgg_2btag_ebeb->Write();
-
-  h1_mgg_0btag_nebeb->Write();
-  h1_mgg_1btag_nebeb->Write();
-  h1_mgg_2btag_nebeb->Write();
   
   h1_cosTheta1->Write();
   h1_cosTheta2->Write();
@@ -1614,7 +1602,6 @@ void fillPlot2012_radion::Init() {
   tree_->SetBranchAddress("puptmuvloose2", &puptmuvloose2, &b_puptmuvloose2);
 }
 
-// chiara: qui va tutto rivisto mettendoci i tagli che servono x analisi dopo ottimizzazione e togliendo quello che non serve 
 void fillPlot2012_radion::setSelectionType( const std::string& selectionType ) {
 
   selectionType_ = selectionType;
@@ -1623,44 +1610,28 @@ void fillPlot2012_radion::setSelectionType( const std::string& selectionType ) {
   dopureeventWeight_ = true;
   cicselection = 4;
 
-  ptphot1cut = 33.;
+  ptphot1cut = 40.;
   ptphot2cut = 25.;
-
-  pthiggsmincut=0.;
-  pthiggsmaxcut=0.;
 
   ptjetacccut  = 25.;
   etajetacccut = 2.5;  
 
-  ptjet_0btag_thresh_ = 20.;
-  ptjet_1btag_thresh_ = 20.;
-  ptjet_2btag_thresh_ = 20.;
-
-  ptgg_0btag_thresh_ = 0.;
-  ptgg_1btag_thresh_ = 0.;
-  ptgg_2btag_thresh_ = 0.;
-
-  zeppenfeld_thresh_ = 1000.;
-
-  costhetastar_0btag_thresh_ = 2.;
-  costhetastar_1btag_thresh_ = 2.;
-  costhetastar_2btag_thresh_ = 2.;
-
-  mjjmincut = 0.;
-  mjjmaxcut = 10000.;
-
-  deltaetajjcut = 0.;
-  deltaphijjcut = 0.;
-
   if( selectionType=="default" ) {
 
-    // leave all cuts to default                                                                                        
+    ptdiphotcut_1bj = 0;
+    ptdiphotcut_2bj = 0;
 
-  } else if( selectionType=="sel1" ) {
+    etadiphotcut_1bj = 2.1;
+    etadiphotcut_2bj = 2.0;  
     
-    // chiara: qui modifichi i tagli che servono
-    ptphot1cut = 60.;
-    ptphot2cut = 25.;
+    ptphot1cut_1bj = 52.;
+    ptphot1cut_2bj = 57.;
+
+    ptjet1cut_1bj = 41.;
+    ptjet1cut_2bj = 48.;
+
+    costhetascut_1bj = 0.9;
+    costhetascut_2bj = 1.0;
 
   } else {
     

@@ -1012,27 +1012,23 @@ class fillPlot2012_radion : public RedNtpFinalizer {
   float ptjetacccut;
   float etajetacccut;
 
-  float ptgg_0btag_thresh_;
-  float ptgg_1btag_thresh_;
-  float ptgg_2btag_thresh_;
+  float ptdiphotcut_1bj;
+  float ptdiphotcut_2bj;
 
-  float ptjet_0btag_thresh_;
-  float ptjet_1btag_thresh_;
-  float ptjet_2btag_thresh_;
+  float etadiphotcut_1bj;
+  float etadiphotcut_2bj;
 
-  float ptjetleadthresh_0btag_;
+  float ptphot1cut_1bj;
+  float ptphot1cut_2bj;
 
-  float zeppenfeld_thresh_;
+  float ptjet1cut_1bj;
+  float ptjet1cut_2bj;
 
-  float costhetastar_0btag_thresh_;
-  float costhetastar_1btag_thresh_;
-  float costhetastar_2btag_thresh_;
+  float costhetascut_1bj;
+  float costhetascut_2bj;
 
   float mjjmincut;
   float mjjmaxcut;
-
-  float deltaetajjcut;
-  float deltaphijjcut;
 };
 
 #endif
