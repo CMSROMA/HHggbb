@@ -41,17 +41,39 @@ int main(int argc, char* argv[]) {
   db_nostack->set_outputdir(outputdir_str);
   db_stack->set_outputdir(outputdir_str);
 
-  int signalFillColor = 46;
+  int signalFillColor300  = 46;
+  int signalFillColor500  = 4;
+  int signalFillColor700  = 3;
+  int signalFillColor1000 = 6;
 
-  // only for shape comparisons
-  std::string RadionFileName = "finalizedTrees_Radion_presel/Radion_";
-  RadionFileName += "Radion_M-300_madgraph";
-  RadionFileName += "_" + selType;
-  RadionFileName += "_" + bTaggerType;
-  RadionFileName += ".root";
-  TFile* RadionFile = TFile::Open(RadionFileName.c_str());
-  db_nostack->add_mcFile( RadionFile, "Radion", "Radion (300)", signalFillColor, 0);
-  db_stack->add_mcFile( RadionFile, "Radion", "Radion (300)", signalFillColor, 0);
+  std::string RadionFileName300 = "finalizedTrees_Radion_presel/Radion_";
+  RadionFileName300 += "Radion_M-300_madgraph";
+  RadionFileName300 += "_" + selType;
+  RadionFileName300 += "_" + bTaggerType;
+  RadionFileName300 += ".root";
+  TFile* RadionFile300 = TFile::Open(RadionFileName300.c_str());
+  db_stack->add_mcFile( RadionFile300, "Radion", "Radion (300)", signalFillColor300, 0);   // chiara: I use 300 for the stack plots
+
+  std::string RadionFileName500 = "finalizedTrees_Radion_presel/Radion_";
+  RadionFileName500 += "Radion_M-500_madgraph";
+  RadionFileName500 += "_" + selType;
+  RadionFileName500 += "_" + bTaggerType;
+  RadionFileName500 += ".root";
+  TFile* RadionFile500 = TFile::Open(RadionFileName500.c_str());
+
+  std::string RadionFileName700 = "finalizedTrees_Radion_presel/Radion_";
+  RadionFileName700 += "Radion_M-700_madgraph";
+  RadionFileName700 += "_" + selType;
+  RadionFileName700 += "_" + bTaggerType;
+  RadionFileName700 += ".root";
+  TFile* RadionFile700 = TFile::Open(RadionFileName700.c_str());
+
+  std::string RadionFileName1000 = "finalizedTrees_Radion_presel/Radion_";
+  RadionFileName1000 += "Radion_M-1000_madgraph";
+  RadionFileName1000 += "_" + selType;
+  RadionFileName1000 += "_" + bTaggerType;
+  RadionFileName1000 += ".root";
+  TFile* RadionFile1000 = TFile::Open(RadionFileName1000.c_str());
 
   std::string HToGGFileName = "finalizedTrees_Radion_presel/Radion_";
   HToGGFileName += "HToGG_M-125_8TeV-pythia6";
@@ -59,7 +81,6 @@ int main(int argc, char* argv[]) {
   HToGGFileName += "_" + bTaggerType;
   HToGGFileName += ".root";
   TFile* HToGGFile = TFile::Open(HToGGFileName.c_str());
-  // db_nostack->add_mcFile( HToGGFile, "HToGG", "H (125)", 29);
   db_stack->add_mcFile( HToGGFile, "HToGG", "H (125)", 29);
 
   /*
@@ -69,7 +90,6 @@ int main(int argc, char* argv[]) {
   HglugluToGGFileName += "_" + bTaggerType;
   HglugluToGGFileName += ".root";
   TFile* HglugluToGGFile = TFile::Open(HglugluToGGFileName.c_str());
-  db_nostack->add_mcFile( HglugluToGGFile, "HToGG gluglu", "H (125), gluglu", 30);
   db_stack->add_mcFile( HglugluToGGFile, "HToGG gluglu", "H (125), gluglu", 30);
 
   std::string HvbfToGGFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -78,7 +98,6 @@ int main(int argc, char* argv[]) {
   HvbfToGGFileName += "_" + bTaggerType;
   HvbfToGGFileName += ".root";
   TFile* HvbfToGGFile = TFile::Open(HvbfToGGFileName.c_str());
-  db_nostack->add_mcFile( HvbfToGGFile, "HToGG vbf", "H (125), vbf", 30);
   db_stack->add_mcFile( HvbfToGGFile, "HToGG vbf", "H (125), vbf", 30);
   */
 
@@ -88,7 +107,6 @@ int main(int argc, char* argv[]) {
   HvhToGGFileName += "_" + bTaggerType;
   HvhToGGFileName += ".root";
   TFile* HvhToGGFile = TFile::Open(HvhToGGFileName.c_str());
-  db_nostack->add_mcFile( HvhToGGFile, "HToGG VH", "H (125), VH", 38);
   // db_stack->add_mcFile( HvhToGGFile, "HToGG VH", "H (125), VH", 38);
 
   /*
@@ -98,7 +116,6 @@ int main(int argc, char* argv[]) {
   HtthToGGFileName += "_" + bTaggerType;
   HtthToGGFileName += ".root";
   TFile* HtthToGGFile = TFile::Open(HtthToGGFileName.c_str());
-  db_nostack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), ttH", 30);
   db_stack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), ttH", 30);
   */
 
@@ -108,7 +125,6 @@ int main(int argc, char* argv[]) {
   DiPhotonFileName += "_" + bTaggerType;
   DiPhotonFileName += ".root";
   TFile* DiPhotonFile = TFile::Open(DiPhotonFileName.c_str());
-  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton", 31);
   db_stack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton", 31);
 
   std::string GammaJetFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -117,7 +133,6 @@ int main(int argc, char* argv[]) {
   GammaJetFileName += "_" + bTaggerType;
   GammaJetFileName += ".root";
   TFile* GammaJetFile = TFile::Open(GammaJetFileName.c_str());
-  // db_nostack->add_mcFile( GammaJetFile, "GammaJet", "#gamma + Jet", 37);
   db_stack->add_mcFile( GammaJetFile, "GammaJet", "#gamma + Jet", 37);
 
   std::string DiBosonFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -126,7 +141,6 @@ int main(int argc, char* argv[]) {
   DiBosonFileName += "_" + bTaggerType;
   DiBosonFileName += ".root";
   TFile* DiBosonFile = TFile::Open(DiBosonFileName.c_str());
-  // db_nostack->add_mcFile( DiBosonFile, "DiBoson", "Diboson", 38);
   db_stack->add_mcFile( DiBosonFile, "DiBoson", "Diboson", 38);
 
   std::string BosonFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -135,7 +149,6 @@ int main(int argc, char* argv[]) {
   BosonFileName += "_" + bTaggerType;
   BosonFileName += ".root";
   TFile* BosonFile = TFile::Open(BosonFileName.c_str());
-  // db_nostack->add_mcFile( BosonFile, "Bosons", "boson", 39);
   db_stack->add_mcFile( BosonFile, "Bosons", "boson", 39);
 
   std::string TriBosonFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -144,7 +157,6 @@ int main(int argc, char* argv[]) {
   TriBosonFileName += "_" + bTaggerType;
   TriBosonFileName += ".root";
   TFile* TriBosonFile = TFile::Open(TriBosonFileName.c_str());
-  // db_nostack->add_mcFile( TriBosonFile, "TriBoson", "V + #gamma#gamma", 40);
   db_stack->add_mcFile( TriBosonFile, "TriBoson", "V + #gamma#gamma", 40);
 
   std::string TTFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -153,7 +165,6 @@ int main(int argc, char* argv[]) {
   TTFileName += "_" + bTaggerType;
   TTFileName += ".root";
   TFile* TTFile = TFile::Open(TTFileName.c_str());
-  // db_nostack->add_mcFile( TTFile, "TT", "Top", 44);
   db_stack->add_mcFile( TTFile, "TT", "Top", 44);
 
   std::string QCDFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -162,8 +173,17 @@ int main(int argc, char* argv[]) {
   QCDFileName += "_" + bTaggerType;
   QCDFileName += ".root";
   TFile* QCDFile = TFile::Open(QCDFileName.c_str());
-  // db_nostack->add_mcFile( QCDFile, "QCD", "QCD", 41);
   db_stack->add_mcFile( QCDFile, "QCD", "QCD", 41);
+
+
+  // only for signal shape comparison
+  db_nostack->add_mcFile( RadionFile300,  "Radion", "Radion (300)",  signalFillColor300,  0);
+  db_nostack->add_mcFile( RadionFile500,  "Radion", "Radion (500)",  signalFillColor500,  0);
+  db_nostack->add_mcFile( RadionFile700,  "Radion", "Radion (700)",  signalFillColor700,  0);
+  db_nostack->add_mcFile( RadionFile1000, "Radion", "Radion (1000)", signalFillColor1000, 0);
+  db_nostack->add_mcFile( HvhToGGFile, "HToGG VH", "H (125), VH", 38);
+  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton", 31);
+
 
   bool log = true;
 
@@ -174,6 +194,8 @@ int main(int argc, char* argv[]) {
 
   db_nostack->drawHisto("ptphot0", "Lead Photon p_{T}",    "GeV");
   db_nostack->drawHisto("ptphot1", "Sublead Photon p_{T}", "GeV");
+
+  db_nostack->drawHisto("runptphot0", "Running Lead Photon p_{T}",    "GeV");
 
   db_nostack->drawHisto("ptjet0",  "Lead Jet p_{T}",       "GeV");
   db_nostack->drawHisto("ptjet1",  "Sublead Jet p_{T}",    "GeV");
@@ -269,8 +291,8 @@ int main(int argc, char* argv[]) {
   db_nostack->drawHisto("mgg_2btag_nebeb", "DiPhoton Invariant Mass", "GeV");
 
 
-  bool doUL = (selType == "default" );  // chiara
-  // bool doUL = (selType == "pippo" );  // chiara
+  // bool doUL = (selType == "default" );  // chiara
+  bool doUL = (selType == "pippo" );  // chiara
 
   // final
   db_stack->drawHisto("mggjj", "DiPhoton+DiJets Invariant Mass", "GeV");
@@ -296,7 +318,7 @@ void printYields( DrawBase* db, const std::string& suffix, bool doUL ) {
   cout << "Preparing file with yields: " << yieldsFileName << endl;
   ofstream yieldsFile(yieldsFileName.c_str());
 
-  float xMin = 250.;  // chiara, da cambiare con la massa
+  float xMin = 250.;  // chiara, to be changed with mass
   float xMax = 350.;
   std::vector<TH1D*> histos = db->get_lastHistos_mc();
   int binXmin = histos[0]->FindBin(xMin);
@@ -320,12 +342,12 @@ void printYields( DrawBase* db, const std::string& suffix, bool doUL ) {
     }
   }
 
-  totalBG_ave *= (100.)/(histos[0]->GetXaxis()->GetXmax()-histos[0]->GetXaxis()->GetXmin());  // chiara?
+  totalBG_ave *= (100.)/(histos[0]->GetXaxis()->GetXmax()-histos[0]->GetXaxis()->GetXmin());  
 
   yieldsFile << "Total BG: "     << totalBG << " (averaged: " << totalBG_ave << ")" << std::endl;
   yieldsFile << "Total Signal: " << signal  << std::endl;
 
-  float signal_xsec = 0.000271;   // chiara, questo x 300 GeV
+  float signal_xsec = 0.000271;   // chiara, this is for 300 GeV Radion
   float total_signal = signal_xsec*db->get_lumi();
   float effS = signal/total_signal;
   yieldsFile << "Signal efficiency: " << effS << std::endl;
