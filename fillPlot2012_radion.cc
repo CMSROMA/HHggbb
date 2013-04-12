@@ -260,6 +260,28 @@ void fillPlot2012_radion::finalize() {
   h1_phiVstar_kinfit->Sumw2();
 
 
+  // kin fit study
+  TH2D* h2_mggjj_vs_mjj_1btag = new TH2D("mggjj_vs_mjj_1btag", "", 100, 0., 300., 100, 100., 600.);
+  h2_mggjj_vs_mjj_1btag->Sumw2();
+  TH2D* h2_mggjj_vs_mjj_2btag = new TH2D("mggjj_vs_mjj_2btag", "", 100, 0., 300., 100, 100., 600.);
+  h2_mggjj_vs_mjj_2btag->Sumw2();
+
+  TH2D* h2_mggjj_vs_mjj_kinfit_1btag = new TH2D("mggjj_vs_mjj_kinfit_1btag", "", 100, 0., 300., 100, 100., 600.);
+  h2_mggjj_vs_mjj_kinfit_1btag->Sumw2();
+  TH2D* h2_mggjj_vs_mjj_kinfit_2btag = new TH2D("mggjj_vs_mjj_kinfit_2btag", "", 100, 0., 300., 100, 100., 600.);
+  h2_mggjj_vs_mjj_kinfit_2btag->Sumw2();
+
+  TH1D* h1_mggjj_kinfit_1btag = new TH1D("mggjj_kinfit_1btag", "", 100, 100., 600.);
+  h1_mggjj_kinfit_1btag->Sumw2();
+  TH1D* h1_mggjj_kinfit_2btag = new TH1D("mggjj_kinfit_2btag", "", 100, 100., 600.);
+  h1_mggjj_kinfit_2btag->Sumw2();
+
+  TH1D* h1_mggjj_nokinfit_1btag = new TH1D("mggjj_nokinfit_1btag", "", 100, 100., 600.);
+  h1_mggjj_nokinfit_1btag->Sumw2();
+  TH1D* h1_mggjj_nokinfit_2btag = new TH1D("mggjj_nokinfit_2btag", "", 100, 100., 600.);
+  h1_mggjj_nokinfit_2btag->Sumw2();
+
+
 
   //-----------------------------------------------------------------------------
   // for the tree with selected events
@@ -860,6 +882,9 @@ void fillPlot2012_radion::finalize() {
     else if (bTaggerType_=="CSV") { btagCategory = (v_looseCSV.size()<=2) ? v_looseCSV.size() : 2; }
     else cout << "this btag algo does not exist" << endl;
 
+    // for test: only EBEB events
+    // if (!myEB) continue;
+
     // checking if photons are in EB or in EE to categorize the events    
     int myR9=-1;
     if(r9phot1>.94 && r9phot2>.94) myR9 = 1;
@@ -926,6 +951,21 @@ void fillPlot2012_radion::finalize() {
     } else {
       h1_mggjj_2btag->Fill( radMass, weight );
     }
+
+    // ---------------------------------------
+    // for a comparison of masses with / wo kin fit
+    if( btagCategory==1 ) {
+      h2_mggjj_vs_mjj_1btag        -> Fill( invMassJJ, radMass, weight );
+      h2_mggjj_vs_mjj_kinfit_1btag -> Fill( invMassJJ, Vstar_kinfit.M(), weight );
+      h1_mggjj_kinfit_1btag        -> Fill( Vstar_kinfit.M(), weight );
+      h1_mggjj_nokinfit_1btag      -> Fill( radMass, weight );
+    } else if (btagCategory==2 ) {
+      h2_mggjj_vs_mjj_2btag        -> Fill( invMassJJ, radMass, weight );
+      h2_mggjj_vs_mjj_kinfit_2btag -> Fill( invMassJJ, Vstar_kinfit.M(), weight );
+      h1_mggjj_kinfit_2btag        -> Fill( Vstar_kinfit.M(), weight );
+      h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight );
+    }
+
 
     // filling the tree for selected events 
     massggnewvtx_t = massggnewvtx;
@@ -1067,6 +1107,16 @@ void fillPlot2012_radion::finalize() {
   h1_ptVstar_kinfit->Write();
   h1_etaVstar_kinfit->Write();
   h1_phiVstar_kinfit->Write();
+
+  h2_mggjj_vs_mjj_1btag        -> Write();
+  h2_mggjj_vs_mjj_kinfit_1btag -> Write();
+  h1_mggjj_kinfit_1btag        -> Write();
+  h1_mggjj_nokinfit_1btag      -> Write();
+
+  h2_mggjj_vs_mjj_2btag        -> Write();
+  h2_mggjj_vs_mjj_kinfit_2btag -> Write();
+  h1_mggjj_kinfit_2btag        -> Write();
+  h1_mggjj_nokinfit_2btag      -> Write();
 
   // eff vs # eta
   TH1F *myEffEtaAss = (TH1F*)myNumEtaAss->Clone("myEffEtaAss");
