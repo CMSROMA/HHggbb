@@ -39,7 +39,7 @@ int main( int argc, char* argv[] ) {
   std::vector<std::string> *datasets = new std::vector<std::string>;
 
   if( dataset=="DATA_Run2012_FULL" ) {  
-    finalize_oneDataset(redntpVersion, "full2012_minusAug24_minusDec11", selectionType, bTaggerType, datasets); 
+    finalize_oneDataset(redntpVersion, "full2012_minusAug24_minusDec11_minusD", selectionType, bTaggerType, datasets); 
 
   } else if( dataset=="DiPhotonBox_8TeV-pythia6" ) {
     finalize_oneDataset(redntpVersion, "DiPhotonBox_Pt-10To25_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1",   selectionType, bTaggerType, datasets);
