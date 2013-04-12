@@ -273,6 +273,7 @@ void fillPlot2012_radion::finalize() {
   float deltaphijj_t, deltaetajj_t;
   float invmassjet_t, ptjj_t, etajj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;  
+  int theCategory_t;
   float zeppen_t; 
   float chiSquareProbH_t, absCosThetaStar_t;
   int nvtx_t;
@@ -309,6 +310,7 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "deltaphiggjj", &deltaphijjgg_t, "deltaphijjgg_t/F");
   myTrees->Branch( "deltaetaggjj", &deltaetajjgg_t, "deltaetajjgg_t/F");
   myTrees->Branch( "btagCategory", &btagCategory_t, "btagCategory_t/I" );
+  myTrees->Branch( "theCategory",  &theCategory_t,  "theCategory_t/I" );
   myTrees->Branch( "nbjets_loose",  &nbjets_loose_t,  "nbjets_loose_t/I" );
   myTrees->Branch( "nbjets_medium", &nbjets_medium_t, "nbjets_medium_t/I" );
   myTrees->Branch( "nbjets_tight",  &nbjets_tight_t,  "nbjets_tight_t/I" );
@@ -321,6 +323,15 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "isBtagJet1", &isj1btagged_t, "isj1btagged_t/I" );
   myTrees->Branch( "isBtagJet2", &isj2btagged_t, "isj2btagged_t/I" );
   myTrees->Branch( "weight", &weight, "weight/F" );
+
+  // for central limits
+  // TTree* myTrees2 = new TTree();
+  // myTrees2->SetName("myTrees2");
+  // myTrees2->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );
+  // myTrees2->Branch( "mjj",          &invmassjet_t,   "invmassjet_t/F" );
+  // myTrees2->Branch( "mtot",         &massggjj_t,     "massggjj_t/F" );
+  // myTrees2->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );
+  // myTrees2->Branch( "Weight",       &weight,         "weight/F" );
 
 
   // ------------------------------------------------------
@@ -414,6 +425,7 @@ void fillPlot2012_radion::finalize() {
 
     // invariant mass cut on photons
     if (t4diPhot.M()<100 || t4diPhot.M()>180) continue;
+    // if (t4diPhot.M()<115 || t4diPhot.M()>135) continue;
     
     // control plots to check the preselection
     h1_ptphot0->Fill(ptphot1, weight);
@@ -695,6 +707,7 @@ void fillPlot2012_radion::finalize() {
     // invariant mass cut on jets 
     float invMassJJ = t4diJet.M();
     if( t4diJet.M()<0. || t4diJet.M()>300. )  continue;
+    // if( t4diJet.M()<50. || t4diJet.M()>200. )  continue;
 
 
     // invariant mass plots after the two preselection on jets and photons
@@ -847,6 +860,17 @@ void fillPlot2012_radion::finalize() {
     else if (bTaggerType_=="CSV") { btagCategory = (v_looseCSV.size()<=2) ? v_looseCSV.size() : 2; }
     else cout << "this btag algo does not exist" << endl;
 
+    // checking if photons are in EB or in EE to categorize the events    
+    int myR9=-1;
+    if(r9phot1>.94 && r9phot2>.94) myR9 = 1;
+    if(r9phot1<.94 || r9phot2<.94) myR9 = 0;
+
+    // total category combining photons / jets
+    int theCategory = -1;
+    if (myR9==1 && btagCategory==2) theCategory = 0;
+    if (myR9==1 && btagCategory==1) theCategory = 1;
+    if (myR9==0 && btagCategory==2) theCategory = 2;
+    if (myR9==0 && btagCategory==1) theCategory = 3;
 
     // -------------------------------------------------------------
     // here we apply further cuts according to the btag category
@@ -927,6 +951,7 @@ void fillPlot2012_radion::finalize() {
     deltaphijjgg_t  = deltaPhi_ggjj;
     deltaetajjgg_t  = deltaEta_ggjj;
     btagCategory_t  = btagCategory;
+    theCategory_t   = theCategory;
     if (bTaggerType_=="JP") {
       nbjets_loose_t  = v_looseJP.size();
       nbjets_medium_t = v_mediumJP.size();
@@ -948,13 +973,16 @@ void fillPlot2012_radion::finalize() {
     isj2btagged_t = isj2btagged;
     myTrees->Fill();
 
+    // myTrees2->Fill();
+
   } // loop over entries 
 
 
   outFile_->cd();
-  
+  // myTrees2->Write();  
+
   myTrees->Write();
-    
+
   h1_njets->Write();
   h1_nbjets_loose->Write();
   h1_nbjets_medium->Write();
