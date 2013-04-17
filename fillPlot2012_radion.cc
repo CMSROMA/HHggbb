@@ -347,13 +347,13 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "weight", &weight, "weight/F" );
 
   // for central limits
-  // TTree* myTrees2 = new TTree();
-  // myTrees2->SetName("myTrees2");
-  // myTrees2->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );
-  // myTrees2->Branch( "mjj",          &invmassjet_t,   "invmassjet_t/F" );
-  // myTrees2->Branch( "mtot",         &massggjj_t,     "massggjj_t/F" );
-  // myTrees2->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );
-  // myTrees2->Branch( "Weight",       &weight,         "weight/F" );
+  // TTree* TCVARS = new TTree("TCVARS","two photon two jet selection");
+  // TCVARS->SetName("TCVARS");
+  // TCVARS->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );
+  // TCVARS->Branch( "mjj",          &invmassjet_t,   "invmassjet_t/F" );
+  // TCVARS->Branch( "mtot",         &massggjj_t,     "massggjj_t/F" );
+  // TCVARS->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );
+  // TCVARS->Branch( "evWeight",     &weight,         "weight/F" );
 
 
   // ------------------------------------------------------
@@ -377,7 +377,7 @@ void fillPlot2012_radion::finalize() {
     std::cout << "-> Cross-Section: "      << xSection_             << " pb" << std::endl;
     std::cout << "-> # Generated Events: " << nGenEvents_           << std::endl;
     std::cout << "-> Event Weight: "       << xSection_/nGenEvents_ << std::endl << std::endl;
-  }
+  } 
 
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
@@ -393,11 +393,15 @@ void fillPlot2012_radion::finalize() {
 	exit(99);
       }
       weight = xSection_ / nGenEvents_ ;
-      // pu reWeighting                                                                                       
+
+      // pu reWeighting
       if(dopureeventWeight_) weight *= pu_weight;
+
+      // chiara 
+      // weight *= 11700.;
     }
 
-   
+
     // analysis cuts
     if(npu>=60) continue;    
 
@@ -897,6 +901,12 @@ void fillPlot2012_radion::finalize() {
     if (myR9==0 && btagCategory==2) theCategory = 2;
     if (myR9==0 && btagCategory==1) theCategory = 3;
 
+    // to compare with an only photon-based analysis 
+    // if (myR9==1 && myEB)  theCategory = 0;
+    // if (myR9==0 && myEB)  theCategory = 1;
+    // if (myR9==1 && !myEB) theCategory = 2;
+    // if (myR9==0 && !myEB) theCategory = 3;
+
     // -------------------------------------------------------------
     // here we apply further cuts according to the btag category
     if (btagCategory<1 || btagCategory>2) continue;
@@ -1011,15 +1021,19 @@ void fillPlot2012_radion::finalize() {
     rhoPF_t  = rhoPF;
     isj1btagged_t = isj1btagged;
     isj2btagged_t = isj2btagged;
+
+    // chiara
+    // if( !isMC ) { weight = 1.; }
+
     myTrees->Fill();
 
-    // myTrees2->Fill();
+    // TCVARS->Fill();
 
   } // loop over entries 
 
 
   outFile_->cd();
-  // myTrees2->Write();  
+  // TCVARS->Write();  
 
   myTrees->Write();
 
