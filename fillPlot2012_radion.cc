@@ -132,6 +132,8 @@ void fillPlot2012_radion::finalize() {
 
   TH1D* h1_ptjet0 = new TH1D("ptjet0", "", 60, 0., 400.);
   h1_ptjet0->Sumw2();
+  TH1D* h1_runptjet0 = new TH1D("runptjet0", "", 60, 0., 400.);
+  h1_runptjet0->Sumw2();
   TH1D* h1_ptjet1 = new TH1D("ptjet1", "", 30, 0., 200.);
   h1_ptjet1->Sumw2();
   TH1D* h1_etajet0 = new TH1D("etajet0", "", 30, -3., 3.);
@@ -290,7 +292,7 @@ void fillPlot2012_radion::finalize() {
   float etaphot1_t, etaphot2_t;
   float ptgg_t, etagg_t, absetagg_t;
   int njets_t;
-  float ptcorrjet1_t, ptcorrjet2_t;
+  float ptcorrjet1_t, runptcorrjet1_t, ptcorrjet2_t;
   float etajet1_t, etajet2_t;
   float deltaphijj_t, deltaetajj_t;
   float invmassjet_t, ptjj_t, etajj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
@@ -319,6 +321,7 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "etagg", &etagg_t, "etagg_t/F" );
   myTrees->Branch( "absetagg", &absetagg_t, "absetagg_t/F" );
   myTrees->Branch( "njets", &njets_t, "njets_t/I" );
+  myTrees->Branch( "runPtCorrJet1", &runptcorrjet1_t, "runptcorrJet1_t/F" );
   myTrees->Branch( "ptCorrJet1", &ptcorrjet1_t, "ptcorrJet1_t/F" );
   myTrees->Branch( "ptCorrJet2", &ptcorrjet2_t, "ptcorrJet2_t/F" );
   myTrees->Branch( "etaJet1", &etajet1_t, "etajet1_t/F" );
@@ -401,10 +404,6 @@ void fillPlot2012_radion::finalize() {
       // weight *= 11700.;
     }
 
-
-    // analysis cuts
-    if(npu>=60) continue;    
-
     // remove duplicate events - chiara, per il momento non rimuovo niente, ma va fatto sia qcd che gjet che wg che zg
 
     // ---------------------------------------------------
@@ -441,17 +440,10 @@ void fillPlot2012_radion::finalize() {
     TVector3 t3diPhot;
     t3diPhot.SetPtEtaPhi( ptggnewvtx, etagg, phigg );
 
-    // cout << endl;
-    // cout << "controllo gamma: " << endl;
-    // cout << "t4phot1 => " << t4phot1.Pt() << " " << t4phot1.Eta() << " " << t4phot1.Phi() << endl;
-    // cout << "t4phot2 => " << t4phot2.Pt() << " " << t4phot2.Eta() << " " << t4phot2.Phi() << endl;
-    // cout << endl;
-
     // further cuts on photons -----------------------
 
     // invariant mass cut on photons
     if (t4diPhot.M()<100 || t4diPhot.M()>180) continue;
-    // if (t4diPhot.M()<115 || t4diPhot.M()>135) continue;
     
     // control plots to check the preselection
     h1_ptphot0->Fill(ptphot1, weight);
@@ -633,93 +625,104 @@ void fillPlot2012_radion::finalize() {
 
     // at least 2 preselected jets
     if (v_puIdJets.size()<2) continue;   
-    std::pair<int,int> allJets_highPt = myTwoHighestPtJet(v_puIdJets);
-
-
 
     // choice of analysis jets ---------------------
 
-    // highest pT jets
-    int jet1 = allJets_highPt.first;
-    int jet2 = allJets_highPt.second;    
-
-    // highest pT btagged jets
-    int jet1btag = -1;
-    int jet2btag = -1;
-
-    // cout << "debug, prima dello swap: jet1 = " << jet1 << ", jet2 = " << jet2 << endl;
-
-    // choose jets as two btagged jets, OR leading ones 
-    int isj1btagged = 0;  
-    int isj2btagged = 0;  
-    if (bTaggerType_=="JP") {
-      if (v_looseJP.size()==1) { 
-	jet1btag = myHighestPtJet(v_looseJP);      
-      } else if (v_looseJP.size()>1) {
-	std::pair<int,int> looseBtag_highPt = myTwoHighestPtJet(v_looseJP);
-	jet1btag = looseBtag_highPt.first;
-	jet2btag = looseBtag_highPt.second;
-      }
-      // cout << "debug, prima dello swap: jet1btag = " << jet1btag << ", jet2btag = " << jet2btag << endl;
-      if( v_looseJP.size()==1 ) {
-	if (jet1 == jet1btag) { isj1btagged = 1;}
-	if (jet2 == jet1btag) { isj2btagged = 1;}
-	if (jet1 != jet1btag && jet2 != jet1btag) {
-	  float j1pt     = ptcorrjet[jet1]; 
-	  float j1btagpt = ptcorrjet[jet1btag]; 
-	  if (j1btagpt>j1pt) {
-	    jet2 = jet1;
-	    jet1 = jet1btag;
-	    isj1btagged = 1;
-	  } else {
-	    jet2 = jet1btag;
-	    isj2btagged = 1;
-	  }
-	}
-      }
-      if( v_looseJP.size()>1 ) {
-	jet1 = jet1btag;
-	jet2 = jet2btag;
-	isj1btagged = 1;
-	isj2btagged = 1;
-      }
-    } else if (bTaggerType_=="CSV") {
-      if (v_looseCSV.size()==1) { 
-	jet1btag = myHighestPtJet(v_looseCSV);      
-      } else if (v_looseCSV.size()>1) {
-	std::pair<int,int> looseBtag_highPt = myTwoHighestPtJet(v_looseCSV);
-	jet1btag = looseBtag_highPt.first;
-	jet2btag = looseBtag_highPt.second;
-      }
-      // cout << "debug, prima dello swap: jet1btag = " << jet1btag << ", jet2btag = " << jet2btag << endl;
-      if( v_looseCSV.size()==1 ) {
-	if (jet1 == jet1btag) { isj1btagged = 1;}
-	if (jet2 == jet1btag) { isj2btagged = 1;}
-	if (jet1 != jet1btag && jet2 != jet1btag) {
-	  float j1pt     = ptcorrjet[jet1]; 
-	  float j1btagpt = ptcorrjet[jet1btag]; 
-	  if (j1btagpt>j1pt) {
-	    jet2 = jet1;
-	    jet1 = jet1btag;
-	    isj1btagged = 1;
-	  } else {
-	    jet2 = jet1btag;
-	    isj2btagged = 1;
-	  }
-	}
-      }
-      if( v_looseCSV.size()>1 ) {
-	jet1 = jet1btag;
-	jet2 = jet2btag;
-	isj1btagged = 1;
-	isj2btagged = 1;
-      }
+    // highest pT btagged jet
+    int jet1btag   = -1;
+    bool isJustOne = false;
+    if (bTaggerType_=="CSV") {
+      if (v_mediumCSV.size()>=1) jet1btag = myHighestPtJet(v_mediumCSV);
+      if (v_mediumCSV.size()==1) isJustOne = true;
+    } else if (bTaggerType_=="JP") {
+      if (v_mediumJP.size()>=1) jet1btag = myHighestPtJet(v_mediumJP);       
+      if (v_mediumJP.size()==1) isJustOne = true;
     } else {
-      cout << "this btag algo does not exist" << endl; 
+      cout << "this btag algo does not exists" << endl;
     }
 
-    // cout << "debug, dopo: jet1 = " << jet1 << ", jet2 = " << jet2 << ", jet1btag = " << jet1btag << ", jet2btag = " << jet2btag << endl;
-    // cout << "debug: v_looseCSV.size() = " << v_looseCSV.size() << endl;
+    // at least 1 btagged jet
+    if ( jet1btag<0 ) continue;  
+
+    // choose the two jets with highest pT(jj), giving preference to btagged ones
+    int jet1 = -1;
+    int jet2 = -1;
+    int isj1btagged = 0;  
+    int isj2btagged = 0;  
+    float maxPtBtag = -999.;
+
+    if( isJustOne ) {  // =1 btagged jets
+      for (int jet=0; jet<(v_puIdJets.size()); jet++) {
+	int index = v_puIdJets[jet];
+	if (index==jet1btag) continue;
+	TLorentzVector t4jet, t4bjet;
+	t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
+	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag],etajet[jet1btag],phijet[jet1btag],ecorrjet[jet1btag]); 
+	
+	TLorentzVector t4_bnotb = t4jet + t4bjet;
+	if ( t4_bnotb.Pt() > maxPtBtag) {
+	  maxPtBtag = t4_bnotb.Pt();
+	  jet1 = jet1btag;
+	  jet2 = index;
+	  isj1btagged = true;
+	  isj2btagged = false;
+	}
+      }
+      
+    } else {  // >1 btagged jets
+      
+      if (bTaggerType_=="CSV") {
+	for (int jetA=0; jetA<(v_mediumCSV.size()-1); jetA++) {
+	  for (int jetB=jetA+1; jetB<v_mediumCSV.size(); jetB++) {
+	    TLorentzVector t4jetA, t4jetB;
+	    int indexA = v_mediumCSV[jetA];
+	    int indexB = v_mediumCSV[jetB];
+	    t4jetA.SetPtEtaPhiE(ptcorrjet[indexA],etajet[indexA],phijet[indexA],ecorrjet[indexA]);
+	    t4jetB.SetPtEtaPhiE(ptcorrjet[indexB],etajet[indexB],phijet[indexB],ecorrjet[indexB]);
+	    TLorentzVector t4AB = t4jetA + t4jetB;
+	    if ( t4AB.Pt() > maxPtBtag) {
+	      maxPtBtag = t4AB.Pt();
+	      jet1 = indexA;
+	      jet2 = indexB;
+	      isj1btagged = true;
+	      isj2btagged = true;
+	    }
+	  }
+	}
+      } else if (bTaggerType_=="JP") {
+	for (int jetA=0; jetA<(v_mediumJP.size()-1); jetA++) {
+	  for (int jetB=jetA+1; jetB<v_mediumJP.size(); jetB++) {
+	    TLorentzVector t4jetA, t4jetB;
+	    int indexA = v_mediumJP[jetA];
+	    int indexB = v_mediumJP[jetB];
+	    t4jetA.SetPtEtaPhiE(ptcorrjet[indexA],etajet[indexA],phijet[indexA],ecorrjet[indexA]);
+	    t4jetB.SetPtEtaPhiE(ptcorrjet[indexB],etajet[indexB],phijet[indexB],ecorrjet[indexB]);
+	    TLorentzVector t4AB = t4jetA + t4jetB;
+	    if ( t4AB.Pt() > maxPtBtag) {
+	      maxPtBtag = t4AB.Pt();
+	      jet1 = indexA;
+	      jet2 = indexB;
+	      isj1btagged = true;
+	      isj2btagged = true;
+	    }
+	  }
+	}
+      } else {
+	cout << "this btag algo does not exists" << endl;	  
+      }
+    }
+
+    if (jet1<0 || jet2<0) cout << "problem! at least 1 jet not correctly selected" << endl;
+
+    // swap jet1 / jet2 if needed to order in pT
+    if (ptcorrjet[jet1]<ptcorrjet[jet2]) {
+      int myjet        = jet1;
+      bool ismyjetbtag = isj1btagged;
+      jet1 = jet2;
+      jet2 = myjet;
+      isj1btagged = isj2btagged;
+      isj2btagged = ismyjetbtag;
+    }
 
     // selected analysis jets 
     TLorentzVector t4jet1, t4jet2;
@@ -727,14 +730,9 @@ void fillPlot2012_radion::finalize() {
     t4jet2.SetPtEtaPhiE(ptcorrjet[jet2],etajet[jet2],phijet[jet2],ecorrjet[jet2]);
     TLorentzVector t4diJet = t4jet1 + t4jet2;
     
-    // cout << "debug, t4jet1.Pt() = " << t4jet1.Pt() << ", t4jet1.Eta() = " << t4jet1.Eta() << ", t4jet1.Phi() = " << t4jet1.Phi() << endl;  
-    // cout << "debug, t4jet2.Pt() = " << t4jet2.Pt() << ", t4jet2.Eta() = " << t4jet2.Eta() << ", t4jet2.Phi() = " << t4jet2.Phi() << endl;  
-
     // invariant mass cut on jets 
     float invMassJJ = t4diJet.M();
     if( t4diJet.M()<0. || t4diJet.M()>300. )  continue;
-    // if( t4diJet.M()<50. || t4diJet.M()>200. )  continue;
-
 
     // invariant mass plots after the two preselection on jets and photons
     h1_mgg_preselJ->Fill( massggnewvtx, weight );    
@@ -771,6 +769,7 @@ void fillPlot2012_radion::finalize() {
     // jets
     h1_ptjet0->Fill( ptJ1, weight );
     h1_ptjet1->Fill( ptJ2, weight );
+    h1_runptjet0->Fill(ptJ1*120./t4diJet.M(), weight);
 
     h1_etajet0->Fill( etaJ1, weight );
     h1_etajet1->Fill( etaJ2, weight );
@@ -882,9 +881,8 @@ void fillPlot2012_radion::finalize() {
     // -------------------------------------------------------------
     // counting the number of bjets to categorize the events
     int btagCategory = -1;
-    if (bTaggerType_=="JP")       { btagCategory = (v_looseJP.size()<=2) ? v_looseJP.size() : 2; }
-    else if (bTaggerType_=="CSV") { btagCategory = (v_looseCSV.size()<=2) ? v_looseCSV.size() : 2; }
-    else cout << "this btag algo does not exist" << endl;
+    if ( isj1btagged==1 && isj2btagged==1 ) btagCategory = 2; 
+    if ( (isj1btagged==1 && isj2btagged==0) || (isj1btagged==0 && isj2btagged==1) ) btagCategory = 1; 
 
     // for test: only EBEB events
     // if (!myEB) continue;
@@ -909,6 +907,7 @@ void fillPlot2012_radion::finalize() {
 
     // -------------------------------------------------------------
     // here we apply further cuts according to the btag category
+    /*
     if (btagCategory<1 || btagCategory>2) continue;
 
     if (btagCategory==1) {
@@ -925,6 +924,7 @@ void fillPlot2012_radion::finalize() {
       if ( ptjet1cut_2bj>0    && ptJ1<ptjet1cut_2bj ) continue;
       if ( costhetascut_2bj>0 && fabs(cosThetaStar)>costhetascut_2bj ) continue;
     }
+    */
 
     // -------------------------------------------------------------
 
@@ -976,7 +976,6 @@ void fillPlot2012_radion::finalize() {
       h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight );
     }
 
-
     // filling the tree for selected events 
     massggnewvtx_t = massggnewvtx;
     ptphot1_t  = ptphot1;
@@ -990,6 +989,7 @@ void fillPlot2012_radion::finalize() {
     njets_t = v_puIdJets.size();
     ptcorrjet1_t = ptJ1;
     ptcorrjet2_t = ptJ2;
+    runptcorrjet1_t = (120./invMassJJ)*ptJ1;
     etajet1_t = etaJ1;
     etajet2_t = etaJ2;
     deltaphijj_t = deltaPhiJJ;
@@ -1021,7 +1021,6 @@ void fillPlot2012_radion::finalize() {
     rhoPF_t  = rhoPF;
     isj1btagged_t = isj1btagged;
     isj2btagged_t = isj2btagged;
-
     // chiara
     // if( !isMC ) { weight = 1.; }
 
@@ -1052,6 +1051,8 @@ void fillPlot2012_radion::finalize() {
 
   h1_ptjet0->Write();
   h1_ptjet1->Write();
+  h1_runptjet0->Write();
+
   h1_etajet0->Write();
   h1_etajet1->Write();
   
@@ -1777,7 +1778,7 @@ bool fillPlot2012_radion::passCutBasedJetId(int jet) {
   bool isGood = true;
 
   if ( fabs(etajet[jet]) < 2.5 ) {
-    if ( betastarjet[jet] > 0.2 * log( nvtx - 0.67 ) ) isGood = false;
+    if ( betastarjet[jet] > 0.2 * log( nvtx - 0.64 ) ) isGood = false;
     if ( rmsjet[jet] > 0.06)                           isGood = false;
   } else if (fabs(etajet[jet]) < 3.){
     if ( rmsjet[jet] > 0.05)  isGood =false;
