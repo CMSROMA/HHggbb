@@ -28,6 +28,7 @@ public :
    Int_t           itype;
    Float_t         run;
    Float_t         lumis;
+   Float_t         event;
    Float_t         weight;
    Float_t         evweight;
    Float_t         pu_weight;
@@ -172,11 +173,48 @@ public :
    Float_t         radion_Pt;
    Float_t         radion_Eta;
    Float_t         radion_Phi;
+   Float_t         gr_radion_p4_pt;
+   Float_t         gr_radion_p4_eta;
+   Float_t         gr_radion_p4_phi;
+   Float_t         gr_radion_p4_mass;
+   Float_t         gr_hgg_p4_pt;
+   Float_t         gr_hgg_p4_eta;
+   Float_t         gr_hgg_p4_phi;
+   Float_t         gr_hgg_p4_mass;
+   Float_t         gr_hbb_p4_pt;
+   Float_t         gr_hbb_p4_eta;
+   Float_t         gr_hbb_p4_phi;
+   Float_t         gr_hbb_p4_mass;
+   Float_t         gr_g1_p4_pt;
+   Float_t         gr_g1_p4_eta;
+   Float_t         gr_g1_p4_phi;
+   Float_t         gr_g1_p4_mass;
+   Float_t         gr_g2_p4_pt;
+   Float_t         gr_g2_p4_eta;
+   Float_t         gr_g2_p4_phi;
+   Float_t         gr_g2_p4_mass;
+   Float_t         gr_b1_p4_pt;
+   Float_t         gr_b1_p4_eta;
+   Float_t         gr_b1_p4_phi;
+   Float_t         gr_b1_p4_mass;
+   Float_t         gr_b2_p4_pt;
+   Float_t         gr_b2_p4_eta;
+   Float_t         gr_b2_p4_phi;
+   Float_t         gr_b2_p4_mass;
+   Float_t         gr_j1_p4_pt;
+   Float_t         gr_j1_p4_eta;
+   Float_t         gr_j1_p4_phi;
+   Float_t         gr_j1_p4_mass;
+   Float_t         gr_j2_p4_pt;
+   Float_t         gr_j2_p4_eta;
+   Float_t         gr_j2_p4_phi;
+   Float_t         gr_j2_p4_mass;
 
    // List of branches
    TBranch        *b_itype;   //!
    TBranch        *b_run;   //!
    TBranch        *b_lumis;   //!
+   TBranch        *b_event;   //!
    TBranch        *b_weight;   //!
    TBranch        *b_evweight;   //!
    TBranch        *b_pu_weight;   //!
@@ -321,6 +359,42 @@ public :
    TBranch        *b_radion_Pt;   //!
    TBranch        *b_radion_Eta;   //!
    TBranch        *b_radion_Phi;   //!
+   TBranch        *b_gr_radion_p4_pt;   //!
+   TBranch        *b_gr_radion_p4_eta;   //!
+   TBranch        *b_gr_radion_p4_phi;   //!
+   TBranch        *b_gr_radion_p4_mass;   //! 
+   TBranch        *b_gr_hgg_p4_pt;   //!
+   TBranch        *b_gr_hgg_p4_eta;   //! 
+   TBranch        *b_gr_hgg_p4_phi;   //! 
+   TBranch        *b_gr_hgg_p4_mass;   //!
+   TBranch        *b_gr_hbb_p4_pt;   //! 
+   TBranch        *b_gr_hbb_p4_eta;   //!  
+   TBranch        *b_gr_hbb_p4_phi;   //!
+   TBranch        *b_gr_hbb_p4_mass;   //! 
+   TBranch        *b_gr_g1_p4_pt;   //! 
+   TBranch        *b_gr_g1_p4_eta;   //! 
+   TBranch        *b_gr_g1_p4_phi;   //! 
+   TBranch        *b_gr_g1_p4_mass;   //! 
+   TBranch        *b_gr_g2_p4_pt;   //! 
+   TBranch        *b_gr_g2_p4_eta;   //! 
+   TBranch        *b_gr_g2_p4_phi;   //!
+   TBranch        *b_gr_g2_p4_mass;   //! 
+   TBranch        *b_gr_b1_p4_pt;   //! 
+   TBranch        *b_gr_b1_p4_eta;   //! 
+   TBranch        *b_gr_b1_p4_phi;   //! 
+   TBranch        *b_gr_b1_p4_mass;   //!  
+   TBranch        *b_gr_b2_p4_pt;   //! 
+   TBranch        *b_gr_b2_p4_eta;   //! 
+   TBranch        *b_gr_b2_p4_phi;   //!  
+   TBranch        *b_gr_b2_p4_mass;   //!  
+   TBranch        *b_gr_j1_p4_pt;   //!   
+   TBranch        *b_gr_j1_p4_eta;   //! 
+   TBranch        *b_gr_j1_p4_phi;   //! 
+   TBranch        *b_gr_j1_p4_mass;   //! 
+   TBranch        *b_gr_j2_p4_pt;   //! 
+   TBranch        *b_gr_j2_p4_eta;   //!   
+   TBranch        *b_gr_j2_p4_phi;   //!  
+   TBranch        *b_gr_j2_p4_mass;   //! 
 
    fillPlot2012_radion_commonNtp( const std::string& dataset, const std::string& selectionType, const std::string& bTaggerType="JP" );
    virtual ~fillPlot2012_radion_commonNtp();

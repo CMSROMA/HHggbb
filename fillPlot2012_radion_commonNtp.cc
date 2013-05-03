@@ -245,7 +245,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->SetName("myTrees");
   myTrees->Branch( "run", &run, "run/I" );
   // myTrees->Branch( "lumis", &lumis, "lumis/I" );
-  //  myTrees->Branch( "event", &event, "event/I" );
+  myTrees->Branch( "event", &event, "event/I" );
   myTrees->Branch( "massggnewvtx", &massggnewvtx_t, "massggnewvtx_t/F" );
   myTrees->Branch( "ptPhot1", &ptphot1_t, "ptphot1_t/F" );
   myTrees->Branch( "runptPhot1", &runptphot1_t, "runptPhot1_t/F" );
@@ -367,7 +367,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // control plots after preselection on photons (pT, acceptance and ID)                                                        
     h1_mgg_preselG->Fill( PhotonsMass, weight_t );
 
-
     
     // ------------------------------ jets ------------------------------------------
     // jets, no btagging, passing cut based jetID                                                                                 
@@ -415,7 +414,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     } else {
       cout << "this btag algo does not exists" << endl;
     }
-    
+
     // at least 2 preselected jets                                                                                                
     if (v_puIdJets.size()<2) continue;
 
@@ -699,7 +698,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // if (myR9==1 && !myEB) theCategory = 2;                                                                                     
     // if (myR9==0 && !myEB) theCategory = 3;
 
-
     // -------------------------------------------------------------                                                              
     // here we apply further cuts according to the btag category                                                                  
     /*
@@ -722,7 +720,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     */
 
     // -------------------------------------------------------------   
-
     // invariant mass of jets by btag category                                                                                    
     if( btagCategory==0 ) {
       h1_mjj_0btag->Fill( invMassJJ, weight_t );
@@ -770,7 +767,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
       h1_mggjj_kinfit_2btag        -> Fill( Vstar_kinfit.M(), weight_t );
       h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight_t );
     }
-
 
     // filling the tree for selected events                                                                                       
     massggnewvtx_t = PhotonsMass;
@@ -954,6 +950,7 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("itype", &itype, &b_itype);
   tree_->SetBranchAddress("run", &run, &b_run);
   tree_->SetBranchAddress("lumis", &lumis, &b_lumis);
+  tree_->SetBranchAddress("event", &event, &b_event);
   tree_->SetBranchAddress("weight", &weight, &b_weight);
   tree_->SetBranchAddress("evweight", &evweight, &b_evweight);
   tree_->SetBranchAddress("pu_weight", &pu_weight, &b_pu_weight);
@@ -1098,6 +1095,42 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("radion_Pt", &radion_Pt, &b_radion_Pt);
   tree_->SetBranchAddress("radion_Eta", &radion_Eta, &b_radion_Eta);
   tree_->SetBranchAddress("radion_Phi", &radion_Phi, &b_radion_Phi);
+  tree_->SetBranchAddress("gr_radion_p4_pt", &gr_radion_p4_pt, &b_gr_radion_p4_pt);
+  tree_->SetBranchAddress("gr_radion_p4_eta", &gr_radion_p4_eta, &b_gr_radion_p4_eta);
+  tree_->SetBranchAddress("gr_radion_p4_phi", &gr_radion_p4_phi, &b_gr_radion_p4_phi);
+  tree_->SetBranchAddress("gr_radion_p4_mass", &gr_radion_p4_mass, &b_gr_radion_p4_mass);
+  tree_->SetBranchAddress("gr_hgg_p4_pt", &gr_hgg_p4_pt, &b_gr_hgg_p4_pt);
+  tree_->SetBranchAddress("gr_hgg_p4_eta", &gr_hgg_p4_eta, &b_gr_hgg_p4_eta);
+  tree_->SetBranchAddress("gr_hgg_p4_phi", &gr_hgg_p4_phi, &b_gr_hgg_p4_phi);
+  tree_->SetBranchAddress("gr_hgg_p4_mass", &gr_hgg_p4_mass, &b_gr_hgg_p4_mass);
+  tree_->SetBranchAddress("gr_hbb_p4_pt", &gr_hbb_p4_pt, &b_gr_hbb_p4_pt);
+  tree_->SetBranchAddress("gr_hbb_p4_eta", &gr_hbb_p4_eta, &b_gr_hbb_p4_eta);
+  tree_->SetBranchAddress("gr_hbb_p4_phi", &gr_hbb_p4_phi, &b_gr_hbb_p4_phi);
+  tree_->SetBranchAddress("gr_hbb_p4_mass", &gr_hbb_p4_mass, &b_gr_hbb_p4_mass);
+  tree_->SetBranchAddress("gr_g1_p4_pt", &gr_g1_p4_pt, &b_gr_g1_p4_pt);
+  tree_->SetBranchAddress("gr_g1_p4_eta", &gr_g1_p4_eta, &b_gr_g1_p4_eta);
+  tree_->SetBranchAddress("gr_g1_p4_phi", &gr_g1_p4_phi, &b_gr_g1_p4_phi);
+  tree_->SetBranchAddress("gr_g1_p4_mass", &gr_g1_p4_mass, &b_gr_g1_p4_mass);
+  tree_->SetBranchAddress("gr_g2_p4_pt", &gr_g2_p4_pt, &b_gr_g2_p4_pt);
+  tree_->SetBranchAddress("gr_g2_p4_eta", &gr_g2_p4_eta, &b_gr_g2_p4_eta);
+  tree_->SetBranchAddress("gr_g2_p4_phi", &gr_g2_p4_phi, &b_gr_g2_p4_phi);
+  tree_->SetBranchAddress("gr_g2_p4_mass", &gr_g2_p4_mass, &b_gr_g2_p4_mass);
+  tree_->SetBranchAddress("gr_b1_p4_pt", &gr_b1_p4_pt, &b_gr_b1_p4_pt);
+  tree_->SetBranchAddress("gr_b1_p4_eta", &gr_b1_p4_eta, &b_gr_b1_p4_eta);
+  tree_->SetBranchAddress("gr_b1_p4_phi", &gr_b1_p4_phi, &b_gr_b1_p4_phi);
+  tree_->SetBranchAddress("gr_b1_p4_mass", &gr_b1_p4_mass, &b_gr_b1_p4_mass);
+  tree_->SetBranchAddress("gr_b2_p4_pt", &gr_b2_p4_pt, &b_gr_b2_p4_pt);
+  tree_->SetBranchAddress("gr_b2_p4_eta", &gr_b2_p4_eta, &b_gr_b2_p4_eta);
+  tree_->SetBranchAddress("gr_b2_p4_phi", &gr_b2_p4_phi, &b_gr_b2_p4_phi);
+  tree_->SetBranchAddress("gr_b2_p4_mass", &gr_b2_p4_mass, &b_gr_b2_p4_mass);
+  tree_->SetBranchAddress("gr_j1_p4_pt", &gr_j1_p4_pt, &b_gr_j1_p4_pt);
+  tree_->SetBranchAddress("gr_j1_p4_eta", &gr_j1_p4_eta, &b_gr_j1_p4_eta);
+  tree_->SetBranchAddress("gr_j1_p4_phi", &gr_j1_p4_phi, &b_gr_j1_p4_phi);
+  tree_->SetBranchAddress("gr_j1_p4_mass", &gr_j1_p4_mass, &b_gr_j1_p4_mass);
+  tree_->SetBranchAddress("gr_j2_p4_pt", &gr_j2_p4_pt, &b_gr_j2_p4_pt);
+  tree_->SetBranchAddress("gr_j2_p4_eta", &gr_j2_p4_eta, &b_gr_j2_p4_eta);
+  tree_->SetBranchAddress("gr_j2_p4_phi", &gr_j2_p4_phi, &b_gr_j2_p4_phi);
+  tree_->SetBranchAddress("gr_j2_p4_mass", &gr_j2_p4_mass, &b_gr_j2_p4_mass);
 }
 
 void fillPlot2012_radion_commonNtp::setSelectionType( const std::string& selectionType ) {
