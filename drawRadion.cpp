@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
   db_nostack->set_shapeNormalization();
 
-  db_stack->set_lumiNormalization(30000.);
+  db_stack->set_lumiNormalization(19600.);  // chiara
   db_stack->set_noStack(false);
 
   std::string outputdir_str = "RadionPlots_MConly_" + selType + "_" + bTaggerType;
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
   HToGGFileName += "_" + bTaggerType;
   HToGGFileName += ".root";
   TFile* HToGGFile = TFile::Open(HToGGFileName.c_str());
-  db_stack->add_mcFile( HToGGFile, "HToGG", "H (125)", 29);
+  db_stack->add_mcFile( HToGGFile, "HToGG", "H (125)", 5);
 
   /*
   std::string HglugluToGGFileName = "finalizedTrees_Radion_presel/Radion_";
@@ -178,11 +178,11 @@ int main(int argc, char* argv[]) {
 
   // only for signal shape comparison
   db_nostack->add_mcFile( RadionFile300,  "Radion", "Radion (300)",  signalFillColor300,  0);
-  db_nostack->add_mcFile( RadionFile500,  "Radion", "Radion (500)",  signalFillColor500,  0);
-  db_nostack->add_mcFile( RadionFile700,  "Radion", "Radion (700)",  signalFillColor700,  0);
-  db_nostack->add_mcFile( RadionFile1000, "Radion", "Radion (1000)", signalFillColor1000, 0);
-  db_nostack->add_mcFile( HvhToGGFile, "HToGG VH", "H (125), VH", 38);
-  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton", 31);
+  // db_nostack->add_mcFile( RadionFile500,  "Radion", "Radion (500)",  signalFillColor500,  0);
+  // db_nostack->add_mcFile( RadionFile700,  "Radion", "Radion (700)",  signalFillColor700,  0);
+  // db_nostack->add_mcFile( RadionFile1000, "Radion", "Radion (1000)", signalFillColor1000, 0);
+  db_nostack->add_mcFile( HvhToGGFile,  "HToGG VH", "H (125), VH", 38);
+  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton",    31);
 
 
   bool log = true;
@@ -197,15 +197,16 @@ int main(int argc, char* argv[]) {
 
   db_nostack->drawHisto("runptphot0", "Running Lead Photon p_{T}",    "GeV");
 
-  db_nostack->drawHisto("ptjet0",  "Lead Jet p_{T}",       "GeV");
-  db_nostack->drawHisto("ptjet1",  "Sublead Jet p_{T}",    "GeV");
+  db_nostack->drawHisto("ptjet0",    "Lead Jet p_{T}",         "GeV");
+  db_nostack->drawHisto("ptjet1",    "Sublead Jet p_{T}",      "GeV");
+  db_nostack->drawHisto("runptjet0", "Running Lead Jet p_{T}", "GeV");
+
   db_nostack->drawHisto("etajet0", "Lead Jet eta",         "");
   db_nostack->drawHisto("etajet1", "Sublead Jet eta",      "");
   db_nostack->drawHisto("ptjet1",  "Sublead Jet eta",      "");
 
   db_nostack->set_rebin(4);
   db_nostack->drawHisto("mjj_preselJ", "Dijet Mass after photon and jets preselection", "GeV");
-  db_nostack->drawHisto("mjj_0btag",   "Dijet Mass", "GeV");
   db_nostack->drawHisto("mjj_1btag",   "Dijet Mass", "GeV");
   db_nostack->drawHisto("mjj_2btag",   "Dijet Mass", "GeV");
 
@@ -215,7 +216,6 @@ int main(int argc, char* argv[]) {
 
   db_nostack->set_rebin(4);
   db_nostack->drawHisto("mggjj",       "4body Mass", "GeV");
-  db_nostack->drawHisto("mggjj_0btag", "4body Mass", "GeV");
   db_nostack->drawHisto("mggjj_1btag", "4body Mass", "GeV");
   db_nostack->drawHisto("mggjj_2btag", "4body Mass", "GeV");
 
@@ -276,31 +276,28 @@ int main(int argc, char* argv[]) {
   db_nostack->drawHisto("kinfit_chiSquareProbH", "KinFit #chi^{2} Prob");
 
   db_nostack->set_rebin(1);
-  db_nostack->set_legendTitle( "0 b-tag Category (EBEB)" );
-  db_nostack->drawHisto("mgg_0btag_ebeb", "DiPhoton Invariant Mass", "GeV");
   db_nostack->set_legendTitle( "1 b-tag Category (EBEB)" );
   db_nostack->drawHisto("mgg_1btag_ebeb", "DiPhoton Invariant Mass", "GeV");
   db_nostack->set_legendTitle( "2 b-tag Category (EBEB)" );
   db_nostack->drawHisto("mgg_2btag_ebeb", "DiPhoton Invariant Mass", "GeV");
 
-  db_nostack->set_legendTitle( "0 b-tag Category (!EBEB)" );
-  db_nostack->drawHisto("mgg_0btag_nebeb", "DiPhoton Invariant Mass", "GeV");
   db_nostack->set_legendTitle( "1 b-tag Category (!EBEB)" );
   db_nostack->drawHisto("mgg_1btag_nebeb", "DiPhoton Invariant Mass", "GeV");
   db_nostack->set_legendTitle( "2 b-tag Category (!EBEB)" );
   db_nostack->drawHisto("mgg_2btag_nebeb", "DiPhoton Invariant Mass", "GeV");
 
+  // db_nostack->set_legendTitle( "1 b-tag Category" );
+  // db_nostack->drawHisto("mggjj_1btag", "DiPhoton+DiJets Invariant Mass", "GeV");
+  // db_nostack->set_legendTitle( "2 b-tag Category" );
+  // db_nostack->drawHisto("mggjj_2btag", "DiPhoton+DiJets Invariant Mass", "GeV");
 
-  // bool doUL = (selType == "default" );  // chiara
-  bool doUL = (selType == "pippo" );  // chiara
+
+  bool doUL = (selType == "default" );  // chiara
 
   // final
+  db_stack->set_legendTitle( "inclusive" );
   db_stack->drawHisto("mggjj", "DiPhoton+DiJets Invariant Mass", "GeV");
   printYields( db_stack, "incl", doUL );
-
-  db_stack->set_legendTitle( "0 b-tag Category" );
-  db_stack->drawHisto("mggjj_0btag", "DiPhoton+DiJets Invariant Mass", "GeV");
-  printYields( db_stack, "0tag", doUL );
 
   db_stack->set_legendTitle( "1 b-tag Category" );
   db_stack->drawHisto("mggjj_1btag", "DiPhoton+DiJets Invariant Mass", "GeV");
@@ -309,6 +306,7 @@ int main(int argc, char* argv[]) {
   db_stack->set_legendTitle( "2 b-tag Category" );
   db_stack->drawHisto("mggjj_2btag", "DiPhoton+DiJets Invariant Mass", "GeV");
   printYields( db_stack, "2tag", doUL );
+
   return 0;
 }
 
@@ -330,7 +328,7 @@ void printYields( DrawBase* db, const std::string& suffix, bool doUL ) {
   float totalBG = 0.;
   float totalBG_ave = 0.;
 
-  yieldsFile << std::endl << "Yields (@ 30 fb-1): " << std::endl;
+  yieldsFile << std::endl << "Yields: " << std::endl;
   for( unsigned int ii=0; ii<histos.size(); ++ii ) {
     yieldsFile << db->get_mcFile(ii).datasetName << " " << histos[ii]->Integral(binXmin, binXmax) << std::endl;
     if( db->get_mcFile(ii).datasetName != "Radion" ) {  
