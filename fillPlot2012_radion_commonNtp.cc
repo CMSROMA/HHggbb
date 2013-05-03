@@ -368,7 +368,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     h1_mgg_preselG->Fill( PhotonsMass, weight_t );
 
 
-
     
     // ------------------------------ jets ------------------------------------------
     // jets, no btagging, passing cut based jetID                                                                                 
@@ -382,7 +381,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     btagcsvjet[0]   = j1_csvBtag;     btagcsvjet[1]   = j2_csvBtag;     btagcsvjet[2]   = j3_csvBtag;     btagcsvjet[3]   = j4_csvBtag;
 
     vector<int> v_puIdJets;
-    for (int ij=0; ij<4; ij++) {
+    for (int ij=0; ij<4; ij++) { 
+      if ( ptcorrjet[ij]<-1)               continue;
       if ( ptcorrjet[ij] < ptjetacccut )   continue;
       if ( fabs(etajet[ij])>etajetacccut ) continue;
       if ( !passCutBasedJetId(ij) )        continue;
@@ -422,7 +422,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // choice of analysis jets ---------------------                                                                              
     
-    // highest pT btagged jet                                                                                                                           
+    // highest pT btagged jet
     int jet1btag   = -1;
     bool isJustOne = false;
     if (bTaggerType_=="CSV") {
@@ -435,17 +435,17 @@ void fillPlot2012_radion_commonNtp::finalize() {
       cout << "this btag algo does not exists" << endl;
     }
 
-    // at least 1 btagged jet                                                                                                                           
+    // at least 1 btagged jet 
     if ( jet1btag<0 ) continue;
 
-    // choose the two jets with highest pT(jj), giving preference to btagged ones                                                                       
+    // choose the two jets with highest pT(jj), giving preference to btagged ones 
     int jet1 = -1;
     int jet2 = -1;
     int isj1btagged = 0;
     int isj2btagged = 0;
     float maxPtBtag = -999.;
 
-    if( isJustOne ) {  // =1 btagged jets                                                                                                               
+    if( isJustOne ) {  // =1 btagged jets
       for (int jet=0; jet<(v_puIdJets.size()); jet++) {
         int index = v_puIdJets[jet];
         if (index==jet1btag) continue;
@@ -463,8 +463,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
         }
       }
 
-    } else {  // >1 btagged jets                                                                                                                        
-
+    } else {  // >1 btagged jets  
+      
       if (bTaggerType_=="CSV") {
         for (int jetA=0; jetA<(v_mediumCSV.size()-1); jetA++) {
           for (int jetB=jetA+1; jetB<v_mediumCSV.size(); jetB++) {
@@ -506,9 +506,12 @@ void fillPlot2012_radion_commonNtp::finalize() {
       }
     }
     
-    if (jet1<0 || jet2<0) cout << "problem! at least 1 jet not correctly selected" << endl;
-    
-    // swap jet1 / jet2 if needed to order in pT                                                                                                        
+    if (jet1<0 || jet2<0) { 
+      cout << "problem! at least 1 jet not correctly selected" << endl;
+      continue;
+    }
+
+    // swap jet1 / jet2 if needed to order in pT 
     if (ptcorrjet[jet1]<ptcorrjet[jet2]) {
       int myjet        = jet1;
       bool ismyjetbtag = isj1btagged;
@@ -670,6 +673,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     int btagCategory = -1;
     if (  isj1btagged==1 && isj2btagged==1 ) btagCategory = 2;
     if ( (isj1btagged==1 && isj2btagged==0) || (isj1btagged==0 && isj2btagged==1) ) btagCategory = 1;
+    if (  isj1btagged==0 && isj2btagged==0 ) cout << "this should not happen!" << endl;
 
     // for test: only EBEB events                                                                                                 
     // if (!myEB) continue;                                                                                                       
@@ -694,6 +698,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // if (myR9==0 && myEB)  theCategory = 1;                                                                                     
     // if (myR9==1 && !myEB) theCategory = 2;                                                                                     
     // if (myR9==0 && !myEB) theCategory = 3;
+
 
     // -------------------------------------------------------------                                                              
     // here we apply further cuts according to the btag category                                                                  
@@ -769,32 +774,32 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // filling the tree for selected events                                                                                       
     massggnewvtx_t = PhotonsMass;
-    ptphot1_t    = ph1_pt;
-    runptphot1_t = (120./PhotonsMass)*ph1_pt;
-    ptphot2_t  = ph2_pt;
-    etaphot1_t = ph1_eta;
-    etaphot2_t = ph2_eta;
-    r9phot1_t = ph1_r9;
-    r9phot2_t = ph2_r9;
-    ptgg_t  = dipho_pt;
-    etagg_t = dipho_eta;
-    absetagg_t = fabs(dipho_eta);
-    njets_t = v_puIdJets.size();
-    ptcorrjet1_t = ptJ1;
-    ptcorrjet2_t = ptJ2;
+    ptphot1_t      = ph1_pt;
+    runptphot1_t   = (120./PhotonsMass)*ph1_pt;
+    ptphot2_t      = ph2_pt;
+    etaphot1_t     = ph1_eta;
+    etaphot2_t     = ph2_eta;
+    r9phot1_t      = ph1_r9;
+    r9phot2_t      = ph2_r9;
+    ptgg_t         = dipho_pt;
+    etagg_t        = dipho_eta;
+    absetagg_t     = fabs(dipho_eta);
+    njets_t        = v_puIdJets.size();
+    ptcorrjet1_t   = ptJ1;
+    ptcorrjet2_t   = ptJ2;
     runptcorrjet1_t = (120./invMassJJ)*ptJ1;
-    etajet1_t = etaJ1;
-    etajet2_t = etaJ2;
-    deltaphijj_t = deltaPhiJJ;
-    deltaetajj_t = deltaEtaJJ;
-    invmassjet_t = invMassJJ;
-    ptjj_t = ptJJ;
-    etajj_t = etaJJ;
-    massggjj_t      = radMass;
-    deltaphijjgg_t  = deltaPhi_ggjj;
-    deltaetajjgg_t  = deltaEta_ggjj;
-    btagCategory_t  = btagCategory;
-    theCategory_t   = theCategory;
+    etajet1_t      = etaJ1;
+    etajet2_t      = etaJ2;
+    deltaphijj_t   = deltaPhiJJ;
+    deltaetajj_t   = deltaEtaJJ;
+    invmassjet_t   = invMassJJ;
+    ptjj_t         = ptJJ;
+    etajj_t        = etaJJ;
+    massggjj_t     = radMass;
+    deltaphijjgg_t = deltaPhi_ggjj;
+    deltaetajjgg_t = deltaEta_ggjj;
+    btagCategory_t = btagCategory;
+    theCategory_t  = theCategory;
     theGammaCategory_t = theGammaCategory;
     if (bTaggerType_=="JP") {
       nbjets_loose_t  = v_looseJP.size();
@@ -1135,8 +1140,8 @@ void fillPlot2012_radion_commonNtp::setSelectionType( const std::string& selecti
 
 int fillPlot2012_radion_commonNtp::myHighestPtJet(std::vector<int> jets) {
 
-  float firstJpt = -998.;
-  int firstJ     = -999;
+  float firstJpt = -898.;
+  int firstJ     = -899;
 
   for (int ij=0; ij<int(jets.size());ij++) {
     int jetIndex = jets[ij];
@@ -1163,8 +1168,10 @@ bool fillPlot2012_radion_commonNtp::passCutBasedJetId(int jet) {
   thermsjet[2]      = j3_dR2Mean;
   thermsjet[3]      = j4_dR2Mean;
 
+  if ( ptcorrjet[jet]<-900) isGood = false;
+
   if ( fabs(etajet[jet]) < 2.5 ) {
-    if ( thebetastarjet[jet] > 0.2 * log( nvtx - 0.67 ) ) isGood = false;
+    if ( thebetastarjet[jet] > 0.2 * log( nvtx - 0.64) )  isGood = false;
     if (thermsjet[jet] > 0.06)                            isGood = false;
   } else if (fabs(etajet[jet]) < 3.){
     if ( thermsjet[jet] > 0.05)  isGood =false;
