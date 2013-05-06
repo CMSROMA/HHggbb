@@ -41,66 +41,33 @@ void fillPlot2012_radion::finalize() {
 
   // ------------------------------------------------------
   // histograms for pu id studies
-
-  TH1F *myDenomEtaAss  = new TH1F("myDenomEtaAss",  "myDenomEtaAss",  41,-5.,5.);
+  TH1F *myDenomEtaAss      = new TH1F("myDenomEtaAss",    "myDenomEtaAss",     21,-2.5,2.5);
+  TH1F *myDenomEtaBtagAss  = new TH1F("myDenomEtaBtagAss","myDenomEtaBtagAss", 21,-2.5,2.5);
   myDenomEtaAss->Sumw2();
-  TH1F *myDenomEtaNAss = new TH1F("myDenomEtaNAss", "myDenomEtaNAss", 41,-5.,5.);
-  myDenomEtaNAss->Sumw2();
-  TH1F *myNumEtaAss    = new TH1F("myNumEtaAss",    "myNumEtaAss",    41,-5.,5.);
-  myNumEtaAss->Sumw2();
-  TH1F *myNumEtaNAss   = new TH1F("myNumEtaNAss",   "myNumEtaNAss",   41,-5.,5.);
-  myNumEtaNAss->Sumw2();
-  //
-  TH1F *myDenomPtAss  = new TH1F("myDenomPtAss",  "myDenomPtAss",  25,25.,100.);
-  myDenomPtAss->Sumw2();
-  TH1F *myDenomPtNAss = new TH1F("myDenomPtNAss", "myDenomPtNAss", 25,25.,100.);
-  myDenomPtNAss->Sumw2();
-  TH1F *myNumPtAss    = new TH1F("myNumPtAss",    "myNumPtAss",    25,25.,100.);
-  myNumPtAss->Sumw2();
-  TH1F *myNumPtNAss   = new TH1F("myNumPtNAss",   "myNumPtNAss",   25,25.,100.);
-  myNumPtNAss->Sumw2();
+  myDenomEtaBtagAss->Sumw2();
   // 
-  TH1F *myAssEta    = new TH1F("myAssEta",    "myAssEta",    41,-5.,5.);
-  myAssEta->Sumw2();
-  TH1F *myNAssEta   = new TH1F("myNAssEta",   "myNAssEta",   41,-5.,5.);
-  myNAssEta->Sumw2();
-  TH1F *myAssRMS    = new TH1F("myAssRMS",    "myAssRMS",    50,0.,0.2);
+  TH1F *myNumEtaAss     = new TH1F("myNumEtaAss",     "myNumEtaAss",     21,-2.5,2.5);
+  TH1F *myNumEtaBtagAss = new TH1F("myNumEtaBtagAss", "myNumEtaBtagAss", 21,-2.5,2.5);
+  myNumEtaAss->Sumw2();
+  myNumEtaBtagAss->Sumw2();
+  //
+  TH1F *myDenomPtAss     = new TH1F("myDenomPtAss",    "myDenomPtAss",     25,25.,100.);
+  TH1F *myDenomPtBtagAss = new TH1F("myDenomPtBtagAss","myDenomPtBtagAss", 25,25.,100.);
+  myDenomPtAss->Sumw2();
+  myDenomPtBtagAss->Sumw2();
+  TH1F *myNumPtAss     = new TH1F("myNumPtAss",    "myNumPtAss",    25,25.,100.);
+  TH1F *myNumPtBtagAss = new TH1F("myNumPtBtagAss","myNumPtBtagAss",25,25.,100.);
+  myNumPtAss->Sumw2();
+  myNumPtBtagAss->Sumw2();
+  // 
+  TH1F *myAssRMS    = new TH1F("myAssRMS",    "myAssRMS",    30,0.,0.13);
   myAssRMS->Sumw2();
-  TH1F *myNAssRMS   = new TH1F("myNAssRMS",   "myNAssRMS",   50,0.,0.2);
+  TH1F *myNAssRMS   = new TH1F("myNAssRMS",   "myNAssRMS",   30,0.,0.13);
   myNAssRMS->Sumw2();
   TH1F *myAssBetaS  = new TH1F("myAssBetaS",  "myAssBetaS",  50,0.,1.);
   myAssBetaS->Sumw2();
   TH1F *myNAssBetaS = new TH1F("myNAssBetaS", "myNAssBetaS", 50,0.,1.);
   myNAssBetaS->Sumw2();
-  //
-  TH1F *myAssEtalt25    = new TH1F("myAssEtalt25",    "myAssEtalt25",    41,-5.,5.);
-  myAssEtalt25->Sumw2();
-  TH1F *myNAssEtalt25   = new TH1F("myNAssEtalt25",   "myNAssEtalt25",   41,-5.,5.);
-  myNAssEtalt25->Sumw2();
-  TH1F *myAssRMSlt25    = new TH1F("myAssRMSlt25",    "myAssRMSlt25",    50,0.,0.2);
-  myAssRMSlt25->Sumw2();
-  TH1F *myNAssRMSlt25   = new TH1F("myNAssRMSlt25",   "myNAssRMSlt25",   50,0.,0.2);
-  myNAssRMSlt25->Sumw2();
-  TH1F *myAssBetaSlt25  = new TH1F("myAssBetaSlt25",  "myAssBetaSlt25",  50,0.,1.);
-  myAssBetaSlt25->Sumw2();
-  TH1F *myNAssBetaSlt25 = new TH1F("myNAssBetaSlt25", "myNAssBetaSlt25", 50,0.,1.);
-  myNAssBetaSlt25->Sumw2();
-  //
-  TH1F *myAssEtalt25_highRho    = new TH1F("myAssEtalt25_highRho",    "myAssEtalt25_highRho",    41,-5.,5.);
-  myAssEtalt25_highRho->Sumw2();
-  TH1F *myNAssEtalt25_highRho   = new TH1F("myNAssEtalt25_highRho",   "myNAssEtalt25_highRho",   41,-5.,5.);
-  myNAssEtalt25_highRho->Sumw2();
-  TH1F *myAssRMSlt25_highRho    = new TH1F("myAssRMSlt25_highRho",    "myAssRMSlt25_highRho",    50,0.,0.2);
-  myAssRMSlt25_highRho->Sumw2();
-  TH1F *myNAssRMSlt25_highRho   = new TH1F("myNAssRMSlt25_highRho",   "myNAssRMSlt25_highRho",   50,0.,0.2);
-  myNAssRMSlt25_highRho->Sumw2();
-  TH1F *myAssBetaSlt25_highRho  = new TH1F("myAssBetaSlt25_highRho",  "myAssBetaSlt25_highRho",  50,0.,1.);
-  myAssBetaSlt25_highRho->Sumw2();
-  TH1F *myNAssBetaSlt25_highRho = new TH1F("myNAssBetaSlt25_highRho", "myNAssBetaSlt25_highRho", 50,0.,1.);
-  myNAssBetaSlt25_highRho->Sumw2();
-  // 
-  TH2F *myAssBetaSvsNvtxlt25 = new TH2F("myAssBetaSvsNvtxlt25","myAssBetaSvsNvtxlt25",20,0.,20.,50,0.,1.);
-  myAssBetaSvsNvtxlt25->Sumw2();
 
 
   // ------------------------------------------------------
@@ -290,6 +257,7 @@ void fillPlot2012_radion::finalize() {
   float massggnewvtx_t;
   float ptphot1_t, runptphot1_t, ptphot2_t;
   float etaphot1_t, etaphot2_t;
+  float r9phot1_t, r9phot2_t;
   float ptgg_t, etagg_t, absetagg_t;
   int njets_t;
   float ptcorrjet1_t, runptcorrjet1_t, ptcorrjet2_t;
@@ -298,11 +266,11 @@ void fillPlot2012_radion::finalize() {
   float invmassjet_t, ptjj_t, etajj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;  
   int theCategory_t;
+  int theGammaCategory_t;
   float zeppen_t; 
   float chiSquareProbH_t, absCosThetaStar_t;
   int nvtx_t;
   int theVertex_t;
-  float rhoPF_t;
   int isj1btagged_t, isj2btagged_t;
   float weight;
 
@@ -317,6 +285,8 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "ptPhot2", &ptphot2_t, "ptphot2_t/F" );
   myTrees->Branch( "etaPhot1", &etaphot1_t, "etaphot1_t/F" );
   myTrees->Branch( "etaPhot2", &etaphot2_t, "etaphot2_t/F" );
+  myTrees->Branch( "r9Phot1", &r9phot1_t, "r9phot1_t/F" );
+  myTrees->Branch( "r9Phot2", &r9phot2_t, "r9phot2_t/F" );
   myTrees->Branch( "ptgg", &ptgg_t, "ptgg_t/F" );
   myTrees->Branch( "etagg", &etagg_t, "etagg_t/F" );
   myTrees->Branch( "absetagg", &absetagg_t, "absetagg_t/F" );
@@ -336,6 +306,7 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "deltaetaggjj", &deltaetajjgg_t, "deltaetajjgg_t/F");
   myTrees->Branch( "btagCategory", &btagCategory_t, "btagCategory_t/I" );
   myTrees->Branch( "theCategory",  &theCategory_t,  "theCategory_t/I" );
+  myTrees->Branch( "theGammaCategory",  &theGammaCategory_t,  "theGammaCategory_t/I" );
   myTrees->Branch( "nbjets_loose",  &nbjets_loose_t,  "nbjets_loose_t/I" );
   myTrees->Branch( "nbjets_medium", &nbjets_medium_t, "nbjets_medium_t/I" );
   myTrees->Branch( "nbjets_tight",  &nbjets_tight_t,  "nbjets_tight_t/I" );
@@ -344,7 +315,6 @@ void fillPlot2012_radion::finalize() {
   myTrees->Branch( "absCosThetaStar", &absCosThetaStar_t, "absCosThetaStar_t/F" );
   myTrees->Branch( "nvtx", &nvtx_t, "nvtx_t/I" );
   myTrees->Branch( "vertex", &theVertex_t, "theVertex_t/I" );
-  myTrees->Branch( "rhoPF", &rhoPF_t, "rhoPF_t/F" );
   myTrees->Branch( "isBtagJet1", &isj1btagged_t, "isj1btagged_t/I" );
   myTrees->Branch( "isBtagJet2", &isj2btagged_t, "isj2btagged_t/I" );
   myTrees->Branch( "weight", &weight, "weight/F" );
@@ -457,130 +427,52 @@ void fillPlot2012_radion::finalize() {
     // control plots after preselection on photons (pT, acceptance and ID)
     h1_mgg_preselG->Fill( massggnewvtx, weight );
 
-
     // --------------------------------------------------------------------------------
     // jets
     
-    /*  
+    // ----------------------------------------------------------------------------------------
+    /*  for PU id plots 
     // two highest pT jets, no btagging, no jetID. This is just for PU jetID studies
     vector<int> v_allJets;
     for (int ij=0; ij<njets; ij++) { 
-    if ( ptcorrjet[ij] < ptjetacccut ) continue;   
-    if ( fabs(etajet[ij])>4.7 )        continue;   
-    v_allJets.push_back(ij);
+      if ( ptcorrjet[ij] < ptjetacccut ) continue;   
+      if ( fabs(etajet[ij])>2.5 )        continue;   
+      v_allJets.push_back(ij);
     }
 
-    if (v_allJets.size()<2) continue;   
-    std::pair<int,int> allJets_highPt_noId = myTwoHighestPtJet(v_allJets);
-    
     // PU jetID studies
-    int jet1noId      = allJets_highPt_noId.first;
-    int jet2noId      = allJets_highPt_noId.second;    
-    float etaJ1noId   = etajet[jet1noId];
-    float etaJ2noId   = etajet[jet2noId];
-    float rmsJ1noId   = rmsjet[jet1noId]; 
-    float rmsJ2noId   = rmsjet[jet2noId]; 
-    float betaSJ1noId = betastarjet[jet1noId];
-    float betaSJ2noId = betastarjet[jet2noId];
+    for (int ii=0; ii<v_allJets.size(); ii++ ){
+      int index    = v_allJets[ii];
+      float etaJ   = etajet[index];
+      float ptJ    = ptcorrjet[index];
+      float rmsJ   = rmsjet[index];
+      float betaSJ = betastarjet[index];
 
-    // control plots
-    if (assjet[jet1noId])  { 
-    myAssEta   -> Fill(etaJ1noId,weight); 
-    myAssRMS   -> Fill(rmsJ1noId,weight);
-    myAssBetaS -> Fill(betaSJ1noId,weight); 
-    if (fabs(etaJ1noId)<2.5) {
-    myAssEtalt25   -> Fill(etaJ1noId,weight); 
-    myAssRMSlt25   -> Fill(rmsJ1noId,weight);
-    myAssBetaSlt25 -> Fill(betaSJ1noId,weight); 
-    myAssBetaSvsNvtxlt25 -> Fill(nvtx,betaSJ1noId,weight);
-    if (rhoPF>15) {
-    myAssEtalt25_highRho   -> Fill(etaJ1noId,weight); 
-    myAssRMSlt25_highRho   -> Fill(rmsJ1noId,weight);
-    myAssBetaSlt25_highRho -> Fill(betaSJ1noId,weight); 
-    }
-    }
-    }
-    if (assjet[jet2])  { 
-    myAssEta   -> Fill(etaJ2noId,weight); 
-    myAssRMS   -> Fill(rmsJ2noId,weight);
-    myAssBetaS -> Fill(betaSJ2noId,weight); 
-    if (fabs(etaJ2noId)<2.5) {
-    myAssEtalt25   -> Fill(etaJ2noId,weight); 
-    myAssRMSlt25   -> Fill(rmsJ2noId,weight);
-    myAssBetaSlt25 -> Fill(betaSJ2noId,weight); 
-    myAssBetaSvsNvtxlt25 -> Fill(nvtx,betaSJ2noId,weight);
-    if (rhoPF>15) {
-    myAssEtalt25_highRho   -> Fill(etaJ2noId,weight); 
-    myAssRMSlt25_highRho   -> Fill(rmsJ2noId,weight);
-    myAssBetaSlt25_highRho -> Fill(betaSJ2noId,weight); 
-    }
-    }
-    }
-    if (!assjet[jet1]) { 
-    myNAssEta   -> Fill(etaJ1noId,weight); 
-    myNAssRMS   -> Fill(rmsJ1noId,weight);
-    myNAssBetaS -> Fill(betaSJ1noId,weight); 
-    if (fabs(etaJ1noId)<2.5) {
-    myNAssEtalt25   -> Fill(etaJ1noId,weight); 
-    myNAssRMSlt25   -> Fill(rmsJ1noId,weight);
-    myNAssBetaSlt25 -> Fill(betaSJ1noId,weight); 
-    if (rhoPF>15) {
-    myNAssEtalt25_highRho   -> Fill(etaJ1noId,weight); 
-    myNAssRMSlt25_highRho   -> Fill(rmsJ1noId,weight);
-    myNAssBetaSlt25_highRho -> Fill(betaSJ1noId,weight); 
-    }
-    }
-    }
-    if (!assjet[jet2]) { 
-    myNAssEta   -> Fill(etaJ2noId,weight);
-    myNAssRMS   -> Fill(rmsJ2noId,weight);
-    myNAssBetaS -> Fill(betaSJ2noId,weight); 
-    if (fabs(etaJ2noId)<2.5) {
-    myNAssEtalt25   -> Fill(etaJ2noId,weight); 
-    myNAssRMSlt25   -> Fill(rmsJ2noId,weight);
-    myNAssBetaSlt25 -> Fill(betaSJ2noId,weight); 
-    if (rhoPF>15) {
-    myNAssEtalt25_highRho   -> Fill(etaJ2noId,weight); 
-    myNAssRMSlt25_highRho   -> Fill(rmsJ2noId,weight);
-    myNAssBetaSlt25_highRho -> Fill(betaSJ2noId,weight); 
-    }
-    }
-    } 
-    
-    // control efficiency plots
-    if (assjet[jet1]) { 
-    myDenomEtaAss -> Fill(etaJ1noId,weight); 
-    myDenomPtAss  -> Fill(ptJ1noId,weight); 
-    if (passCutBasedJetId(jet1noId)) { 
-    myNumEtaAss -> Fill(etaJ1noId,weight); 
-    myNumPtAss  -> Fill(ptJ1noId,weight); 
-    }
-    }
-    if (!assjet[jet1]) { 
-    myDenomEtaNAss -> Fill(etaJ1noId,weight); 
-    myDenomPtNAss  -> Fill(ptJ1noId,weight); 
-    if (passCutBasedJetId(jet1noId)) { 
-    myNumEtaNAss -> Fill(etaJ1noId,weight); 
-    myNumPtNAss  -> Fill(ptJ1noId,weight); 
-    }
-    }
-    if (assjet[jet2]) { 
-    myDenomEtaAss -> Fill(etaJ2noId,weight); 
-    myDenomPtAss  -> Fill(ptJ2noId,weight); 
-    if (passCutBasedJetId(jet2noId)) { 
-    myNumEtaAss -> Fill(etaJ2noId,weight); 
-    myNumPtAss  -> Fill(ptJ2noId,weight); 
-    }
-    }
-    if (!assjet[jet2]) { 
-    myDenomEtaNAss -> Fill(etaJ2noId,weight); 
-    myDenomPtNAss  -> Fill(ptJ2noId,weight); 
-    if (passCutBasedJetId(jet2noId)) { 
-    myNumEtaNAss -> Fill(etaJ2noId,weight); 
-    myNumPtNAss  -> Fill(ptJ2noId,weight); 
-    }
+      // for control plots and efficiencies
+      if (assjet[index])  { 
+	myAssRMS      -> Fill(rmsJ,weight);
+	myAssBetaS    -> Fill(betaSJ,weight); 
+	myDenomEtaAss -> Fill(etaJ,weight); 
+	myDenomPtAss  -> Fill(ptJ,weight); 	
+	if (btagcsvjet[index]>0.679) {
+	  myDenomEtaBtagAss -> Fill(etaJ,weight); 
+	  myDenomPtBtagAss  -> Fill(ptJ,weight); 		  
+	}
+	if (passCutBasedJetId(index)) { 
+	  myNumEtaAss -> Fill(etaJ,weight); 
+	  myNumPtAss  -> Fill(ptJ,weight); 
+	  if (btagcsvjet[index]>0.679) {
+	    myNumEtaBtagAss -> Fill(etaJ,weight); 
+	    myNumPtBtagAss  -> Fill(ptJ,weight); 		  
+	  }
+	}	
+      } else { 
+	myNAssRMS      -> Fill(rmsJ,weight);
+	myNAssBetaS    -> Fill(betaSJ,weight); 
+      }
     }
     */
+    // ---------------------------------------------------------------------------------
 
 
     // --------------------------------------------------------
@@ -625,6 +517,7 @@ void fillPlot2012_radion::finalize() {
 
     // at least 2 preselected jets
     if (v_puIdJets.size()<2) continue;   
+
 
     // choice of analysis jets ---------------------
 
@@ -737,8 +630,6 @@ void fillPlot2012_radion::finalize() {
     // invariant mass plots after the two preselection on jets and photons
     h1_mgg_preselJ->Fill( massggnewvtx, weight );    
     h1_mjj_preselJ->Fill( t4diJet.M(), weight );
-
-    
 
 
     // -------------------------------------------------------------------------
@@ -891,6 +782,9 @@ void fillPlot2012_radion::finalize() {
     int myR9=-1;
     if(r9phot1>.94 && r9phot2>.94) myR9 = 1;
     if(r9phot1<.94 || r9phot2<.94) myR9 = 0;
+    int theGammaCategory = -1;
+    if (myR9==1) theGammaCategory = 0;
+    if (myR9==0) theGammaCategory = 1;
 
     // total category combining photons / jets
     int theCategory = -1;
@@ -904,7 +798,7 @@ void fillPlot2012_radion::finalize() {
     // if (myR9==0 && myEB)  theCategory = 1;
     // if (myR9==1 && !myEB) theCategory = 2;
     // if (myR9==0 && !myEB) theCategory = 3;
-
+    
     // -------------------------------------------------------------
     // here we apply further cuts according to the btag category
     /*
@@ -912,19 +806,20 @@ void fillPlot2012_radion::finalize() {
 
     if (btagCategory==1) {
       if ( ptdiphotcut_1bj>0  && t4diPhot.Pt()<ptdiphotcut_1bj ) continue;
-      if ( etadiphotcut_1bj>0 && fabs(etagg)>etadiphotcut_1bj  ) continue;
-      if ( ptphot1cut_1bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_1bj ) continue;
-      if ( ptjet1cut_1bj>0    && ptJ1<ptjet1cut_1bj ) continue;
+      // if ( etadiphotcut_1bj>0 && fabs(etagg)>etadiphotcut_1bj  ) continue;
+      // if ( ptphot1cut_1bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_1bj ) continue;
+      if ( ptjet1cut_1bj>0    && ((120./invMassJJ)*ptJ1)<ptjet1cut_1bj ) continue;
       if ( costhetascut_1bj>0 && fabs(cosThetaStar)>costhetascut_1bj ) continue;
 
     } else if (btagCategory==2) {
       if ( ptdiphotcut_2bj>0  && t4diPhot.Pt()<ptdiphotcut_2bj ) continue;
-      if ( etadiphotcut_2bj>0 && fabs(etagg)>etadiphotcut_2bj  ) continue;
-      if ( ptphot1cut_2bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_2bj ) continue;
-      if ( ptjet1cut_2bj>0    && ptJ1<ptjet1cut_2bj ) continue;
+      // if ( etadiphotcut_2bj>0 && fabs(etagg)>etadiphotcut_2bj  ) continue;
+      // if ( ptphot1cut_2bj>0   && ((120./massggnewvtx)*ptphot1)<ptphot1cut_2bj ) continue;
+      if ( ptjet1cut_2bj>0    && ((120./invMassJJ)*ptJ1)<ptjet1cut_2bj ) continue;
       if ( costhetascut_2bj>0 && fabs(cosThetaStar)>costhetascut_2bj ) continue;
     }
     */
+
 
     // -------------------------------------------------------------
 
@@ -983,6 +878,8 @@ void fillPlot2012_radion::finalize() {
     ptphot2_t  = ptphot2;
     etaphot1_t = etaphot1;
     etaphot2_t = etaphot2;
+    r9phot1_t = r9phot1;
+    r9phot2_t = r9phot2;
     ptgg_t  = ptgg;
     etagg_t = etagg; 
     absetagg_t = fabs(etagg); 
@@ -1002,6 +899,7 @@ void fillPlot2012_radion::finalize() {
     deltaetajjgg_t  = deltaEta_ggjj;
     btagCategory_t  = btagCategory;
     theCategory_t   = theCategory;
+    theGammaCategory_t = theGammaCategory;
     if (bTaggerType_=="JP") {
       nbjets_loose_t  = v_looseJP.size();
       nbjets_medium_t = v_mediumJP.size();
@@ -1018,9 +916,9 @@ void fillPlot2012_radion::finalize() {
     absCosThetaStar_t  = fabs(cosThetaStar);
     nvtx_t      = nvtx;
     theVertex_t = vtxId;
-    rhoPF_t  = rhoPF;
     isj1btagged_t = isj1btagged;
     isj2btagged_t = isj2btagged;
+
     // chiara
     // if( !isMC ) { weight = 1.; }
 
@@ -1133,54 +1031,30 @@ void fillPlot2012_radion::finalize() {
   h1_mggjj_kinfit_2btag        -> Write();
   h1_mggjj_nokinfit_2btag      -> Write();
 
+
+
   // eff vs # eta
   TH1F *myEffEtaAss = (TH1F*)myNumEtaAss->Clone("myEffEtaAss");
-  myEffEtaAss   -> Divide(myDenomEtaAss);
-  myNumEtaAss   -> Write();
-  myDenomEtaAss -> Write();
-  myEffEtaAss   -> Write();
-  
-  TH1F *myEffEtaNAss = (TH1F*)myNumEtaNAss->Clone("myEffEtaNAss");
-  myEffEtaNAss   -> Divide(myDenomEtaNAss);
-  myNumEtaNAss   -> Write();
-  myDenomEtaNAss -> Write();
-  myEffEtaNAss   -> Write();
+  myEffEtaAss -> Divide(myDenomEtaAss);
+  myEffEtaAss -> Write();
+
+  TH1F *myEffEtaBtagAss = (TH1F*)myNumEtaBtagAss->Clone("myEffEtaBtagAss");
+  myEffEtaBtagAss -> Divide(myDenomEtaBtagAss);
+  myEffEtaBtagAss -> Write();
   
   // eff vs # pt
   TH1F *myEffPtAss = (TH1F*)myNumPtAss->Clone("myEffPtAss");
-  myEffPtAss   -> Divide(myDenomPtAss);
-  myNumPtAss   -> Write();
-  myDenomPtAss -> Write();
-  myEffPtAss   -> Write();
+  myEffPtAss -> Divide(myDenomPtAss);
+  myEffPtAss -> Write();
+
+  TH1F *myEffPtBtagAss = (TH1F*)myNumPtBtagAss->Clone("myEffPtBtagAss");
+  myEffPtBtagAss   -> Divide(myDenomPtBtagAss);
+  myEffPtBtagAss   -> Write();
   
-  TH1F *myEffPtNAss = (TH1F*)myNumPtNAss->Clone("myEffPtNAss");
-  myEffPtNAss   -> Divide(myDenomPtNAss);
-  myNumPtNAss   -> Write();
-  myDenomPtNAss -> Write();
-  myEffPtNAss   -> Write();
-  
-  myNAssEta   -> Write();
-  myAssEta    -> Write();
   myNAssRMS   -> Write();
   myAssRMS    -> Write();
   myNAssBetaS -> Write();
   myAssBetaS  -> Write();
-  
-  myNAssEtalt25   -> Write();
-  myAssEtalt25    -> Write();
-  myNAssRMSlt25   -> Write();
-  myAssRMSlt25    -> Write();
-  myNAssBetaSlt25 -> Write();
-  myAssBetaSlt25  -> Write();
-  
-  myNAssEtalt25_highRho   -> Write();
-  myAssEtalt25_highRho    -> Write();
-  myNAssRMSlt25_highRho   -> Write();
-  myAssRMSlt25_highRho    -> Write();
-  myNAssBetaSlt25_highRho -> Write();
-  myAssBetaSlt25_highRho  -> Write();
-
-  myAssBetaSvsNvtxlt25 -> Write();
 
 } // finalize
 
@@ -1711,20 +1585,20 @@ void fillPlot2012_radion::setSelectionType( const std::string& selectionType ) {
 
   if( selectionType=="default" ) {
 
-    ptdiphotcut_1bj = 0;
-    ptdiphotcut_2bj = 0;
+    ptdiphotcut_1bj = 40;
+    ptdiphotcut_2bj = 45;
 
-    etadiphotcut_1bj = 2.1;
-    etadiphotcut_2bj = 2.0;  
+    // etadiphotcut_1bj = 2.1;
+    // etadiphotcut_2bj = 2.0;  
     
-    ptphot1cut_1bj = 52.;
-    ptphot1cut_2bj = 57.;
+    // ptphot1cut_1bj = 52.;
+    // ptphot1cut_2bj = 57.;
 
-    ptjet1cut_1bj = 41.;
-    ptjet1cut_2bj = 48.;
+    ptjet1cut_1bj = 49.;
+    ptjet1cut_2bj = 53.;
 
-    costhetascut_1bj = 0.9;
-    costhetascut_2bj = 1.0;
+    costhetascut_1bj = 0.79;
+    costhetascut_2bj = 0.77;
 
   } else {
     
