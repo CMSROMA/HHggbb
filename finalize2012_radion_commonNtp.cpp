@@ -215,8 +215,8 @@ RedntpDirStruct get_dirs_commonNtp( const std::string& prodVersion ) {
 
     returnStruct.maindatadir = "/xrootdfs/cms/local/crovelli/Radion/common";  
     returnStruct.mainmcdir   = "/xrootdfs/cms/local/crovelli/Radion/common";
-    returnStruct.datadir     = "radion_tree_v01";
-    returnStruct.mcdir       = "radion_tree_v01";
+    returnStruct.datadir     = "radion_tree_v03";
+    returnStruct.mcdir       = "radion_tree_v03";
 
   } else {
 
