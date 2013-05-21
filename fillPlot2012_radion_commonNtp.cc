@@ -72,6 +72,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_ptjet0->Sumw2();
   TH1D* h1_ptjet1 = new TH1D("ptjet1", "", 30, 0., 200.);
   h1_ptjet1->Sumw2();
+  TH1D* h1_runptjet0 = new TH1D("runptjet0", "", 60, 0., 400.);
+  h1_runptjet0->Sumw2();
   TH1D* h1_etajet0 = new TH1D("etajet0", "", 30, -3., 3.);
   h1_etajet0->Sumw2();
   TH1D* h1_etajet1 = new TH1D("etajet1", "", 30, -3., 3.);
@@ -220,7 +222,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
 
   // -----------------------------------------------------------------------------                                                 
-  // variables to be saved in an output tree with selected events                                                                                            
+  // variables to be saved in an output tree with selected events 
   float massggnewvtx_t;
   float ptphot1_t, runptphot1_t, ptphot2_t;
   float etaphot1_t, etaphot2_t;
@@ -562,6 +564,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // jets                                                                                                                       
     h1_ptjet0->Fill( ptJ1, weight_t );
     h1_ptjet1->Fill( ptJ2, weight_t );
+    h1_runptjet0->Fill(ptJ1*120./t4diJet.M(), weight);
 
     h1_etajet0->Fill( etaJ1, weight_t );
     h1_etajet1->Fill( etaJ2, weight_t );
@@ -842,6 +845,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
   h1_ptjet0->Write();
   h1_ptjet1->Write();
+  h1_runptjet0->Write();
   h1_etajet0->Write();
   h1_etajet1->Write();
 
