@@ -241,6 +241,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   int nvtx_t;
   int theVertex_t;
   int isj1btagged_t, isj2btagged_t;
+  float mjj_kin_t, mggjj_kin_t;
   float weight_t;
 
   TTree* myTrees = new TTree();
@@ -286,6 +287,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "vertex", &theVertex_t, "theVertex_t/I" );
   myTrees->Branch( "isBtagJet1", &isj1btagged_t, "isj1btagged_t/I" );
   myTrees->Branch( "isBtagJet2", &isj2btagged_t, "isj2btagged_t/I" );
+  myTrees->Branch( "mjj_kin", &mjj_kin_t, "mjj_kin_t/F" );
+  myTrees->Branch( "mggjj_kin", &mggjj_kin_t, "mggjj_kin_t/F" );
   myTrees->Branch( "weight", &weight_t, "weight_t/F" );
 
   // tree to compute final limits                                                                                                           
@@ -355,7 +358,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // further cuts on photons -----------------------                                                                            
 
     // invariant mass cut on photons                                                                                              
-    if (PhotonsMass<100 || PhotonsMass>180) continue;
+    // if (PhotonsMass<100 || PhotonsMass>180) continue;
+    if (PhotonsMass<120 || PhotonsMass>130) continue;
 
     // control plots to check the preselection                                                                                    
     h1_ptphot0->Fill(ph1_pt, weight_t);
@@ -677,6 +681,14 @@ void fillPlot2012_radion_commonNtp::finalize() {
     if ( (isj1btagged==1 && isj2btagged==0) || (isj1btagged==0 && isj2btagged==1) ) btagCategory = 1;
     if (  isj1btagged==0 && isj2btagged==0 ) cout << "this should not happen!" << endl;
 
+    // chiara: for better yield estimate:
+    // if(v_puIdJets.size()>3) continue;
+    // if( btagCategory==1 && (t4diJet.M()<70. || t4diJet.M()>165.) )  continue;
+    // if( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) )  continue;
+    // if( btagCategory==1 && (radMass<255. || radMass>340.) )    continue;
+    // if( btagCategory==2 && (radMass<265. || radMass>320.) )    continue;
+
+
     // for test: only EBEB events                                                                                                 
     // if (!myEB) continue;                                                                                                       
 
@@ -818,6 +830,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     theVertex_t = vtx_ind;
     isj1btagged_t = isj1btagged;
     isj2btagged_t = isj2btagged;
+    mjj_kin_t = dijet_kinfit.M();
+    mggjj_kin_t = Vstar_kinfit.M();
 
     myTrees->Fill();
 
