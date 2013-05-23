@@ -75,6 +75,7 @@ int main(int argc, char* argv[]) {
   RadionFileName1000 += ".root";
   TFile* RadionFile1000 = TFile::Open(RadionFileName1000.c_str());
 
+  
   std::string HToGGFileName = "finalizedTrees_Radion_presel/Radion_";
   HToGGFileName += "HToGG_M-125_8TeV-pythia6";
   HToGGFileName += "_" + selType;
@@ -110,14 +111,30 @@ int main(int argc, char* argv[]) {
   // db_stack->add_mcFile( HvhToGGFile, "HToGG VH", "H (125), VH", 38);
 
   /*
+  std::string HWhToGGFileName = "finalizedTrees_Radion_presel/Radion_";
+  HWhToGGFileName += "WH_HToGG_M-125_8TeV";
+  HWhToGGFileName += "_" + selType;
+  HWhToGGFileName += "_" + bTaggerType;
+  HWhToGGFileName += ".root";
+  TFile* HWhToGGFile = TFile::Open(HWhToGGFileName.c_str());
+  db_stack->add_mcFile( HWhToGGFile, "HToGG WH", "H (125), WH", 38);
+
+  std::string HZhToGGFileName = "finalizedTrees_Radion_presel/Radion_";
+  HZhToGGFileName += "ZH_HToGG_M-125_8TeV";
+  HZhToGGFileName += "_" + selType;
+  HZhToGGFileName += "_" + bTaggerType;
+  HZhToGGFileName += ".root";
+  TFile* HZhToGGFile = TFile::Open(HZhToGGFileName.c_str());
+  db_stack->add_mcFile( HZhToGGFile, "HToGG ZH", "H (125), ZH", 38);
+  */
+
   std::string HtthToGGFileName = "finalizedTrees_Radion_presel/Radion_";
   HtthToGGFileName += "TTH_HToGG_M-125_8TeV";
   HtthToGGFileName += "_" + selType;
   HtthToGGFileName += "_" + bTaggerType;
   HtthToGGFileName += ".root";
   TFile* HtthToGGFile = TFile::Open(HtthToGGFileName.c_str());
-  db_stack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), ttH", 30);
-  */
+  // db_stack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), ttH", 30);
 
   std::string DiPhotonFileName = "finalizedTrees_Radion_presel/Radion_";
   DiPhotonFileName += "DiPhoton_8TeV";
@@ -135,32 +152,29 @@ int main(int argc, char* argv[]) {
   TFile* GammaJetFile = TFile::Open(GammaJetFileName.c_str());
   db_stack->add_mcFile( GammaJetFile, "GammaJet", "#gamma + Jet", 37);
 
-  // chiara: scommenta quando ci sara'
-  // std::string DiBosonFileName = "finalizedTrees_Radion_presel/Radion_";
-  // DiBosonFileName += "VV_8TeV";
-  // DiBosonFileName += "_" + selType;
-  // DiBosonFileName += "_" + bTaggerType;
-  // DiBosonFileName += ".root";
-  // TFile* DiBosonFile = TFile::Open(DiBosonFileName.c_str());
-  // db_stack->add_mcFile( DiBosonFile, "DiBoson", "Diboson", 38);
+  std::string DiBosonFileName = "finalizedTrees_Radion_presel/Radion_";
+  DiBosonFileName += "VV_8TeV";
+  DiBosonFileName += "_" + selType;
+  DiBosonFileName += "_" + bTaggerType;
+  DiBosonFileName += ".root";
+  TFile* DiBosonFile = TFile::Open(DiBosonFileName.c_str());
+  db_stack->add_mcFile( DiBosonFile, "DiBoson", "Diboson", 38);
 
-  // chiara: scommenta quando ci sara'
-  // std::string BosonFileName = "finalizedTrees_Radion_presel/Radion_";
-  // BosonFileName += "V_8TeV";
-  // BosonFileName += "_" + selType;
-  // BosonFileName += "_" + bTaggerType;
-  // BosonFileName += ".root";
-  // TFile* BosonFile = TFile::Open(BosonFileName.c_str());
-  // db_stack->add_mcFile( BosonFile, "Bosons", "boson", 39);
+  std::string BosonFileName = "finalizedTrees_Radion_presel/Radion_";
+  BosonFileName += "V_8TeV";
+  BosonFileName += "_" + selType;
+  BosonFileName += "_" + bTaggerType;
+  BosonFileName += ".root";
+  TFile* BosonFile = TFile::Open(BosonFileName.c_str());
+  db_stack->add_mcFile( BosonFile, "Bosons", "boson", 39);
 
-  // chiara: scommenta quando ci sara'
-  // std::string TriBosonFileName = "finalizedTrees_Radion_presel/Radion_";
-  // TriBosonFileName += "VGG_8TeV";
-  // TriBosonFileName += "_" + selType;
-  // TriBosonFileName += "_" + bTaggerType;
-  // TriBosonFileName += ".root";
-  // TFile* TriBosonFile = TFile::Open(TriBosonFileName.c_str());
-  // db_stack->add_mcFile( TriBosonFile, "TriBoson", "V + #gamma#gamma", 40);
+  std::string TriBosonFileName = "finalizedTrees_Radion_presel/Radion_";
+  TriBosonFileName += "VGG_8TeV";
+  TriBosonFileName += "_" + selType;
+  TriBosonFileName += "_" + bTaggerType;
+  TriBosonFileName += ".root";
+  TFile* TriBosonFile = TFile::Open(TriBosonFileName.c_str());
+  db_stack->add_mcFile( TriBosonFile, "TriBoson", "V + #gamma#gamma", 40);
 
   std::string TTFileName = "finalizedTrees_Radion_presel/Radion_";
   TTFileName += "TT_8TeV";
@@ -185,6 +199,7 @@ int main(int argc, char* argv[]) {
   // db_nostack->add_mcFile( RadionFile700,  "Radion", "Radion (700)",  signalFillColor700,  0);
   // db_nostack->add_mcFile( RadionFile1000, "Radion", "Radion (1000)", signalFillColor1000, 0);
   db_nostack->add_mcFile( HvhToGGFile,  "HToGG VH", "H (125), VH", 38);
+  // db_nostack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), TTH", 44);
   db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton",    31);
 
 
@@ -289,10 +304,10 @@ int main(int argc, char* argv[]) {
   db_nostack->set_legendTitle( "2 b-tag Category (!EBEB)" );
   db_nostack->drawHisto("mgg_2btag_nebeb", "DiPhoton Invariant Mass", "GeV");
 
-  // db_nostack->set_legendTitle( "1 b-tag Category" );
-  // db_nostack->drawHisto("mggjj_1btag", "DiPhoton+DiJets Invariant Mass", "GeV");
-  // db_nostack->set_legendTitle( "2 b-tag Category" );
-  // db_nostack->drawHisto("mggjj_2btag", "DiPhoton+DiJets Invariant Mass", "GeV");
+  db_nostack->set_legendTitle( "1 b-tag Category" );
+  db_nostack->drawHisto("mggjj_1btag", "DiPhoton+DiJets Invariant Mass", "GeV");
+  db_nostack->set_legendTitle( "2 b-tag Category" );
+  db_nostack->drawHisto("mggjj_2btag", "DiPhoton+DiJets Invariant Mass", "GeV");
 
 
   bool doUL = (selType == "default" );  // chiara
@@ -334,6 +349,7 @@ void printYields( DrawBase* db, const std::string& suffix, bool doUL ) {
   yieldsFile << std::endl << "Yields: " << std::endl;
   for( unsigned int ii=0; ii<histos.size(); ++ii ) {
     yieldsFile << db->get_mcFile(ii).datasetName << " " << histos[ii]->Integral(binXmin, binXmax) << std::endl;
+    // yieldsFile << db->get_mcFile(ii).datasetName << " " << histos[ii]->Integral() << std::endl;   // chiara
     if( db->get_mcFile(ii).datasetName != "Radion" ) {  
       totalBG += histos[ii]->Integral(binXmin, binXmax);
       totalBG_ave += histos[ii]->Integral(1, histos[ii]->GetNbinsX());

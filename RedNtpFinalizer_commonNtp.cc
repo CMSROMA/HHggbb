@@ -17,6 +17,8 @@ RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyze
   else if ( dataset_tstr.Contains("GluGluToHToGG_M-125_8TeV") ) tree_ = new TChain("ggh_m125_8TeV");   
   else if ( dataset_tstr.Contains("VBF_HToGG_M-125_8TeV")  )    tree_ = new TChain("vbf_m125_8TeV");   
   else if ( dataset_tstr.Contains("WH_ZH_HToGG_M-125_8TeV")  )  tree_ = new TChain("wzh_m125_8TeV");   
+  else if ( dataset_tstr.Contains("WH_HToGG_M-125_8TeV")  )     tree_ = new TChain("wzh_m125_8TeV");   
+  else if ( dataset_tstr.Contains("ZH_HToGG_M-125_8TeV")  )     tree_ = new TChain("wzh_m125_8TeV");   
   else if ( dataset_tstr.Contains("TTH_HToGG_M-125_8TeV")  )    tree_ = new TChain("tth_m125_8TeV");   
 
   else if( dataset_tstr.Contains("DiPhotonJets_8TeV-madgraph") ) tree_ = new TChain("diphojet_8TeV");
@@ -31,6 +33,20 @@ RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyze
 
   else if( dataset_tstr.Contains("QCD_Pt-30to40_doubleEMEnriched_8TeV-ff") )  tree_ = new TChain("qcd_30_8TeV_ff");
   else if( dataset_tstr.Contains("QCD_Pt-30to40_doubleEMEnriched_8TeV-pf") )  tree_ = new TChain("qcd_30_8TeV_pf");
+  else if( dataset_tstr.Contains("QCD_Pt-40_doubleEMEnriched_8TeV-ff") )      tree_ = new TChain("qcd_40_8TeV_ff");
+  else if( dataset_tstr.Contains("QCD_Pt-40_doubleEMEnriched_8TeV-pf") )      tree_ = new TChain("qcd_40_8TeV_pf");
+
+  else if( dataset_tstr.Contains("ZZ_TuneZ2star_8TeV") ) tree_ = new TChain("ZZJetsTo2L2Q");                   
+
+  else if( dataset_tstr.Contains("TTbarGG") )                         tree_ = new TChain("ttgg_dR02");
+  else if( dataset_tstr.Contains("TTJets_TuneZ2star_8TeV-madgraph") ) tree_ = new TChain("TTJets");
+  else if( dataset_tstr.Contains("TTGJets_8TeV-madgraph") )           tree_ = new TChain("TTGJets");
+
+  else if( dataset_tstr.Contains("DYJetsToLL") ) tree_ = new TChain("DYJetsToLL"); 
+
+  else if( dataset_tstr.Contains("WGToLNuG") ) tree_ = new TChain("WGToLNuG"); 
+
+  else if( dataset_tstr.Contains("ZGG") ) tree_ = new TChain("Zgg_dR02");
 
   else if( dataset_tstr.Contains("Data2012") ) tree_ = new TChain("Data");
 
@@ -97,6 +113,8 @@ void RedNtpFinalizer_commonNtp::addFile(const std::string& dataset, const std::s
   else if ( dataset_tstr.Contains("GluGluToHToGG_M-125_8TeV")  ) treeName = redNtpDir_ + "/SMHiggs_m125.root/ggh_m125_8TeV";   
   else if ( dataset_tstr.Contains("VBF_HToGG_M-125_8TeV")  )     treeName = redNtpDir_ + "/SMHiggs_m125.root/vbf_m125_8TeV";   
   else if ( dataset_tstr.Contains("WH_ZH_HToGG_M-125_8TeV")  )   treeName = redNtpDir_ + "/SMHiggs_m125.root/wzh_m125_8TeV";   
+  else if ( dataset_tstr.Contains("WH_HToGG_M-125_8TeV")  )      treeName = redNtpDir_ + "/SMHiggs_m125_WH.root/wzh_m125_8TeV";   
+  else if ( dataset_tstr.Contains("ZH_HToGG_M-125_8TeV")  )      treeName = redNtpDir_ + "/SMHiggs_m125_ZH.root/wzh_m125_8TeV";   
   else if ( dataset_tstr.Contains("TTH_HToGG_M-125_8TeV")  )     treeName = redNtpDir_ + "/SMHiggs_m125.root/tth_m125_8TeV";   
 
   else if( dataset_tstr.Contains("DiPhotonJets_8TeV-madgraph") ) treeName = redNtpDir_ + "/MCBackgrounds_DiPhotonJets-madgraph.root/diphojet_8TeV";
@@ -111,6 +129,20 @@ void RedNtpFinalizer_commonNtp::addFile(const std::string& dataset, const std::s
 
   else if( dataset_tstr.Contains("QCD_Pt-30to40_doubleEMEnriched_8TeV-ff") ) treeName = redNtpDir_ + "/MCBackgrounds.root/qcd_30_8TeV_ff";
   else if( dataset_tstr.Contains("QCD_Pt-30to40_doubleEMEnriched_8TeV-pf") ) treeName = redNtpDir_ + "/MCBackgrounds.root/qcd_30_8TeV_pf";  
+  else if( dataset_tstr.Contains("QCD_Pt-40_doubleEMEnriched_8TeV-ff") )     treeName = redNtpDir_ + "/MCBackgrounds.root/qcd_40_8TeV_ff";
+  else if( dataset_tstr.Contains("QCD_Pt-40_doubleEMEnriched_8TeV-pf") )     treeName = redNtpDir_ + "/MCBackgrounds.root/qcd_40_8TeV_pf";
+
+  else if( dataset_tstr.Contains("ZZ_TuneZ2star_8TeV") ) treeName = redNtpDir_ + "/MCBackgrounds.root/ZZJetsTo2L2Q";                   
+
+  else if( dataset_tstr.Contains("TTbarGG") )                         treeName = redNtpDir_ + "/MCBackgrounds_ttgg_Zgg.root/ttgg_dR02";
+  else if( dataset_tstr.Contains("TTJets_TuneZ2star_8TeV-madgraph") ) treeName = redNtpDir_ + "/MCBackgrounds.root/TTJets";
+  else if( dataset_tstr.Contains("TTGJets_8TeV-madgraph") )           treeName = redNtpDir_ + "/MCBackgrounds.root/TTGJets";
+
+  else if( dataset_tstr.Contains("DYJetsToLL") ) treeName = redNtpDir_ + "/MCBackgrounds_DY_WG.root/DYJetsToLL"; 
+
+  else if( dataset_tstr.Contains("WGToLNuG") ) treeName = redNtpDir_ + "/MCBackgrounds_DY_WG.root/WGToLNuG"; 
+
+  else if( dataset_tstr.Contains("ZGG") ) treeName = redNtpDir_ + "/MCBackgrounds_ttgg_Zgg.root/Zgg_dR02";
 
   else if( dataset_tstr.Contains("Data2012") ) treeName = redNtpDir_ + "/Data_full2012.root/Data";
   

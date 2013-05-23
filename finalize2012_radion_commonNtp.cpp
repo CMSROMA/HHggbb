@@ -60,9 +60,7 @@ int main( int argc, char* argv[] ) {
 
   } else if( dataset=="V_8TeV") {
        
-    cout << "chiara: does not exist for the moment" << endl;
-    // finalize_oneDataset_commonNtp(redntpVersion, "DYJetsToLL_M-10To50filter_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1",  selectionType, bTaggerType, datasets);
-    // finalize_oneDataset_commonNtp(redntpVersion, "DYJetsToLL_M-50_TuneZ2Star_8TeV-madgraph-tarball_Summer12_DR53X-PU_S10_START53_V7A-v1",	selectionType, bTaggerType, datasets); 
+    finalize_oneDataset_commonNtp(redntpVersion, "DYJetsToLL",	selectionType, bTaggerType, datasets); 
     // finalize_oneDataset_commonNtp(redntpVersion, "WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball_Summer12_DR53X-PU_S10_START53_V7A-v1",      selectionType, bTaggerType, datasets);
 
   } else if( dataset=="GJet_doubleEMEnriched_TuneZ2star_8TeV-pythia6" ) {
@@ -74,32 +72,30 @@ int main( int argc, char* argv[] ) {
 
   } else if( dataset=="QCD_doubleEMEnriched_TuneZ2star_8TeV-pythia6") {
 
-    // finalize_oneDataset_commonNtp(redntpVersion, "QCD_Pt-40_doubleEMEnriched_TuneZ2star_8TeV-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1",     selectionType, bTaggerType, datasets);
     finalize_oneDataset_commonNtp(redntpVersion, "QCD_Pt-30to40_doubleEMEnriched_8TeV-ff", selectionType, bTaggerType, datasets);
     finalize_oneDataset_commonNtp(redntpVersion, "QCD_Pt-30to40_doubleEMEnriched_8TeV-pf", selectionType, bTaggerType, datasets);
+    finalize_oneDataset_commonNtp(redntpVersion, "QCD_Pt-40_doubleEMEnriched_8TeV-ff", selectionType, bTaggerType, datasets);
+    finalize_oneDataset_commonNtp(redntpVersion, "QCD_Pt-40_doubleEMEnriched_8TeV-pf", selectionType, bTaggerType, datasets);
 
   } else if( dataset=="TT_8TeV" ) {
        
-    cout << "chiara: does not exist for the moment" << endl;
-    // finalize_oneDataset_commonNtp(redntpVersion, "TTbarGG_0Jet_S1" , selectionType, bTaggerType, datasets);
-    // finalize_oneDataset_commonNtp(redntpVersion, "TTGJets_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1", selectionType, bTaggerType, datasets);
-    // finalize_oneDataset_commonNtp(redntpVersion, "TTJets_TuneZ2star_8TeV-madgraph-tauola_Summer12-PU_S7_START52_V9-v1", selectionType, bTaggerType, datasets); 
+    finalize_oneDataset_commonNtp(redntpVersion, "TTbarGG", selectionType, bTaggerType, datasets);
+    finalize_oneDataset_commonNtp(redntpVersion, "TTGJets_8TeV-madgraph", selectionType, bTaggerType, datasets);
+    finalize_oneDataset_commonNtp(redntpVersion, "TTJets_TuneZ2star_8TeV-madgraph", selectionType, bTaggerType, datasets); 
 
   } else if( dataset=="VV_8TeV" ) {
 
-    cout << "chiara: does not exist for the moment" << endl;
+    finalize_oneDataset_commonNtp(redntpVersion, "ZZ_TuneZ2star_8TeV", selectionType, bTaggerType, datasets);
     // finalize_oneDataset_commonNtp(redntpVersion, "WW_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1", selectionType, bTaggerType, datasets); 
-    // finalize_oneDataset_commonNtp(redntpVersion, "ZZ_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1", selectionType, bTaggerType, datasets);
     // finalize_oneDataset_commonNtp(redntpVersion, "WZ_TuneZ2star_8TeV_pythia6_tauola_Summer12_DR53X-PU_S10_START53_V7A-v1", selectionType, bTaggerType, datasets);
-    // finalize_oneDataset_commonNtp(redntpVersion, "WGToLNuG_TuneZ2star_8TeV-madgraph-tauola_Summer12_DR53X-PU_S10_START53_V7A-v1", selectionType, bTaggerType, datasets);
+    finalize_oneDataset_commonNtp(redntpVersion, "WGToLNuG_8TeV", selectionType, bTaggerType, datasets);
     // finalize_oneDataset_commonNtp(redntpVersion, "ZGToLLG_8TeV-madgraph_Summer12_DR53X-PU_S10_START53_V7A-v1",             selectionType, bTaggerType, datasets);
 
   } else if( dataset=="VGG_8TeV" ) {
     
-    cout << "chiara: does not exist for the moment" << endl;
     // finalize_oneDataset_commonNtp(redntpVersion, "WmGG", selectionType, bTaggerType, datasets); 
     // finalize_oneDataset_commonNtp(redntpVersion, "WpGG", selectionType, bTaggerType, datasets);
-    // finalize_oneDataset_commonNtp(redntpVersion, "ZGG",  selectionType, bTaggerType, datasets);  
+    finalize_oneDataset_commonNtp(redntpVersion, "ZGG",  selectionType, bTaggerType, datasets);  
 
   } else if( dataset=="HToGG_M-125_8TeV-pythia6" ) {
 
@@ -111,6 +107,14 @@ int main( int argc, char* argv[] ) {
   } else if( dataset=="WH_ZH_HToGG_M-125_8TeV" ) {
 
     finalize_oneDataset_commonNtp(redntpVersion, "WH_ZH_HToGG_M-125_8TeV",    selectionType, bTaggerType, datasets);
+
+  } else if( dataset=="WH_HToGG_M-125_8TeV" ) {
+
+    finalize_oneDataset_commonNtp(redntpVersion, "WH_HToGG_M-125_8TeV",    selectionType, bTaggerType, datasets);
+
+  } else if( dataset=="ZH_HToGG_M-125_8TeV" ) {
+
+    finalize_oneDataset_commonNtp(redntpVersion, "ZH_HToGG_M-125_8TeV",    selectionType, bTaggerType, datasets);
 
   } else if( dataset=="VBF_HToGG_M-125_8TeV" ) {
 
@@ -213,10 +217,15 @@ RedntpDirStruct get_dirs_commonNtp( const std::string& prodVersion ) {
 
   if( prodVersion=="Radion" ) {
 
-    returnStruct.maindatadir = "/xrootdfs/cms/local/crovelli/Radion/common";  
-    returnStruct.mainmcdir   = "/xrootdfs/cms/local/crovelli/Radion/common";
-    returnStruct.datadir     = "radion_tree_v03";
-    returnStruct.mcdir       = "radion_tree_v03";
+    // returnStruct.maindatadir = "/xrootdfs/cms/local/crovelli/Radion/common";  
+    // returnStruct.mainmcdir   = "/xrootdfs/cms/local/crovelli/Radion/common";
+    // returnStruct.datadir     = "radion_tree_v03";
+    // returnStruct.mcdir       = "radion_tree_v03";
+
+    returnStruct.maindatadir = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.mainmcdir   = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.datadir     = "dataCommonNtp";
+    returnStruct.mcdir       = "dataCommonNtp";
 
   } else {
 
