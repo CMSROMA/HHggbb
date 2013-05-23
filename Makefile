@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.1 2013/04/08 12:38:59 crovelli Exp $
+# $Id: Makefile,v 1.2 2013/04/10 12:14:54 crovelli Exp $
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --libs)
 ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
 
@@ -153,10 +153,6 @@ $(OBJDIR)/RooBkgd2L2JV2.o: $(CMSSW_BASE)/src/HelicityLikelihoodDiscriminant/PDFs
 	mkdir -p $(OBJDIR)
 	@$(CC) $(CCFLAGS) -c $< -o $@ $(INCLUDES)
 
-
-
-
-
 # Implicit rule to compile all classes
 $(OBJDIR)/%.o : %.cc
 	@echo "Compiling $<"
@@ -177,5 +173,6 @@ clean:
 	rm -Rf $(OBJDIR)/*.o
 	rm drawRadion
 	rm finalize2012_radion
+	rm finalize2012_radion_commonNtp
 
 #.PHONY : shlib lib default clean
