@@ -358,8 +358,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // further cuts on photons -----------------------                                                                            
 
     // invariant mass cut on photons                                                                                              
-    // if (PhotonsMass<100 || PhotonsMass>180) continue;
-    if (PhotonsMass<120 || PhotonsMass>130) continue;
+    if (PhotonsMass<100 || PhotonsMass>180) continue;
 
     // control plots to check the preselection                                                                                    
     h1_ptphot0->Fill(ph1_pt, weight_t);
@@ -687,7 +686,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // if( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) )  continue;
     // if( btagCategory==1 && (radMass<255. || radMass>340.) )    continue;
     // if( btagCategory==2 && (radMass<265. || radMass>320.) )    continue;
-
+    // if (PhotonsMass<120 || PhotonsMass>130) continue;
 
     // for test: only EBEB events                                                                                                 
     // if (!myEB) continue;                                                                                                       
