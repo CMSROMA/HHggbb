@@ -74,6 +74,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_ptjet1->Sumw2();
   TH1D* h1_runptjet0 = new TH1D("runptjet0", "", 60, 0., 400.);
   h1_runptjet0->Sumw2();
+  TH1D* h1_HTjet = new TH1D("HTjet", "", 60, 0., 400.);
+  h1_HTjet->Sumw2();
   TH1D* h1_etajet0 = new TH1D("etajet0", "", 30, -3., 3.);
   h1_etajet0->Sumw2();
   TH1D* h1_etajet1 = new TH1D("etajet1", "", 30, -3., 3.);
@@ -126,6 +128,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TH1D* h1_deltaEtaDiphot = new TH1D("deltaEtaDiphot", "", 40, -5., 5.);
   h1_deltaEtaDiphot->Sumw2();
 
+  TH1D*  h1_deltaR = new TH1D("deltaR", "", 100, 0., 3.);
+  h1_deltaR->Sumw2();
   TH1D*  h1_deltaPhi = new TH1D("deltaPhi", "", 100, 0., 3.1416);
   h1_deltaPhi->Sumw2();
   TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 50, -5., 5.);
@@ -226,13 +230,15 @@ void fillPlot2012_radion_commonNtp::finalize() {
   float massggnewvtx_t;
   float ptphot1_t, runptphot1_t, ptphot2_t;
   float etaphot1_t, etaphot2_t;
+  int   cicphot1_t, cicphot2_t;
   float r9phot1_t, r9phot2_t;
   float ptgg_t, etagg_t, absetagg_t;
   int njets_t;
   float ptcorrjet1_t, ptcorrjet2_t, runptcorrjet1_t;
   float etajet1_t, etajet2_t;
   float deltaphijj_t, deltaetajj_t;
-  float invmassjet_t, ptjj_t, etajj_t, massggjj_t, deltaphijjgg_t, deltaetajjgg_t;
+  float invmassjet_t, ptjj_t, etajj_t, massggjj_t;
+  float deltaphijjgg_t, deltaetajjgg_t, deltaRjjgg_t;
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;
   int theGammaCategory_t;
   int theCategory_t;
@@ -242,7 +248,9 @@ void fillPlot2012_radion_commonNtp::finalize() {
   int theVertex_t;
   int isj1btagged_t, isj2btagged_t;
   float mjj_kin_t, mggjj_kin_t;
+  float HT_jet_t, HT_gjet_t;
   float weight_t;
+
 
   TTree* myTrees = new TTree();
   myTrees->SetName("myTrees");
@@ -255,6 +263,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "ptPhot2", &ptphot2_t, "ptphot2_t/F" );
   myTrees->Branch( "etaPhot1", &etaphot1_t, "etaphot1_t/F" );
   myTrees->Branch( "etaPhot2", &etaphot2_t, "etaphot2_t/F" );
+  myTrees->Branch( "cicPhot1", &cicphot1_t, "cicphot1_t/I" );
+  myTrees->Branch( "cicPhot2", &cicphot2_t, "cicphot2_t/I" );
   myTrees->Branch( "r9Phot1", &r9phot1_t, "r9phot1_t/F" );
   myTrees->Branch( "r9Phot2", &r9phot2_t, "r9phot2_t/F" );
   myTrees->Branch( "ptgg", &ptgg_t, "ptgg_t/F" );
@@ -274,6 +284,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "mggjj", &massggjj_t, "massggjj_t/F" );
   myTrees->Branch( "deltaphiggjj", &deltaphijjgg_t, "deltaphijjgg_t/F");
   myTrees->Branch( "deltaetaggjj", &deltaetajjgg_t, "deltaetajjgg_t/F");
+  myTrees->Branch( "deltaRggjj", &deltaRjjgg_t, "deltaRjjgg_t/F");
   myTrees->Branch( "btagCategory", &btagCategory_t, "btagCategory_t/I" );
   myTrees->Branch( "theCategory",  &theCategory_t,  "theCategory_t/I" );
   myTrees->Branch( "theGammaCategory",  &theGammaCategory_t,  "theGammaCategory_t/I" );
@@ -289,16 +300,21 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "isBtagJet2", &isj2btagged_t, "isj2btagged_t/I" );
   myTrees->Branch( "mjj_kin", &mjj_kin_t, "mjj_kin_t/F" );
   myTrees->Branch( "mggjj_kin", &mggjj_kin_t, "mggjj_kin_t/F" );
+  myTrees->Branch( "HT_jet",  &HT_jet_t,  "HT_jet_t/F" );
+  myTrees->Branch( "HT_gjet", &HT_gjet_t, "HT_gjet_t/F" );
   myTrees->Branch( "weight", &weight_t, "weight_t/F" );
 
-  // tree to compute final limits                                                                                                           
-  // TTree* TCVARS = new TTree("TCVARS","two photon two jet selection");                                                          
-  // TCVARS->SetName("TCVARS");                                                                                                   
-  // TCVARS->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );                                                       
-  // TCVARS->Branch( "mjj",          &invmassjet_t,   "invmassjet_t/F" );                                                         
-  // TCVARS->Branch( "mtot",         &massggjj_t,     "massggjj_t/F" );                                                           
-  // TCVARS->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );                                                        
-  // TCVARS->Branch( "evWeight",     &weight_t,       "weight_t/F" );   
+
+  /*
+  // tree to compute final limits                                                          
+  TTree* TCVARS = new TTree("TCVARS","two photon two jet selection");                                                          
+  TCVARS->SetName("TCVARS");                                                                                                   
+  TCVARS->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );                                                       
+  TCVARS->Branch( "mjj",          &invmassjet_t,   "invmassjet_t/F" );                                                         
+  TCVARS->Branch( "mtot",         &massggjj_t,     "massggjj_t/F" );                                                           
+  TCVARS->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );                                                        
+  TCVARS->Branch( "evWeight",     &weight_t,       "weight_t/F" );   
+  */
 
   // ------------------------------------------------------                                                                       
   // for the kinematic fits, assuming the two jets come from a 125 GeV Higgs                                                      
@@ -341,6 +357,22 @@ void fillPlot2012_radion_commonNtp::finalize() {
       if(!(idphot2)) continue;
     }
 
+
+    /*
+    // chiara: photonID for control sample
+    bool idphot1(0), idphot2(0);
+    bool looseidphot1(0), looseidphot2(0);
+    idphot1 = (ph1_ciclevel >= cicselection);
+    idphot2 = (ph2_ciclevel >= cicselection);
+    looseidphot1 = (ph1_ciclevel < cicselection && ph1_ciclevel >= 0);
+    looseidphot2 = (ph2_ciclevel < cicselection && ph2_ciclevel >= 0);
+    if(cicselection>0) {
+      if (idphot1 && idphot2) continue;
+      if (!looseidphot1 && !looseidphot2) continue;
+      if ( !((idphot1 && looseidphot2) || (idphot2 && looseidphot1)) ) continue;
+    }
+    */
+
     // extra cuts on photons: splitting events per photon class if needed                                                         
     int myEB=2;
     if( (fabs(ph1_SCEta)>1.4442 || fabs(ph2_SCEta)>1.4442) ) myEB=0;
@@ -358,7 +390,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // further cuts on photons -----------------------                                                                            
 
     // invariant mass cut on photons                                                                                              
-    if (PhotonsMass<100 || PhotonsMass>180) continue;
+    if (PhotonsMass<100 || PhotonsMass>180) continue;  
 
     // control plots to check the preselection                                                                                    
     h1_ptphot0->Fill(ph1_pt, weight_t);
@@ -372,7 +404,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // control plots after preselection on photons (pT, acceptance and ID)                                                        
     h1_mgg_preselG->Fill( PhotonsMass, weight_t );
 
-    
+
+
     // ------------------------------ jets ------------------------------------------
     // jets, no btagging, passing cut based jetID                                                                                 
 
@@ -524,6 +557,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
       isj1btagged = isj2btagged;
       isj2btagged = ismyjetbtag;
     }
+
     
     // selected analysis jets                                                                                                     
     TLorentzVector t4jet1, t4jet2;
@@ -533,7 +567,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     
     // invariant mass cut on jets                                                                                                 
     float invMassJJ = t4diJet.M();
-    if( t4diJet.M()<0. || t4diJet.M()>300. )  continue;
 
     // invariant mass plots after the two preselection on jets and photons                                                        
     h1_mgg_preselJ->Fill( PhotonsMass, weight_t );
@@ -553,6 +586,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // jet/photon related kinematic variables                                                                                     
     float zeppen        = t4diPhot.Eta() - 0.5*( etaJ1 + etaJ2);
+    float deltaR_ggjj   = t4diPhot.DeltaR(t4diJet);
     float deltaPhi_ggjj = t4diPhot.DeltaPhi(t4diJet);
     float deltaEta_ggjj = t4diPhot.Eta() - t4diJet.Eta();
 
@@ -563,11 +597,16 @@ void fillPlot2012_radion_commonNtp::finalize() {
     TLorentzVector t4Radion = t4diJet + t4diPhot;
     float radMass = t4Radion.M();
 
+    // further variables: HT
+    float HTgjet = ptJ1 + ptJ2 + ph1_pt + ph2_pt; 
+    float HTjet  = ptJ1 + ptJ2;
+
     // control plots on basic kinematic variables after the two jets and two photons are preselected 
     // jets                                                                                                                       
     h1_ptjet0->Fill( ptJ1, weight_t );
     h1_ptjet1->Fill( ptJ2, weight_t );
     h1_runptjet0->Fill(ptJ1*120./t4diJet.M(), weight);
+    h1_HTjet->Fill(HTjet);
 
     h1_etajet0->Fill( etaJ1, weight_t );
     h1_etajet1->Fill( etaJ2, weight_t );
@@ -580,6 +619,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // jets - gammas                                                                                                              
     h1_zeppen       -> Fill( zeppen, weight_t);
+    h1_deltaR       -> Fill( deltaR_ggjj, weight_t );
     h1_deltaPhi     -> Fill( deltaPhi_ggjj, weight_t );
     h1_deltaEta     -> Fill( deltaEta_ggjj, weight_t );
     h1_ptRatio      -> Fill( t4diJet.Pt()/t4diPhot.Pt(), weight_t );
@@ -589,6 +629,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     h1_ptDiphot       -> Fill( t4diPhot.Pt(), weight_t );
     h1_etaDiphot      -> Fill( t4diPhot.Eta(), weight_t );
     h1_deltaEtaDiphot -> Fill( deltaEtaGG, weight_t );
+
 
     // ------------------------------------------------------------                                                               
     // more refined analyses                                                                                                      
@@ -680,16 +721,17 @@ void fillPlot2012_radion_commonNtp::finalize() {
     if ( (isj1btagged==1 && isj2btagged==0) || (isj1btagged==0 && isj2btagged==1) ) btagCategory = 1;
     if (  isj1btagged==0 && isj2btagged==0 ) cout << "this should not happen!" << endl;
 
+    // chiara: mjj and mjjgg optimized windows 
+    // if( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>150.) )  continue;
+    // if( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) )  continue;
+    // if( btagCategory==1 && (radMass<260. || radMass>335.) )         continue;
+    // if( btagCategory==2 && (radMass<255. || radMass>320.) )         continue;
+
     // chiara: for better yield estimate:
     // if(v_puIdJets.size()>3) continue;
-    // if( btagCategory==1 && (t4diJet.M()<70. || t4diJet.M()>165.) )  continue;
-    // if( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) )  continue;
-    // if( btagCategory==1 && (radMass<255. || radMass>340.) )    continue;
-    // if( btagCategory==2 && (radMass<265. || radMass>320.) )    continue;
-    // if (PhotonsMass<120 || PhotonsMass>130) continue;
-
-    // for test: only EBEB events                                                                                                 
-    // if (!myEB) continue;                                                                                                       
+    // if(PhotonsMass<120 || PhotonsMass>130) continue;
+    // if(fabs(cosThetaStar)>1.) continue;
+    // if (btagCategory==1 && (ph1_pt*120./PhotonsMass)<50) continue; 
 
     // categorize the events using gammas
     int myR9=-1;
@@ -701,16 +743,12 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // total category combining photons / jets                                                                                    
     int theCategory = -1;
-    if (myR9==1 && btagCategory==2) theCategory = 0;
-    if (myR9==1 && btagCategory==1) theCategory = 1;
-    if (myR9==0 && btagCategory==2) theCategory = 2;
-    if (myR9==0 && btagCategory==1) theCategory = 3;
-
-    // to compare with an only photon-based analysis                                                                              
-    // if (myR9==1 && myEB)  theCategory = 0;                                                                                     
-    // if (myR9==0 && myEB)  theCategory = 1;                                                                                     
-    // if (myR9==1 && !myEB) theCategory = 2;                                                                                     
-    // if (myR9==0 && !myEB) theCategory = 3;
+    // if (myR9==1 && btagCategory==2) theCategory = 0;
+    // if (myR9==1 && btagCategory==1) theCategory = 1;
+    // if (myR9==0 && btagCategory==2) theCategory = 2;
+    // if (myR9==0 && btagCategory==1) theCategory = 3;
+    if (btagCategory==2) theCategory = 0;
+    if (btagCategory==1) theCategory = 1;
 
     // -------------------------------------------------------------                                                              
     // here we apply further cuts according to the btag category                                                                  
@@ -782,6 +820,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
       h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight_t );
     }
 
+
     // filling the tree for selected events                                                                                       
     massggnewvtx_t = PhotonsMass;
     ptphot1_t      = ph1_pt;
@@ -789,6 +828,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     ptphot2_t      = ph2_pt;
     etaphot1_t     = ph1_eta;
     etaphot2_t     = ph2_eta;
+    cicphot1_t     = ph1_ciclevel;
+    cicphot2_t     = ph2_ciclevel;
     r9phot1_t      = ph1_r9;
     r9phot2_t      = ph2_r9;
     ptgg_t         = dipho_pt;
@@ -802,12 +843,14 @@ void fillPlot2012_radion_commonNtp::finalize() {
     etajet2_t      = etaJ2;
     deltaphijj_t   = deltaPhiJJ;
     deltaetajj_t   = deltaEtaJJ;
-    invmassjet_t   = invMassJJ;
+    invmassjet_t   = invMassJJ;   
     ptjj_t         = ptJJ;
     etajj_t        = etaJJ;
-    massggjj_t     = radMass;
+    massggjj_t     = radMass;      
+    // massggjj_t     = Vstar_kinfit.M();      // chiara => to use the mggjj after kin fit
     deltaphijjgg_t = deltaPhi_ggjj;
     deltaetajjgg_t = deltaEta_ggjj;
+    deltaRjjgg_t   = deltaR_ggjj;
     btagCategory_t = btagCategory;
     theCategory_t  = theCategory;
     theGammaCategory_t = theGammaCategory;
@@ -831,6 +874,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     isj2btagged_t = isj2btagged;
     mjj_kin_t = dijet_kinfit.M();
     mggjj_kin_t = Vstar_kinfit.M();
+    HT_gjet_t = HTgjet;
+    HT_jet_t  = HTjet;
 
     myTrees->Fill();
 
@@ -859,6 +904,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_ptjet0->Write();
   h1_ptjet1->Write();
   h1_runptjet0->Write();
+  h1_HTjet->Write();
   h1_etajet0->Write();
   h1_etajet1->Write();
 
@@ -889,6 +935,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_etaDiphot->Write();
   h1_deltaEtaDiphot->Write();
 
+  h1_deltaR->Write();
   h1_deltaPhi->Write();
   h1_deltaEta->Write();
   h1_ptDijet->Write();
