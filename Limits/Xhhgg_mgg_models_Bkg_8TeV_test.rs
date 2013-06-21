@@ -24,16 +24,28 @@ MassggnewvtxCBSig_cat0    = CBShape(massggnewvtx, massggnewvtx_sig_m0_cat0, mass
 MassggnewvtxSig_cat0      = AddPdf(MassggnewvtxGaussSig_cat0, MassggnewvtxCBSig_cat0, massggnewvtx_sig_frac_cat0);
 
 
-massggnewvtx_sig_m0_cat1[124.927, 120.0, 130.0];
-massggnewvtx_sig_sigma0_cat1[3., 0.0, 5.0];
-massggnewvtx_sig_sigma1_cat1[4., 1.0, 7.0];
-massggnewvtx_sig_alpha_cat1[3., 0., 5.]; 
-massggnewvtx_sig_n_cat1[0.5, 0., 0.5]; 
-massggnewvtx_sig_frac_cat1[0.15607, 0, 1.0];
+massggnewvtx_sig_m0_cat1[125., 120.0, 130.0];
+massggnewvtx_sig_sigma0_cat1[3.5, 0.0, 5.0];
+massggnewvtx_sig_sigma1_cat1[3.5, 0.0, 5.0];
+massggnewvtx_sig_alpha_cat1[1., 0., 4.]; 
+massggnewvtx_sig_n_cat1[0.7, 0.3, 1.]; 
+massggnewvtx_sig_frac_cat1[0.5, 0., 1.];
 
 MassggnewvtxGaussSig_cat1 = Gaussian(massggnewvtx, massggnewvtx_sig_m0_cat1, massggnewvtx_sig_sigma0_cat1);
 MassggnewvtxCBSig_cat1    = CBShape(massggnewvtx, massggnewvtx_sig_m0_cat1, massggnewvtx_sig_sigma1_cat1, massggnewvtx_sig_alpha_cat1, massggnewvtx_sig_n_cat1);
 MassggnewvtxSig_cat1      = AddPdf(MassggnewvtxGaussSig_cat1, MassggnewvtxCBSig_cat1, massggnewvtx_sig_frac_cat1);
+
+
+massggnewvtx_sig_m0_cat2[124.927, 120.0, 130.0];
+massggnewvtx_sig_sigma0_cat2[3., 0.0, 5.0];
+massggnewvtx_sig_sigma1_cat2[4., 1.0, 7.0];
+massggnewvtx_sig_alpha_cat2[3., 0., 5.]; 
+massggnewvtx_sig_n_cat2[0.5, 0., 0.5]; 
+massggnewvtx_sig_frac_cat2[0.15607, 0, 1.0];
+
+MassggnewvtxGaussSig_cat2 = Gaussian(massggnewvtx, massggnewvtx_sig_m0_cat2, massggnewvtx_sig_sigma0_cat2);
+MassggnewvtxCBSig_cat2    = CBShape(massggnewvtx, massggnewvtx_sig_m0_cat2, massggnewvtx_sig_sigma1_cat2, massggnewvtx_sig_alpha_cat2, massggnewvtx_sig_n_cat2);
+MassggnewvtxSig_cat2      = AddPdf(MassggnewvtxGaussSig_cat2, MassggnewvtxCBSig_cat2, massggnewvtx_sig_frac_cat2);
 
 
 
@@ -45,6 +57,9 @@ MassggnewvtxBkg_cat0 = Exponential(massggnewvtx, massggnewvtx_bkg_exp_cat0);
 
 massggnewvtx_bkg_exp_cat1[-0.025,-0.05, 0.];
 MassggnewvtxBkg_cat1 = Exponential(massggnewvtx, massggnewvtx_bkg_exp_cat1);
+
+massggnewvtx_bkg_exp_cat2[-0.025,-0.05, 0.];
+MassggnewvtxBkg_cat2 = Exponential(massggnewvtx, massggnewvtx_bkg_exp_cat2);
 
 wei[1,0,10];
 
