@@ -44,6 +44,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   // ------------------------------------------------------                                                                       
   // histograms for kinematic optimization                                                                                        
 
+  // jets
   TH1D*  h1_njets = new TH1D("njets", "", 11, -0.5, 10.5);
   h1_njets->Sumw2();
   TH1D*  h1_nbjets_loose = new TH1D("nbjets_loose", "", 11, -0.5, 10.5);
@@ -53,20 +54,13 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TH1D*  h1_nbjets_tight = new TH1D("nbjets_tight", "", 11, -0.5, 10.5);
   h1_nbjets_tight->Sumw2();
 
+  // photons and jets kinematics
   TH1D* h1_ptphot0 = new TH1D("ptphot0", "", 100, 0., 200.);
   h1_ptphot0->Sumw2();
   TH1D* h1_ptphot1 = new TH1D("ptphot1", "", 100, 0., 200.);
   h1_ptphot1->Sumw2();
-
   TH1D* h1_runptphot0 = new TH1D("runptphot0", "", 100, 0., 200.);
   h1_runptphot0->Sumw2();
-
-  TH1D* h1_mgg_preselG = new TH1D("mgg_preselG", "", 80, 100., 180.);
-  h1_mgg_preselG->Sumw2();
-  TH1D* h1_mgg_preselJ = new TH1D("mgg_preselJ", "", 80, 100., 180.);
-  h1_mgg_preselJ->Sumw2();
-  TH1D* h1_mjj_preselJ = new TH1D("mjj_preselJ", "", 200, 0., 500.);
-  h1_mjj_preselJ->Sumw2();
 
   TH1D* h1_ptjet0 = new TH1D("ptjet0", "", 60, 0., 400.);
   h1_ptjet0->Sumw2();
@@ -74,53 +68,13 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_ptjet1->Sumw2();
   TH1D* h1_runptjet0 = new TH1D("runptjet0", "", 60, 0., 400.);
   h1_runptjet0->Sumw2();
-  TH1D* h1_HTjet = new TH1D("HTjet", "", 60, 0., 400.);
-  h1_HTjet->Sumw2();
+
   TH1D* h1_etajet0 = new TH1D("etajet0", "", 30, -3., 3.);
   h1_etajet0->Sumw2();
   TH1D* h1_etajet1 = new TH1D("etajet1", "", 30, -3., 3.);
   h1_etajet1->Sumw2();
 
-  TH1D* h1_kinfit_chiSquareProbH = new TH1D("kinfit_chiSquareProbH", "", 1000, 0., 1.0001);
-  h1_kinfit_chiSquareProbH->Sumw2();
-
-  TH1D* h1_mjj_0btag = new TH1D("mjj_0btag", "", 200, 0., 500.);
-  h1_mjj_0btag->Sumw2();
-  TH1D* h1_mjj_1btag = new TH1D("mjj_1btag", "", 200, 0., 500.);
-  h1_mjj_1btag->Sumw2();
-  TH1D* h1_mjj_2btag = new TH1D("mjj_2btag", "", 200, 0., 500.);
-  h1_mjj_2btag->Sumw2();
-
-  TH1D* h1_mggjj = new TH1D("mggjj", "", 100, 0., 1000.);
-  h1_mggjj->Sumw2();
-  TH1D* h1_mggjj_0btag = new TH1D("mggjj_0btag", "", 100, 0., 1000.);
-  h1_mggjj_0btag->Sumw2();
-  TH1D* h1_mggjj_1btag = new TH1D("mggjj_1btag", "", 100, 0., 1000.);
-  h1_mggjj_1btag->Sumw2();
-  TH1D* h1_mggjj_2btag = new TH1D("mggjj_2btag", "", 100, 0., 1000.);
-  h1_mggjj_2btag->Sumw2();
-
-  TH1D* h1_mgg_0btag = new TH1D("mgg_0btag", "", 80, 100., 180.);
-  h1_mgg_0btag->Sumw2();
-  TH1D* h1_mgg_1btag = new TH1D("mgg_1btag", "", 80, 100., 180.);
-  h1_mgg_1btag->Sumw2();
-  TH1D* h1_mgg_2btag = new TH1D("mgg_2btag", "", 80, 100., 180.);
-  h1_mgg_2btag->Sumw2();
-
-  TH1D* h1_mgg_0btag_ebeb = new TH1D("mgg_0btag_ebeb", "", 80, 100., 180.);
-  h1_mgg_0btag_ebeb->Sumw2();
-  TH1D* h1_mgg_1btag_ebeb = new TH1D("mgg_1btag_ebeb", "", 80, 100., 180.);
-  h1_mgg_1btag_ebeb->Sumw2();
-  TH1D* h1_mgg_2btag_ebeb = new TH1D("mgg_2btag_ebeb", "", 80, 100., 180.);
-  h1_mgg_2btag_ebeb->Sumw2();
-
-  TH1D* h1_mgg_0btag_nebeb = new TH1D("mgg_0btag_nebeb", "", 80, 100., 180.);
-  h1_mgg_0btag_nebeb->Sumw2();
-  TH1D* h1_mgg_1btag_nebeb = new TH1D("mgg_1btag_nebeb", "", 80, 100., 180.);
-  h1_mgg_1btag_nebeb->Sumw2();
-  TH1D* h1_mgg_2btag_nebeb = new TH1D("mgg_2btag_nebeb", "", 80, 100., 180.);
-  h1_mgg_2btag_nebeb->Sumw2();
-
+  // diphoton kine
   TH1D*  h1_ptDiphot = new TH1D("ptDiphot", "", 100, 0., 500.);
   h1_ptDiphot->Sumw2();
   TH1D*  h1_etaDiphot = new TH1D("etaDiphot", "", 40, -10., 10.);
@@ -128,12 +82,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TH1D* h1_deltaEtaDiphot = new TH1D("deltaEtaDiphot", "", 40, -5., 5.);
   h1_deltaEtaDiphot->Sumw2();
 
-  TH1D*  h1_deltaR = new TH1D("deltaR", "", 100, 0., 3.);
-  h1_deltaR->Sumw2();
-  TH1D*  h1_deltaPhi = new TH1D("deltaPhi", "", 100, 0., 3.1416);
-  h1_deltaPhi->Sumw2();
-  TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 50, -5., 5.);
-  h1_deltaEta->Sumw2();
+  // dijets kine
   TH1D*  h1_ptDijet = new TH1D("ptDijet", "", 100, 0., 500.);
   h1_ptDijet->Sumw2();
   TH1D*  h1_etaDijet = new TH1D("etaDijet", "", 40, -10., 10.);
@@ -142,9 +91,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_ptRatio->Sumw2();
   TH1D*  h1_ptDifference = new TH1D("ptDifference", "", 100, -200., 200.);
   h1_ptDifference->Sumw2();
-  TH1D* h1_zeppen = new TH1D("zeppen", "", 100, -8., 8.);
-  h1_zeppen->Sumw2();
-
+  TH1D* h1_HTjet = new TH1D("HTjet", "", 60, 0., 400.);
+  h1_HTjet->Sumw2();
   TH1D* h1_deltaPhiJets = new TH1D("deltaPhiJets", "", 50, -5., 5.);
   h1_deltaPhiJets->Sumw2();
   TH1D* h1_deltaEtaJets = new TH1D("deltaEtaJets", "", 40, -5., 5.);
@@ -152,58 +100,59 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TH1D* h1_deltaFabsEtaJets = new TH1D("deltaFabsEtaJets", "", 50, -5., 5.);
   h1_deltaFabsEtaJets->Sumw2();
 
-  TH1D*  h1_deltaPhi_kinfit = new TH1D("deltaPhi_kinfit", "", 100, 0., 3.1416);
-  h1_deltaPhi_kinfit->Sumw2();
-  TH1D*  h1_ptDijet_kinfit = new TH1D("ptDijet_kinfit", "", 100, 0., 500.);
-  h1_ptDijet_kinfit->Sumw2();
-  TH1D*  h1_ptRatio_kinfit = new TH1D("ptRatio_kinfit", "", 100, 0., 3.);
-  h1_ptRatio_kinfit->Sumw2();
-  TH1D*  h1_ptDifference_kinfit = new TH1D("ptDifference_kinfit", "", 100, -200., 200.);
-  h1_ptDifference_kinfit->Sumw2();
-  TH1D* h1_zeppen_kinfit = new TH1D("zeppen_kinfit", "", 100, -8., 8.);
-  h1_zeppen_kinfit->Sumw2();
+  // photons and jets
+  TH1D*  h1_deltaR = new TH1D("deltaR", "", 100, 0., 3.);
+  h1_deltaR->Sumw2();
+  TH1D*  h1_deltaPhi = new TH1D("deltaPhi", "", 100, 0., 3.1416);
+  h1_deltaPhi->Sumw2();
+  TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 50, -5., 5.);
+  h1_deltaEta->Sumw2();
 
-  TH1D* h1_deltaEtaJets_kinfit = new TH1D("deltaEtaJets_kinfit", "", 50, -5., 5.);
-  h1_deltaEtaJets_kinfit->Sumw2();
-  TH1D* h1_deltaFabsEtaJets_kinfit = new TH1D("deltaFabsEtaJets_kinfit", "", 50, -5., 5.);
-  h1_deltaFabsEtaJets_kinfit->Sumw2();
+  // masses
+  TH1D* h1_mgg_preselG = new TH1D("mgg_preselG", "", 80, 100., 180.);
+  h1_mgg_preselG->Sumw2();
+  TH1D* h1_mgg_preselJ = new TH1D("mgg_preselJ", "", 80, 100., 180.);
+  h1_mgg_preselJ->Sumw2();
+  TH1D* h1_mjj_preselJ = new TH1D("mjj_preselJ", "", 200, 0., 500.);
+  h1_mjj_preselJ->Sumw2();
 
-  TH1D* h1_cosTheta1 = new TH1D("cosTheta1", "", 50, -1.0001, 1.0001);
-  h1_cosTheta1->Sumw2();
-  TH1D* h1_cosTheta2 = new TH1D("cosTheta2", "", 25, 0., 1.0001);
-  h1_cosTheta2->Sumw2();
+  TH1D* h1_mjj_0btag = new TH1D("mjj_0btag", "", 200, 0., 500.);
+  h1_mjj_0btag->Sumw2();
+  TH1D* h1_mjj_1btag = new TH1D("mjj_1btag", "", 200, 0., 500.);
+  h1_mjj_1btag->Sumw2();
+  TH1D* h1_mjj_2btag = new TH1D("mjj_2btag", "", 200, 0., 500.);
+  h1_mjj_2btag->Sumw2();
+
+  TH1D* h1_mggjj = new TH1D("mggjj", "", 100, 100., 600.);
+  h1_mggjj->Sumw2();
+  TH1D* h1_mggjj_0btag = new TH1D("mggjj_0btag", "", 100, 100., 600.);
+  h1_mggjj_0btag->Sumw2();
+  TH1D* h1_mggjj_1btag = new TH1D("mggjj_1btag", "", 100, 100., 600.);
+  h1_mggjj_1btag->Sumw2();
+  TH1D* h1_mggjj_2btag = new TH1D("mggjj_2btag", "", 100, 100., 600.);
+  h1_mggjj_2btag->Sumw2();
+
+  // helicity angles
   TH1D* h1_cosThetaStar = new TH1D("cosThetaStar", "", 50, -1.0001, 1.0001);
   h1_cosThetaStar->Sumw2();
-  TH1D* h1_helphi = new TH1D("helphi", "", 100, 0., 3.1416);
-  h1_helphi->Sumw2();
-  TH1D* h1_helphi1 = new TH1D("helphi1", "", 100, 0., 3.1416);
-  h1_helphi1->Sumw2();
-
-  TH1D* h1_cosThetaStar_jets = new TH1D("cosThetaStar_jets", "", 50, -1.0001, 1.0001);
-  h1_cosThetaStar_jets->Sumw2();
-
-  TH1D* h1_helicityAngle_V = new TH1D("helicityAngle_V", "", 100, -1.0001, 1.0001);
-  h1_helicityAngle_V->Sumw2();
-
-  TH1D* h1_mVstar = new TH1D("mVstar", "", 500, 0., 1000.);
-  h1_mVstar->Sumw2();
-  TH1D* h1_ptVstar = new TH1D("ptVstar", "", 500, 0., 500.);
-  h1_ptVstar->Sumw2();
-  TH1D* h1_etaVstar = new TH1D("etaVstar", "", 100, -5., 5.);
-  h1_etaVstar->Sumw2();
-  TH1D* h1_phiVstar = new TH1D("phiVstar", "", 100, 0., 3.1416);
-  h1_phiVstar->Sumw2();
-
-  TH1D* h1_mVstar_kinfit = new TH1D("mVstar_kinfit", "", 500, 0., 1000.);
-  h1_mVstar_kinfit->Sumw2();
-  TH1D* h1_ptVstar_kinfit = new TH1D("ptVstar_kinfit", "", 500, 0., 500.);
-  h1_ptVstar_kinfit->Sumw2();
-  TH1D* h1_etaVstar_kinfit = new TH1D("etaVstar_kinfit", "", 100, -5., 5.);
-  h1_etaVstar_kinfit->Sumw2();
-  TH1D* h1_phiVstar_kinfit = new TH1D("phiVstar_kinfit", "", 100, 0., 3.1416);
-  h1_phiVstar_kinfit->Sumw2();
 
   // kin fit study                                                                                                                
+  TH1D* h1_kinfit_chiSquareProbH = new TH1D("kinfit_chiSquareProbH", "", 1000, 0., 1.0001);
+  h1_kinfit_chiSquareProbH->Sumw2();
+  TH1D* h1_mVstar_kinfit = new TH1D("mVstar_kinfit", "", 100, 100., 600.);
+  h1_mVstar_kinfit->Sumw2();
+  TH1D* h1_mVstar = new TH1D("mVstar", "", 100, 100., 600.);
+  h1_mVstar->Sumw2();
+  TH1D* h1_mggjj_kinfit_1btag = new TH1D("mggjj_kinfit_1btag", "", 100, 100., 600.);
+  h1_mggjj_kinfit_1btag->Sumw2();
+  TH1D* h1_mggjj_kinfit_2btag = new TH1D("mggjj_kinfit_2btag", "", 100, 100., 600.);
+  h1_mggjj_kinfit_2btag->Sumw2();
+  TH1D* h1_mggjj_nokinfit_1btag = new TH1D("mggjj_nokinfit_1btag", "", 100, 100., 600.);
+  h1_mggjj_nokinfit_1btag->Sumw2();
+  TH1D* h1_mggjj_nokinfit_2btag = new TH1D("mggjj_nokinfit_2btag", "", 100, 100., 600.);
+  h1_mggjj_nokinfit_2btag->Sumw2();
+
+  // 2d plots
   TH2D* h2_mggjj_vs_mjj_1btag = new TH2D("mggjj_vs_mjj_1btag", "", 100, 0., 300., 100, 100., 600.);
   h2_mggjj_vs_mjj_1btag->Sumw2();
   TH2D* h2_mggjj_vs_mjj_2btag = new TH2D("mggjj_vs_mjj_2btag", "", 100, 0., 300., 100, 100., 600.);
@@ -213,16 +162,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h2_mggjj_vs_mjj_kinfit_1btag->Sumw2();
   TH2D* h2_mggjj_vs_mjj_kinfit_2btag = new TH2D("mggjj_vs_mjj_kinfit_2btag", "", 100, 0., 300., 100, 100., 600.);
   h2_mggjj_vs_mjj_kinfit_2btag->Sumw2();
-
-  TH1D* h1_mggjj_kinfit_1btag = new TH1D("mggjj_kinfit_1btag", "", 100, 100., 600.);
-  h1_mggjj_kinfit_1btag->Sumw2();
-  TH1D* h1_mggjj_kinfit_2btag = new TH1D("mggjj_kinfit_2btag", "", 100, 100., 600.);
-  h1_mggjj_kinfit_2btag->Sumw2();
-
-  TH1D* h1_mggjj_nokinfit_1btag = new TH1D("mggjj_nokinfit_1btag", "", 100, 100., 600.);
-  h1_mggjj_nokinfit_1btag->Sumw2();
-  TH1D* h1_mggjj_nokinfit_2btag = new TH1D("mggjj_nokinfit_2btag", "", 100, 100., 600.);
-  h1_mggjj_nokinfit_2btag->Sumw2();
 
 
   // -----------------------------------------------------------------------------                                                 
@@ -242,7 +181,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;
   int theGammaCategory_t;
   int theCategory_t;
-  float zeppen_t;
   float chiSquareProbH_t, absCosThetaStar_t;
   int nvtx_t;
   int theVertex_t;
@@ -255,7 +193,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TTree* myTrees = new TTree();
   myTrees->SetName("myTrees");
   myTrees->Branch( "run", &run, "run/I" );
-  // myTrees->Branch( "lumis", &lumis, "lumis/I" );
   myTrees->Branch( "event", &event, "event/I" );
   myTrees->Branch( "massggnewvtx", &massggnewvtx_t, "massggnewvtx_t/F" );
   myTrees->Branch( "ptPhot1", &ptphot1_t, "ptphot1_t/F" );
@@ -291,7 +228,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "nbjets_loose",  &nbjets_loose_t,  "nbjets_loose_t/I" );
   myTrees->Branch( "nbjets_medium", &nbjets_medium_t, "nbjets_medium_t/I" );
   myTrees->Branch( "nbjets_tight",  &nbjets_tight_t,  "nbjets_tight_t/I" );
-  myTrees->Branch( "zeppen", &zeppen_t, "zeppen_t/F" );
   myTrees->Branch( "chiSquareProbH", &chiSquareProbH_t, "chiSquareProbH_t/F" );
   myTrees->Branch( "absCosThetaStar", &absCosThetaStar_t, "absCosThetaStar_t/F" );
   myTrees->Branch( "nvtx", &nvtx_t, "nvtx_t/I" );
@@ -306,7 +242,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
 
   /*
-  // tree to compute final limits                                                          
+  // tree to compute final limits in Alexandra's stuff                                                          
   TTree* TCVARS = new TTree("TCVARS","two photon two jet selection");                                                          
   TCVARS->SetName("TCVARS");                                                                                                   
   TCVARS->Branch( "mgg",          &massggnewvtx_t, "massggnewvtx_t/F" );                                                       
@@ -315,6 +251,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TCVARS->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );                                                        
   TCVARS->Branch( "evWeight",     &weight_t,       "weight_t/F" );   
   */
+
 
   // ------------------------------------------------------                                                                       
   // for the kinematic fits, assuming the two jets come from a 125 GeV Higgs                                                      
@@ -585,7 +522,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     float etaJJ      = t4diJet.Eta();
 
     // jet/photon related kinematic variables                                                                                     
-    float zeppen        = t4diPhot.Eta() - 0.5*( etaJ1 + etaJ2);
     float deltaR_ggjj   = t4diPhot.DeltaR(t4diJet);
     float deltaPhi_ggjj = t4diPhot.DeltaPhi(t4diJet);
     float deltaEta_ggjj = t4diPhot.Eta() - t4diJet.Eta();
@@ -618,7 +554,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     h1_deltaPhiJets     -> Fill( deltaPhiJJ, weight_t );
 
     // jets - gammas                                                                                                              
-    h1_zeppen       -> Fill( zeppen, weight_t);
     h1_deltaR       -> Fill( deltaR_ggjj, weight_t );
     h1_deltaPhi     -> Fill( deltaPhi_ggjj, weight_t );
     h1_deltaEta     -> Fill( deltaEta_ggjj, weight_t );
@@ -634,7 +569,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // ------------------------------------------------------------                                                               
     // more refined analyses                                                                                                      
 
-    // perform two kinfits                                                                                                        
+    // perform the kinfit                                                                                                        
     std::pair<TLorentzVector,TLorentzVector> jets_kinfitH = fitter_jetsH->fit(t4jet1, t4jet2);
     float chiSquareProbH = TMath::Prob(fitter_jetsH->getS(), fitter_jetsH->getNDF());
 
@@ -642,51 +577,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     HelicityLikelihoodDiscriminant::HelicityAngles hangles;
     if( coin->Uniform(1.)<0.5 ) hangles = helicityDiscriminator->computeHelicityAngles(t4phot1, t4phot2, t4jet1, t4jet2);
     else                        hangles = helicityDiscriminator->computeHelicityAngles(t4phot1, t4phot2, t4jet1, t4jet2);
-
     float cosThetaStar = hangles.helCosThetaStar;
     h1_cosThetaStar -> Fill( hangles.helCosThetaStar, weight_t );
-    h1_cosTheta1    -> Fill( hangles.helCosTheta1, weight_t );
-    h1_cosTheta2    -> Fill( hangles.helCosTheta2, weight_t );
-    h1_helphi       -> Fill( hangles.helPhi, weight_t );
-    h1_helphi1      -> Fill( hangles.helPhi1, weight_t );
-
-    // boost stuff in the radion frame                                                                                            
-    TLorentzVector Vstar_Vstar(t4Radion);
-    Vstar_Vstar.Boost(-t4Radion.BoostVector());
-    TLorentzVector V_Vstar(t4diJet);
-    V_Vstar.Boost(-t4Radion.BoostVector());
-
-    // boost stuff in the V_Vstar frame:                                                                                          
-    TLorentzVector Vstar_V(Vstar_Vstar);
-    Vstar_V.Boost(-V_Vstar.BoostVector());
-    
-    TLorentzVector jet1_V, jet2_V;
-    // randomize:                                                                                                                 
-    if( coin->Uniform(1.)<0.5) {
-      jet1_V = t4jet1;
-      jet2_V = t4jet2;
-    } else {
-      jet1_V = t4jet2;
-      jet2_V = t4jet1;
-    }
-    jet1_V.Boost(-t4diJet.BoostVector());
-    jet2_V.Boost(-t4diJet.BoostVector());
-
-    TVector3 v3_jet1_V  = jet1_V.Vect();
-    TVector3 v3_jet2_V  = jet2_V.Vect();
-    TVector3 v3_Vstar_V = Vstar_V.Vect();
-    TVector3 v3_V_Vstar = V_Vstar.Vect();
-
-    float cosThetaStar_jets = cos( v3_jet1_V.Angle(v3_V_Vstar) );
-    float helicityAngle_V   = sin( v3_jet1_V.Angle(v3_Vstar_V) );
-
-    // control plots                                                                                                              
-    h1_cosThetaStar_jets -> Fill( cosThetaStar_jets, weight_t );
-    h1_helicityAngle_V   -> Fill( helicityAngle_V, weight_t );
-    h1_mVstar            -> Fill( t4Radion.M(), weight_t );
-    h1_ptVstar           -> Fill( t4Radion.Pt(), weight_t );
-    h1_etaVstar          -> Fill( t4Radion.Eta(), weight_t );
-    h1_phiVstar          -> Fill( t4Radion.Phi(), weight_t );
 
 
     // refitted jets                                                                                                              
@@ -694,25 +586,12 @@ void fillPlot2012_radion_commonNtp::finalize() {
     jet1_kinfit = jets_kinfitH.first;
     jet2_kinfit = jets_kinfitH.second;
     TLorentzVector dijet_kinfit = jet1_kinfit + jet2_kinfit;
+    TLorentzVector Vstar_kinfit = dijet_kinfit + t4diPhot;
 
     // control plots after kin fit                                                                                                
     h1_kinfit_chiSquareProbH->Fill( chiSquareProbH, weight_t );
-
-    float zeppen_kinfit = t3diPhot.Eta() - 0.5*( jet1_kinfit.Eta() + jet2_kinfit.Eta() );
-    h1_zeppen_kinfit->Fill( zeppen_kinfit, weight_t );
-    float deltaphi_kinfit = fabs(dijet_kinfit.DeltaPhi(t4diPhot));
-    h1_deltaPhi_kinfit         -> Fill( deltaphi_kinfit, weight_t );
-    h1_ptDijet_kinfit          -> Fill( dijet_kinfit.Pt(), weight_t );
-    h1_ptRatio_kinfit          -> Fill( dijet_kinfit.Pt()/t4diPhot.Pt(), weight_t );
-    h1_ptDifference_kinfit     -> Fill( dijet_kinfit.Pt()-t4diPhot.Pt(), weight_t );
-    h1_deltaEtaJets_kinfit     -> Fill( jet1_kinfit.Eta()-jet2_kinfit.Eta(), weight_t );
-    h1_deltaFabsEtaJets_kinfit -> Fill( fabs(jet1_kinfit.Eta())-fabs(jet2_kinfit.Eta()), weight_t );
-
-    TLorentzVector Vstar_kinfit = dijet_kinfit + t4diPhot;
     h1_mVstar_kinfit   -> Fill( Vstar_kinfit.M(),   weight_t );
-    h1_ptVstar_kinfit  -> Fill( Vstar_kinfit.Pt(),  weight_t );
-    h1_etaVstar_kinfit -> Fill( Vstar_kinfit.Eta(), weight_t );
-    h1_phiVstar_kinfit -> Fill( Vstar_kinfit.Phi(), weight_t );
+    h1_mVstar          -> Fill( t4Radion.M(), weight_t );
 
     // -------------------------------------------------------------                                                              
     // counting the number of bjets to categorize the events                                                                      
@@ -779,21 +658,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
       h1_mjj_1btag->Fill( invMassJJ, weight_t );
     } else {
       h1_mjj_2btag->Fill( invMassJJ, weight_t );
-    }
-
-    // invariant mass of photons by btag category                                                                                 
-    if( btagCategory==0 ) {
-      h1_mgg_0btag -> Fill( PhotonsMass, weight_t );
-      if( myEB ) h1_mgg_0btag_ebeb ->Fill( PhotonsMass, weight_t );
-      else       h1_mgg_0btag_nebeb->Fill( PhotonsMass, weight_t );
-    } else if( btagCategory==1 ) {
-      h1_mgg_1btag -> Fill( PhotonsMass, weight_t );
-      if( myEB ) h1_mgg_1btag_ebeb ->Fill( PhotonsMass, weight_t );
-      else       h1_mgg_1btag_nebeb->Fill( PhotonsMass, weight_t );
-    } else if( btagCategory==2 ) {
-      h1_mgg_2btag -> Fill( PhotonsMass, weight_t );
-      if( myEB ) h1_mgg_2btag_ebeb ->Fill( PhotonsMass, weight_t );
-      else       h1_mgg_2btag_nebeb->Fill( PhotonsMass, weight_t );
     }
 
     // invariant mass of radion by btag category                                                                                  
@@ -865,7 +729,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     } else {
       cout << "this btag algo does not exist" << endl;
     }
-    zeppen_t = zeppen;
     chiSquareProbH_t = chiSquareProbH;
     absCosThetaStar_t  = fabs(cosThetaStar);
     nvtx_t      = nvtx;
@@ -919,18 +782,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_mggjj_1btag->Write();
   h1_mggjj_2btag->Write();
 
-  h1_mgg_0btag->Write();
-  h1_mgg_1btag->Write();
-  h1_mgg_2btag->Write();
-
-  h1_mgg_0btag_ebeb->Write();
-  h1_mgg_1btag_ebeb->Write();
-  h1_mgg_2btag_ebeb->Write();
-
-  h1_mgg_0btag_nebeb->Write();
-  h1_mgg_1btag_nebeb->Write();
-  h1_mgg_2btag_nebeb->Write();
-
   h1_ptDiphot->Write();
   h1_etaDiphot->Write();
   h1_deltaEtaDiphot->Write();
@@ -946,35 +797,11 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_deltaPhiJets->Write();
   h1_deltaEtaJets->Write();
   h1_deltaFabsEtaJets->Write();
-  h1_zeppen->Write();
 
-  h1_deltaPhi_kinfit->Write();
-  h1_ptDijet_kinfit->Write();
-  h1_ptRatio_kinfit->Write();
-  h1_ptDifference_kinfit->Write();
-
-  h1_deltaEtaJets_kinfit->Write();
-  h1_deltaFabsEtaJets_kinfit->Write();
-  h1_zeppen_kinfit->Write();
-
-  h1_cosTheta1->Write();
-  h1_cosTheta2->Write();
   h1_cosThetaStar->Write();
-  h1_helphi->Write();
-  h1_helphi1->Write();
-
-  h1_cosThetaStar_jets->Write();
-  h1_helicityAngle_V->Write();
 
   h1_mVstar->Write();
-  h1_ptVstar->Write();
-  h1_etaVstar->Write();
-  h1_phiVstar->Write();
-
   h1_mVstar_kinfit->Write();
-  h1_ptVstar_kinfit->Write();
-  h1_etaVstar_kinfit->Write();
-  h1_phiVstar_kinfit->Write();
 
   h2_mggjj_vs_mjj_1btag        -> Write();
   h2_mggjj_vs_mjj_kinfit_1btag -> Write();
