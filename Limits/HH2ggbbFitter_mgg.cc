@@ -54,14 +54,15 @@ RooArgSet* defineVariables() {
   RooRealVar* massggnewvtx  = new RooRealVar("massggnewvtx", "M(gg)",MMIN,MMAX,"GeV");
   RooRealVar* mjj = new RooRealVar("mjj", "M(jj)",10,300,"GeV");
   RooRealVar* mggjj = new RooRealVar("mggjj", "M(ggjj)",10,1500,"GeV");
-  RooRealVar* etaPhot1 = new RooRealVar("etaPhot1", "eta(g1)",-10,10,"GeV");
-  RooRealVar* etaPhot2 = new RooRealVar("etaPhot2", "eta(g2)",-10,10,"GeV");
-  RooRealVar* r9Phot1 = new RooRealVar("r9Phot1", "R9(g1)",-10,10,"GeV");
-  RooRealVar* r9Phot2 = new RooRealVar("r9Phot2", "R9(g2)",-10,10,"GeV");
+  RooRealVar* runptPhot1 = new RooRealVar("runptPhot1","runptPhot1",0,1000,"GeV");
+  RooRealVar* runptCorrJet1 = new RooRealVar("runptCorrJet1","runptCorrJet1",0,1000,"GeV");
+  RooRealVar* absCosThetaStar = new RooRealVar("absCosThetaStar","absCosThetaStar",0,1,"");
+  // RooRealVar* HT_jet = new RooRealVar("HT_jet","HT_jet",0,1000,"GeV");
+  // RooRealVar* njets = new RooRealVar("njets", "# jets",-10,10,"");
   RooRealVar* weight = new RooRealVar("weight","Reweightings",0,10,"");
   RooRealVar* btagCategory = new RooRealVar("btagCategory","event category",0.9,2.1,"") ;
   
-  RooArgSet* ntplVars = new RooArgSet(*massggnewvtx, *mjj, *mggjj, *etaPhot1, *etaPhot2, *r9Phot1, *r9Phot2, *btagCategory, *weight);
+  RooArgSet* ntplVars = new RooArgSet(*massggnewvtx, *mjj, *mggjj, *runptPhot1, *runptCorrJet1, *absCosThetaStar, *btagCategory, *weight);
   
   return ntplVars;
 }
@@ -142,9 +143,10 @@ void AddSigData(RooWorkspace* w, Float_t mass) {
   TTree* sigTree1 = (TTree*) sigFile1.Get("myTrees");
 
   // common preselection cut
-  TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && mjj>98.5 && mjj<151.5 && mggjj>270 && mggjj<330");   // chiara
-  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<165 && mjj>70 && mggjj>255 && mggjj<340) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>265) )");   // chiara
-  
+  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && mjj>98.5 && mjj<151.5 && mggjj>270 && mggjj<330");   // chiara
+  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<150 && mjj>90 && mggjj>260 && mggjj<335) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>255) )");   // chiara
+  TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<150 && mjj>90 && mggjj>260 && mggjj<335 && runptCorrJet1>50 && runptPhot1>55 && absCosThetaStar<0.8) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>255 && runptPhot1>50) )");   // chiara
+
   // Create signal dataset composed with different productions, the weight is already applied in our ntuples
   RooDataSet sigWeighted("sigWeighted","dataset",sigTree1,*ntplVars,mainCut,"weight");
   cout << endl;
@@ -175,6 +177,12 @@ void AddSigData(RooWorkspace* w, Float_t mass) {
     // d) chiara: 1-btag, 2-btag 
     if (c==0) signal[c] = (RooDataSet*) sigWeighted.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1"));
     if (c==1) signal[c] = (RooDataSet*) sigWeighted.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==2"));
+
+    // e) chiara: 2-btag, 1-btag high R9, 1-btag low R9
+    // if (c==0) signal[c] = (RooDataSet*) sigWeighted.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1 && r9Phot1>0.94 && r9Phot2>0.94"));
+    // if (c==1) signal[c] = (RooDataSet*) sigWeighted.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1 && (r9Phot1<0.94 || r9Phot2<0.94)"));
+    // if (c==2) signal[c] = (RooDataSet*) sigWeighted.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==2"));
+ 
 
     w->import(*signal[c],Rename(TString::Format("SigWeight_cat%d",c)));
     
@@ -209,8 +217,9 @@ void AddBkgData(RooWorkspace* w) {
   RooArgSet* ntplVars = defineVariables();
 
   // common preselection cut
-  TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && mjj>98.5 && mjj<151.5 && mggjj>270 && mggjj<330");  // chiara
-  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<165 && mjj>70 && mggjj>255 && mggjj<340) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>265) )");   // chiara
+  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && mjj>98.5 && mjj<151.5 && mggjj>270 && mggjj<330");  // chiara
+  // TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<150 && mjj>90 && mggjj>260 && mggjj<335) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>255) )");   // chiara
+  TString mainCut("massggnewvtx>=100 && massggnewvtx<=180 && ( (btagCategory==1 && mjj<150 && mjj>90 && mggjj>260 && mggjj<335 && runptCorrJet1>50 && runptPhot1>55 && absCosThetaStar<0.8) || (btagCategory==2 && mjj<140 && mjj>95 && mggjj<320 && mggjj>255 && runptPhot1>50) )");   // chiara
 
   // Create dataset
   RooDataSet Data("Data","dataset",dataTree,*ntplVars,mainCut,"weight");
@@ -243,6 +252,11 @@ void AddBkgData(RooWorkspace* w) {
     // d) chiara: 1-2 btag
     if (c==0) dataToFit[c] = (RooDataSet*) Data.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1"));
     if (c==1) dataToFit[c] = (RooDataSet*) Data.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==2"));
+
+    // e) chiara: 2-btag, 1-btag high R9, 1-btag low R9
+    // if (c==0) dataToFit[c] = (RooDataSet*) Data.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1 && r9Phot1>0.94 && r9Phot2>0.94"));
+    // if (c==1) dataToFit[c] = (RooDataSet*) Data.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==1 && (r9Phot1<0.94 || r9Phot2<0.94)"));
+    // if (c==2) dataToFit[c] = (RooDataSet*) Data.reduce(*w->var("massggnewvtx"),mainCut+TString::Format(" && btagCategory==2"));
 
     cout << endl; cout << "for category = " << c << endl;
     dataToFit[c]->Print("v");
