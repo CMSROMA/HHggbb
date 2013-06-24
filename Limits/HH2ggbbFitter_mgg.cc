@@ -131,7 +131,7 @@ void AddSigData(RooWorkspace* w, Float_t mass) {
   Float_t MASS(mass);
 
   // Luminosity:
-  Float_t Lum = 19500.0;  
+  Float_t Lum = 19620.0;  
   RooRealVar lumi("lumi","lumi",Lum);
   w->import(lumi); 
   
