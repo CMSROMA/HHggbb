@@ -107,6 +107,10 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_deltaPhi->Sumw2();
   TH1D*  h1_deltaEta = new TH1D("deltaEta", "", 50, -5., 5.);
   h1_deltaEta->Sumw2();
+  TH1D *h1_deltaR_gg    = new TH1D("deltaR_gg",    "", 50, 0., 3.);
+  h1_deltaR_gg->Sumw2();
+  TH1D *h1_minDeltaR_gb = new TH1D("minDeltaR_gb", "", 50, 0., 3.);
+  h1_minDeltaR_gb->Sumw2();
 
   // masses
   TH1D* h1_mgg_preselG = new TH1D("mgg_preselG", "", 80, 100., 180.);
@@ -178,6 +182,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   float deltaphijj_t, deltaetajj_t;
   float invmassjet_t, ptjj_t, etajj_t, massggjj_t;
   float deltaphijjgg_t, deltaetajjgg_t, deltaRjjgg_t;
+  float deltaR_gg_t, minDeltaR_gb_t;
   int btagCategory_t, nbjets_loose_t, nbjets_medium_t, nbjets_tight_t;
   int theGammaCategory_t;
   int theCategory_t;
@@ -238,6 +243,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "mggjj_kin", &mggjj_kin_t, "mggjj_kin_t/F" );
   myTrees->Branch( "HT_jet",  &HT_jet_t,  "HT_jet_t/F" );
   myTrees->Branch( "HT_gjet", &HT_gjet_t, "HT_gjet_t/F" );
+  myTrees->Branch( "deltaR_gg",    &deltaR_gg_t,    "deltaR_gg/F" );
+  myTrees->Branch( "minDeltaR_gb", &minDeltaR_gb_t, "minDeltaR_gb/F" );
   myTrees->Branch( "weight", &weight_t, "weight_t/F" );
 
 
@@ -285,7 +292,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     if((TMath::Abs(ph1_SCEta)>1.4442&&TMath::Abs(ph1_SCEta)<1.566)||(TMath::Abs(ph2_SCEta)>1.4442&&TMath::Abs(ph2_SCEta)<1.566)
        || TMath::Abs(ph1_SCEta)>2.5 || TMath::Abs(ph2_SCEta)>2.5) continue;  // acceptance                                      
 
-    // photon id                                                                                                                  
+    // photon id  
     bool idphot1(0), idphot2(0);
     idphot1 = (ph1_ciclevel >= cicselection);
     idphot2 = (ph2_ciclevel >= cicselection);
@@ -293,7 +300,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
       if(!(idphot1)) continue;
       if(!(idphot2)) continue;
     }
-
 
     /*
     // chiara: photonID for control sample
@@ -319,6 +325,9 @@ void fillPlot2012_radion_commonNtp::finalize() {
     TLorentzVector t4phot1, t4phot2;
     t4phot1.SetPtEtaPhiM(ph1_pt,ph1_eta,ph1_phi,0.);
     t4phot2.SetPtEtaPhiM(ph2_pt,ph2_eta,ph2_phi,0.);
+    TVector3 t3phot1, t3phot2;
+    t3phot1.SetPtEtaPhi(ph1_pt,ph1_eta,ph1_phi);
+    t3phot2.SetPtEtaPhi(ph2_pt,ph2_eta,ph2_phi);
     TLorentzVector t4diPhot;
     t4diPhot.SetPtEtaPhiM( dipho_pt, dipho_eta, dipho_phi, PhotonsMass );
     TVector3 t3diPhot;
@@ -500,6 +509,9 @@ void fillPlot2012_radion_commonNtp::finalize() {
     TLorentzVector t4jet1, t4jet2;
     t4jet1.SetPtEtaPhiE(ptcorrjet[jet1],etajet[jet1],phijet[jet1],ecorrjet[jet1]);
     t4jet2.SetPtEtaPhiE(ptcorrjet[jet2],etajet[jet2],phijet[jet2],ecorrjet[jet2]);
+    TVector3 t3jet1, t3jet2;
+    t3jet1.SetPtEtaPhi(ptcorrjet[jet1],etajet[jet1],phijet[jet1]);
+    t3jet2.SetPtEtaPhi(ptcorrjet[jet2],etajet[jet2],phijet[jet2]);
     TLorentzVector t4diJet = t4jet1 + t4jet2;
     
     // invariant mass cut on jets                                                                                                 
@@ -525,6 +537,17 @@ void fillPlot2012_radion_commonNtp::finalize() {
     float deltaR_ggjj   = t4diPhot.DeltaR(t4diJet);
     float deltaPhi_ggjj = t4diPhot.DeltaPhi(t4diJet);
     float deltaEta_ggjj = t4diPhot.Eta() - t4diJet.Eta();
+
+    // gg and gamma,jet
+    float deltaR_gg    = t3phot1.DeltaR(t3phot2);
+    float deltaR_g1b1  = t3phot1.DeltaR(t3jet1);
+    float deltaR_g1b2  = t3phot1.DeltaR(t3jet2);
+    float deltaR_g2b1  = t3phot2.DeltaR(t3jet1);
+    float deltaR_g2b2  = t3phot2.DeltaR(t3jet2);
+    float minDeltaR_gb = deltaR_g1b1;
+    if ( deltaR_g1b2 < minDeltaR_gb ) minDeltaR_gb = deltaR_g1b2;
+    if ( deltaR_g2b1 < minDeltaR_gb ) minDeltaR_gb = deltaR_g2b1;
+    if ( deltaR_g2b2 < minDeltaR_gb ) minDeltaR_gb = deltaR_g2b2;
 
     // further diphoton variables                                                                                                 
     float deltaEtaGG = t4phot1.Eta() - t4phot2.Eta();
@@ -559,6 +582,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     h1_deltaEta     -> Fill( deltaEta_ggjj, weight_t );
     h1_ptRatio      -> Fill( t4diJet.Pt()/t4diPhot.Pt(), weight_t );
     h1_ptDifference -> Fill( t4diJet.Pt()-t4diPhot.Pt(), weight_t );
+    h1_deltaR_gg    -> Fill( deltaR_gg, weight_t );
+    h1_minDeltaR_gb -> Fill( minDeltaR_gb, weight_t );
 
     // gammas                                                                                                                     
     h1_ptDiphot       -> Fill( t4diPhot.Pt(), weight_t );
@@ -608,9 +633,13 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // chiara: for better yield estimate:
     // if(v_puIdJets.size()>3) continue;
-    // if(PhotonsMass<120 || PhotonsMass>130) continue;
+    // if(PhotonsMass<115 || PhotonsMass>135) continue;
     // if(fabs(cosThetaStar)>1.) continue;
     // if (btagCategory==1 && (ph1_pt*120./PhotonsMass)<50) continue; 
+
+    // if( PhotonsMass<115 || PhotonsMass>135 )     continue;         
+    // if( (t4diJet.M()<90. || t4diJet.M()>150.) )  continue;
+    //  if( radMass<470. || radMass>530. )           continue; 
 
     // categorize the events using gammas
     int myR9=-1;
@@ -739,6 +768,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     mggjj_kin_t = Vstar_kinfit.M();
     HT_gjet_t = HTgjet;
     HT_jet_t  = HTjet;
+    deltaR_gg_t = deltaR_gg;
+    minDeltaR_gb_t = minDeltaR_gb;
 
     myTrees->Fill();
 
@@ -793,6 +824,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
   h1_etaDijet->Write();
   h1_ptRatio->Write();
   h1_ptDifference->Write();
+  h1_deltaR_gg->Write();
+  h1_minDeltaR_gb->Write();
 
   h1_deltaPhiJets->Write();
   h1_deltaEtaJets->Write();
