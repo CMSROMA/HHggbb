@@ -144,6 +144,10 @@ int main( int argc, char* argv[] ) {
 
     finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-1000_madgraph", selectionType, bTaggerType, datasets);    
 
+  } else if( dataset=="Radion_M-300_regr" ) {  
+
+    finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-300_regr", selectionType, bTaggerType, datasets);    
+
   } else {
     
     cout << "this dataset does not exists" << endl;

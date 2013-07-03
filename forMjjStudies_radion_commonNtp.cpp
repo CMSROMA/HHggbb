@@ -53,6 +53,9 @@ int main( int argc, char* argv[] ) {
   } else if( dataset=="Radion_M-1000_madgraph" ) {  
     finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-1000_madgraph", selectionType, bTaggerType, datasets);    
 
+  } else if( dataset=="Radion_M-300_regr" ) {
+    finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-300_regr", selectionType, bTaggerType, datasets);
+
   } else {
     cout << "this dataset does not exists" << endl;
   }
@@ -125,10 +128,11 @@ RedntpDirStruct get_dirs_commonNtp( const std::string& prodVersion ) {
 
   if( prodVersion=="Radion" ) {
 
-    returnStruct.maindatadir = "/xrootdfs/cms/local/crovelli/Radion/common";  
-    returnStruct.mainmcdir   = "/xrootdfs/cms/local/crovelli/Radion/common";
-    returnStruct.datadir     = "radion_tree_v03";
-    returnStruct.mcdir       = "radion_tree_v03";
+    returnStruct.maindatadir = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.mainmcdir   = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.datadir     = "dataCommonNtp";
+    returnStruct.mcdir       = "dataCommonNtp";
+
   } else {
 
     std::cout << "-> Unknown prodVersion: '" << prodVersion << "'! Exiting." << std::endl;

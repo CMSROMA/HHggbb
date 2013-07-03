@@ -3,7 +3,7 @@
 #include "RedNtpFinalizer_commonNtp.h"
 
 RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyzerType, const std::string& dataset, const std::string& flags) {
-  
+
   DEBUG_ = false;
 
   // chiara: aggiungi gli altri quando ci saranno
@@ -49,6 +49,9 @@ RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyze
   else if( dataset_tstr.Contains("ZGG") ) tree_ = new TChain("Zgg_dR02");
 
   else if( dataset_tstr.Contains("Data2012") ) tree_ = new TChain("Data");
+
+  // to study the regression
+  else if ( dataset_tstr.Contains("Radion_M-300_regr") ) tree_ = new TChain("Radion_m300_8TeV_nm");   
 
   else cout << "wrong dataset name" << endl;
 
@@ -146,6 +149,9 @@ void RedNtpFinalizer_commonNtp::addFile(const std::string& dataset, const std::s
 
   else if( dataset_tstr.Contains("Data2012") ) treeName = redNtpDir_ + "/Data_full2012.root/Data";
   
+  // to study regression
+  else if( dataset_tstr.Contains("Radion_M-300_regr") ) treeName = redNtpDir_ + "/Radion_m300_withRegression.root/Radion_m300_8TeV_nm";   
+
   else cout << "wrong dataset name" << endl;
   
   tree_->Add(treeName.c_str());
