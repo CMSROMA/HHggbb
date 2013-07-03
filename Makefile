@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.2 2013/04/10 12:14:54 crovelli Exp $
+# $Id: Makefile,v 1.3 2013/05/23 10:12:38 crovelli Exp $
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --libs)
 ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
 
@@ -32,7 +32,7 @@ EXTRALIBS  :=  -L$(ROOTSYS)/lib -L$(ROOFIT_LIBDIR)/ -lHtml -lMathCore -lGenVecto
 CCFILES=$(filter-out $(BINFILES),$(wildcard *.cc))
 
 # List of all object files to build
-OLIST = $(OBJDIR)/RedNtpFinalizer.o $(OBJDIR)/AnalysisJet.o $(OBJDIR)/BTagSFUtil.o $(OBJDIR)/SFlightFuncs.o $(OBJDIR)/MistagFuncs.o $(OBJDIR)/Bins.o $(OBJDIR)/QGLikelihoodCalculator.o 
+OLIST = $(OBJDIR)/RedNtpFinalizer.o $(OBJDIR)/AnalysisJet.o $(OBJDIR)/BTagSFUtil.o $(OBJDIR)/SFlightFuncs.o $(OBJDIR)/MistagFuncs.o 
 OLIST += $(OBJDIR)/DrawBase.o $(OBJDIR)/fitTools.o
 OLIST += $(OBJDIR)/TAbsFitParticle.o $(OBJDIR)/TAbsFitConstraint.o $(OBJDIR)/TFitConstraintM.o $(OBJDIR)/TFitParticleEtEtaPhi.o $(OBJDIR)/TKinFitter.o $(OBJDIR)/DiJetKinFitter.o
 OLIST += $(OBJDIR)/HelicityLikelihoodDiscriminant.o $(OBJDIR)/RooPentaSpinTwo.o $(OBJDIR)/RooBphione.o $(OBJDIR)/RooBtheta.o $(OBJDIR)/RooBkg2l2jHL.o $(OBJDIR)/RooSpinZero5DV2.o $(OBJDIR)/RooBkgd2L2JV2.o 
@@ -62,20 +62,6 @@ $(OBJDIR)/MistagFuncs.o: $(CMSSW_BASE)/src/BTagSFUtil/src/MistagFuncs.cc
 	@echo "Compiling $<"
 	mkdir -p $(OBJDIR)
 	@$(CC) $(CCFLAGS) -c $< -o $@ $(INCLUDES)
-
-$(OBJDIR)/Bins.o: $(CMSSW_BASE)/src/QGLikelihood/src/Bins.cc
-	@echo "Compiling $<"
-	mkdir -p $(OBJDIR)
-	@$(CC) $(CCFLAGS) -c $< -o $@ $(INCLUDES)
-
-
-
-$(OBJDIR)/QGLikelihoodCalculator.o: $(CMSSW_BASE)/src/QGLikelihood/src/QGLikelihoodCalculator.cc
-	@echo "Compiling $<"
-	mkdir -p $(OBJDIR)
-	@$(CC) $(CCFLAGS) -c $< -o $@ $(INCLUDES)
-
-
 
 $(OBJDIR)/DrawBase.o: $(CMSSW_BASE)/src/CommonTools/DrawBase.C
 	@echo "Compiling $<"
