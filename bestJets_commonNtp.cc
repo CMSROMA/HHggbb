@@ -2,11 +2,26 @@
 
 using namespace std;
 
+using namespace TMVA;
+
 bestJets_commonNtp::bestJets_commonNtp( const std::string& dataset, const std::string& selectionType, const std::string& bTaggerType ) : RedNtpFinalizer_commonNtp( "Radion", dataset ) {
   
   bTaggerType_ = bTaggerType;
   
   setSelectionType(selectionType);
+
+  // jet regression                                                                                                   
+  readerRegres = new Reader( "!Color:!Silent" );
+  readerRegres->AddVariable( "hJet_pt",  &fRegr_pt);
+  readerRegres->AddVariable( "hJet_eta", &fRegr_eta);
+  readerRegres->AddVariable( "hJet_cef", &fRegr_cef);
+  readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
+  readerRegres->AddVariable( "hJet_chf",    &fRegr_chf);
+  readerRegres->AddVariable( "hJet_vtxPt",  &fRegr_vtxPt);
+  readerRegres->AddVariable( "hJet_vtx3dL", &fRegr_vtx3dl);
+  readerRegres->AddVariable( "MET", &fRegr_met);
+  readerRegres->AddVariable( "hJet_dPhiMETJet", &fRegr_dPhiMet);
+  readerRegres->BookMVA("BDTG method","data/regrWeights/TMVARegression_BDTG.weights.xml");
 }
 
 bestJets_commonNtp::~bestJets_commonNtp() {
@@ -37,14 +52,14 @@ void bestJets_commonNtp::finalize() {
 
   //-----------------------------------------------------------------------------
   // for the tree with selected events
-  float invMassJJ_pt, invMassJJ_maxptjj, invMassJJ_maxptmjj;  
-  float invMassJJ_mgg, invMassJJ_btag_pt, invMassJJ_btag_ptCSV;
-  float invMassJJ_btag_ptjj, invMassJJ_btag_ptmjj, invMassJJ_btag_mgg;
+  float invMassJJ_pt,      invMassJJ_maxptjj,   invMassJJ_maxptmjj,   invMassJJ_mgg; 
+  float invMassJJ_btag_pt, invMassJJ_btag_ptjj, invMassJJ_btag_ptmjj, invMassJJ_btag_mgg, invMassJJ_btag_ptCSV;
   float invMassJJ_gen;
   int btagCategory_t;
-  float weight_t;
   float dMmin_t, dMmin_btag_t;
+  float minDrGenReco1_t, minDrGenReco2_t;
   int ngoodJets_t;
+  float weight_t;
 
   TTree* myTrees = new TTree();
   myTrees->SetName("myTrees");
@@ -62,7 +77,10 @@ void bestJets_commonNtp::finalize() {
   myTrees->Branch( "dMmin_btag",      &dMmin_btag_t,          "dMmin_btag_t/F" );    
   myTrees->Branch( "btagCategory",    &btagCategory_t,        "btagCategory_t/I" );
   myTrees->Branch( "ngoodJets",       &ngoodJets_t,           "ngoodJets_t/I" );
-  myTrees->Branch( "weight", &weight_t, "weight_t/F" );
+  myTrees->Branch( "ngoodJets",       &ngoodJets_t,           "ngoodJets_t/I" );
+  myTrees->Branch( "minDrGenReco1",   &minDrGenReco1_t,       "minDrGenReco1_t/F" );
+  myTrees->Branch( "minDrGenReco2",   &minDrGenReco2_t,       "minDrGenReco2_t/F" );
+
 
   // ------------------------------------------------------
   // analysis
@@ -72,7 +90,8 @@ void bestJets_commonNtp::finalize() {
   Long64_t nbytes = 0, nb = 0;
 
   // to check how often the choice is correct 
-  float counter = 0.;
+  float counter1 = 0.;
+  float counter2 = 0.;
   //
   float counter_pt    = 0.;
   float counter_ptjj  = 0.;
@@ -83,6 +102,9 @@ void bestJets_commonNtp::finalize() {
   float counter_btag_ptjj  = 0.;
   float counter_btag_ptmjj = 0.;
   float counter_btag_mgg   = 0.;
+  // 
+  float counter_btagBasedOnPt  = 0.;
+  float counter_btagBasedOnCSV = 0.;
 
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
 
@@ -92,6 +114,7 @@ void bestJets_commonNtp::finalize() {
     
     // event weight for MC events: xsec, PU and smearings. It correspond to 19.62/fb , chiara
     weight_t = evweight;  
+
 
     // ---------------------------------------------------
     // gamma-gamma analysis
@@ -123,18 +146,15 @@ void bestJets_commonNtp::finalize() {
     TVector3 t3diPhot;
     t3diPhot.SetPtEtaPhi( dipho_pt, dipho_eta, dipho_phi );
 
-    // further cuts on photons -----------------------
-
-    // invariant mass cut on photons                                                                                              
-    if (PhotonsMass<100 || PhotonsMass>180) continue;
-
     // photons pt cuts                                                                                                            
     if(ph1_pt<ptphot1cut * PhotonsMass/120.) continue;         // pt first photon                                                
     if(ph2_pt<ptphot2cut)                    continue;         // pt second photon     
 
+    // invariant mass cut on photons                                                                                              
+    if (PhotonsMass<100 || PhotonsMass>180) continue;
+
 
     // --------------------------------------------------------------------------------
-
     // preparing vectors with the infos used later on
     ecorrjet[0]     = j1_e;           ecorrjet[1]     = j2_e;           ecorrjet[2]     = j3_e;           ecorrjet[3]     = j4_e;
     ptcorrjet[0]    = j1_pt;          ptcorrjet[1]    = j2_pt;          ptcorrjet[2]    = j3_pt;          ptcorrjet[3]    = j4_pt;
@@ -142,10 +162,45 @@ void bestJets_commonNtp::finalize() {
     phijet[0]       = j1_phi;         phijet[1]       = j2_phi;         phijet[2]       = j3_phi;         phijet[3]       = j4_phi;
     btagjprobjet[0] = j1_jetProbBtag; btagjprobjet[1] = j2_jetProbBtag; btagjprobjet[2] = j3_jetProbBtag; btagjprobjet[3] = j4_jetProbBtag;
     btagcsvjet[0]   = j1_csvBtag;     btagcsvjet[1]   = j2_csvBtag;     btagcsvjet[2]   = j3_csvBtag;     btagcsvjet[3]   = j4_csvBtag;
+    cefjet[0]       = j1_emfrac;      cefjet[1]       = j2_emfrac;      cefjet[2]       = j3_emfrac;      cefjet[3]       = j4_emfrac;
+    chfjet[0]       = j1_hadfrac;     chfjet[1]       = j2_hadfrac;     chfjet[2]       = j3_hadfrac;     chfjet[3]       = j4_hadfrac;
+    vtxPtjet[0]     = j1_secVtxPt;    vtxPtjet[1]     = j2_secVtxPt;    vtxPtjet[2]     = j3_secVtxPt;    vtxPtjet[3]     = j4_secVtxPt;
+    vtx3dljet[0]    = j1_secVtx3dL;   vtx3dljet[1]    = j2_secVtx3dL;   vtx3dljet[2]    = j3_secVtx3dL;   vtx3dljet[3]    = j4_secVtx3dL;
+    nconstjet[0]    = (float)(j1_nNeutrals + j1_nCharged);   // + j1_ntk?? chiara!                                                                      
+    nconstjet[1]    = (float)(j2_nNeutrals + j2_nCharged);
+    nconstjet[2]    = (float)(j3_nNeutrals + j3_nCharged);
+    nconstjet[3]    = (float)(j4_nNeutrals + j4_nCharged);
+
+    // applying the jet regression
+    TVector3 tempT3jet, t3met;
+    // t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   // chiara                                                                            
+    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);                // chiara  
+    for (int ii=0; ii<4; ii++) {
+      if ( ptcorrjet[ii]<-1) continue;
+
+      fRegr_pt      = ptcorrjet[ii];
+      fRegr_eta     = etajet[ii];
+      fRegr_cef     = cefjet[ii];
+      fRegr_nconst  = nconstjet[ii];
+      fRegr_chf     = chfjet[ii];
+      fRegr_vtxPt   = vtxPtjet[ii];
+      fRegr_vtx3dl  = vtx3dljet[ii];
+      // fRegr_met     = met_corr_pfmet;      // chiara                                                                                                 
+      fRegr_met     = met_pfmet;              // chiara
+      tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
+      fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
+      float thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
+
+      // corrected pT and energy                                                                                                                        
+      float correctionFactor = thePtCorr/ptcorrjet[ii];                                                                                              
+      ptcorrjet[ii] = thePtCorr;                                                                                                                     
+      ecorrjet[ii] *= correctionFactor;                                                                                                              
+    }
 
     vector<int> v_puIdJets;
     for (int ij=0; ij<4; ij++) { 
       if ( ptcorrjet[ij]<-1)               continue;
+      if ( btagcsvjet[ij]<=0)              continue;
       if ( ptcorrjet[ij] < ptjetacccut )   continue;
       if ( fabs(etajet[ij])>etajetacccut ) continue;
       if ( !passCutBasedJetId(ij) )        continue;
@@ -153,16 +208,12 @@ void bestJets_commonNtp::finalize() {
     }
 
     // jets passing btagging ( + eta/pT/PUid cuts)                                                                                
-    vector<int> v_looseJP,  v_mediumJP,  v_tightJP;
     vector<int> v_looseCSV, v_mediumCSV, v_tightCSV;
     for (int ij=0; ij<int(v_puIdJets.size());ij++) {
       int index = v_puIdJets[ij];
-      if (btagjprobjet[index]>0.275) v_looseJP.push_back(index);
-      if (btagjprobjet[index]>0.545) v_mediumJP.push_back(index);
-      if (btagjprobjet[index]>0.790) v_tightJP.push_back(index);
-      if (btagcsvjet[index]>0.244)   v_looseCSV.push_back(index);
-      if (btagcsvjet[index]>0.679)   v_mediumCSV.push_back(index);
-      if (btagcsvjet[index]>0.898)   v_tightCSV.push_back(index);
+      if (btagcsvjet[index]>0.244) v_looseCSV.push_back(index);
+      if (btagcsvjet[index]>0.679) v_mediumCSV.push_back(index);
+      if (btagcsvjet[index]>0.898) v_tightCSV.push_back(index);
     }
 
     // at least 2 preselected jets
@@ -171,14 +222,15 @@ void bestJets_commonNtp::finalize() {
 
 
 
-    // choice of analysis jets ---------------------
+    //  ----------------------------------------------------------------------
+    // choice of analysis jets: no btag info used
 
     // 0) gen-level jets associated to the gen-level b
     TLorentzVector t4_gen1, t4_gen2;
-    t4_gen1.SetPtEtaPhiM(gr_j1_p4_pt, gr_j1_p4_eta, gr_j1_p4_phi, gr_j1_p4_mass);
-    t4_gen2.SetPtEtaPhiM(gr_j2_p4_pt, gr_j2_p4_eta, gr_j2_p4_phi, gr_j2_p4_mass);
-    // t4_gen1.SetPtEtaPhiM(gr_b1_p4_pt, gr_b1_p4_eta, gr_b1_p4_phi, gr_b1_p4_mass);
-    // t4_gen2.SetPtEtaPhiM(gr_b2_p4_pt, gr_b2_p4_eta, gr_b2_p4_phi, gr_b2_p4_mass);
+    // t4_gen1.SetPtEtaPhiM(gr_j1_p4_pt, gr_j1_p4_eta, gr_j1_p4_phi, gr_j1_p4_mass);
+    // t4_gen2.SetPtEtaPhiM(gr_j2_p4_pt, gr_j2_p4_eta, gr_j2_p4_phi, gr_j2_p4_mass);
+    t4_gen1.SetPtEtaPhiM(gr_b1_p4_pt, gr_b1_p4_eta, gr_b1_p4_phi, gr_b1_p4_mass);
+    t4_gen2.SetPtEtaPhiM(gr_b2_p4_pt, gr_b2_p4_eta, gr_b2_p4_phi, gr_b2_p4_mass);
 
     // reco jets closest to the above gen jets
     int jet1_genJ = -1;
@@ -191,58 +243,28 @@ void bestJets_commonNtp::finalize() {
       t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
       float theDr1 = t4_gen1.DeltaR(t4jet);
       float theDr2 = t4_gen2.DeltaR(t4jet);
-      if ( theDr1 < minDrGenJ1 ) {
+      if ( theDr1<theDr2 && theDr1<minDrGenJ1 ) {
 	minDrGenJ1 = theDr1;  
 	jet1_genJ  = index;
       }
-      if ( theDr2 < minDrGenJ2 ) {
+      if ( theDr2<theDr1 && theDr2<minDrGenJ2 ) {
 	minDrGenJ2 = theDr2;  
 	jet2_genJ  = index;
       }
     }      
-
-    // in case something went wrong and I took twice the same reco jet
-    if (jet1_genJ==jet2_genJ) {
-
-      float minDrGenJ1b = 999.;
-      float minDrGenJ2b = 999.;
-      int jet1_genJb = -1;
-      int jet2_genJb = -1;
-      for (int jet=0; jet<(v_puIdJets.size()); jet++) {
-	int index = v_puIdJets[jet];
-	TLorentzVector t4jet;
-	t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
-
-	if ( minDrGenJ1<minDrGenJ2 ) {
-	  if (index==jet1_genJ) continue;
-	  float theDr2 = t4_gen2.DeltaR(t4jet);
-	  if ( theDr2 < minDrGenJ2b ) {
-	    minDrGenJ2b = theDr2;  
-	    jet2_genJb  = index;
-	    jet1_genJb  = jet1_genJ;
-	  }
-	} else if ( minDrGenJ2<minDrGenJ1 ) {     
-	  if (index==jet2_genJ) continue;
-	  float theDr1 = t4_gen1.DeltaR(t4jet);
-	  if ( theDr1 < minDrGenJ1b ) {
-	    minDrGenJ1b = theDr1;  
-	    jet1_genJb  = index;
-	    jet2_genJb  = jet2_genJ;
-	  }
-	}      
-      }
-      
-      jet1_genJ = jet1_genJb;
-      jet2_genJ = jet2_genJb;
-    }
+    if (jet1_genJ==jet2_genJ) cout << "this can not happen" << endl;
+    
+    // if there is no good match with gen jet skip the event
+    if (minDrGenJ1>0.07) continue;   
+    if (minDrGenJ2>0.07) continue;   
 
     TLorentzVector t4jet1_genJ, t4jet2_genJ;
     t4jet1_genJ.SetPtEtaPhiE(ptcorrjet[jet1_genJ],etajet[jet1_genJ],phijet[jet1_genJ],ecorrjet[jet1_genJ]);
     t4jet2_genJ.SetPtEtaPhiE(ptcorrjet[jet2_genJ],etajet[jet2_genJ],phijet[jet2_genJ],ecorrjet[jet2_genJ]);
     TLorentzVector t4diJet_genJ = t4jet1_genJ + t4jet2_genJ;
 
-    // -----------------------------------------
 
+    // -----------------------------------------
     // 1) highest pT jets
     int jet1_pt = allJets_highPt.first;
     int jet2_pt = allJets_highPt.second;    
@@ -252,8 +274,8 @@ void bestJets_commonNtp::finalize() {
     t4jet2_pt.SetPtEtaPhiE(ptcorrjet[jet2_pt],etajet[jet2_pt],phijet[jet2_pt],ecorrjet[jet2_pt]);
     TLorentzVector t4diJet_pt = t4jet1_pt + t4jet2_pt;
 
-    // -----------------------------------------
 
+    // -----------------------------------------
     // 2) jets giving the highest pT(jj)
     int jet1_maxptjj = -1;
     int jet2_maxptjj = -1;
@@ -279,8 +301,8 @@ void bestJets_commonNtp::finalize() {
     t4jet2_maxptjj.SetPtEtaPhiE(ptcorrjet[jet2_maxptjj],etajet[jet2_maxptjj],phijet[jet2_maxptjj],ecorrjet[jet2_maxptjj]);
     TLorentzVector t4diJet_maxptjj = t4jet1_maxptjj + t4jet2_maxptjj;
 
-    // -----------------------------------------
 
+    // -----------------------------------------
     // 3) jets giving the highest pT(jj) / m(jj)
     int jet1_maxptmjj = -1;
     int jet2_maxptmjj = -1;
@@ -306,8 +328,8 @@ void bestJets_commonNtp::finalize() {
     t4jet2_maxptmjj.SetPtEtaPhiE(ptcorrjet[jet2_maxptmjj],etajet[jet2_maxptmjj],phijet[jet2_maxptmjj],ecorrjet[jet2_maxptmjj]);
     TLorentzVector t4diJet_maxptmjj = t4jet1_maxptmjj + t4jet2_maxptmjj;
 
-    // -----------------------------------------
 
+    // -----------------------------------------
     // 4) jets giving mjj closest to mgg
     int jet1_mgg  = -1;
     int jet2_mgg  = -1;
@@ -335,28 +357,30 @@ void bestJets_commonNtp::finalize() {
     t4jet2_mgg.SetPtEtaPhiE(ptcorrjet[jet2_mgg],etajet[jet2_mgg],phijet[jet2_mgg],ecorrjet[jet2_mgg]);
     TLorentzVector t4diJet_mgg = t4jet1_mgg + t4jet2_mgg;
 
-    // -----------------------------------------
 
-    // choose jets looking to btag: pT
+    // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+
+    // choose jets looking to btag: highest pT ones
     int jet1btag_pt = -1;
     int jet2btag_pt = -1;
-    if (v_looseCSV.size()==1) { 
-      jet1btag_pt = myHighestPtJet(v_looseCSV);      
-    } else if (v_looseCSV.size()>1) {
-      std::pair<int,int> looseBtag_highPt = myTwoHighestPtJet(v_looseCSV);
-      jet1btag_pt = looseBtag_highPt.first;
-      jet2btag_pt = looseBtag_highPt.second;
+    if (v_mediumCSV.size()==1) { 
+      jet1btag_pt = myHighestPtJet(v_mediumCSV);      
+    } else if (v_mediumCSV.size()>1) {
+      std::pair<int,int> mediumBtag_highPt = myTwoHighestPtJet(v_mediumCSV);
+      jet1btag_pt = mediumBtag_highPt.first;
+      jet2btag_pt = mediumBtag_highPt.second;
     }
 
-    // choose jets looking to btag: CSV
+    // choose jets looking to btag: highest CSV output
     int jet1btag_CSV = -1;
     int jet2btag_CSV = -1;
-    if (v_looseCSV.size()==1) { 
-      jet1btag_CSV = myHighestBtagJet(v_looseCSV);                          
-    } else if (v_looseCSV.size()>1) {
-      std::pair<int,int> looseBtag_csv = myTwoHighestBtagJet(v_looseCSV);  
-      jet1btag_CSV = looseBtag_csv.first;
-      jet2btag_CSV = looseBtag_csv.second;
+    if (v_mediumCSV.size()==1) { 
+      jet1btag_CSV = myHighestBtagJet(v_mediumCSV);                          
+    } else if (v_mediumCSV.size()>1) {
+      std::pair<int,int> mediumBtag_csv = myTwoHighestBtagJet(v_mediumCSV);  
+      jet1btag_CSV = mediumBtag_csv.first;
+      jet2btag_CSV = mediumBtag_csv.second;
     }
 
     // -----------------------------------------
@@ -365,7 +389,7 @@ void bestJets_commonNtp::finalize() {
     //     bjets: pT ordered ; nobjets (btagCat=1): pT ordered
     int jet1_btag_pt = -1;
     int jet2_btag_pt = -1;
-    if( v_looseCSV.size()==1 ) {
+    if( v_mediumCSV.size()==1 ) {
       if (jet1_pt != jet1btag_pt && jet2_pt != jet1btag_pt) {
 	jet2_btag_pt = jet1_pt;
 	jet1_btag_pt = jet1btag_pt;
@@ -377,7 +401,7 @@ void bestJets_commonNtp::finalize() {
 	jet2_btag_pt = jet1_pt;
       }
     }
-    if( v_looseCSV.size()>1 ) {
+    if( v_mediumCSV.size()>1 ) {
       jet1_btag_pt = jet1btag_pt;
       jet2_btag_pt = jet2btag_pt;
     }
@@ -393,7 +417,7 @@ void bestJets_commonNtp::finalize() {
     //     bjets: CSV ordered ; nobjets (btagCat=1): pT ordered
     int jet1_btag_ptCSV = -1;
     int jet2_btag_ptCSV = -1;
-    if( v_looseCSV.size()==1 ) {
+    if( v_mediumCSV.size()==1 ) {
       if (jet1_pt != jet1btag_CSV && jet2_pt != jet1btag_CSV) {
 	jet2_btag_ptCSV = jet1_pt;
 	jet1_btag_ptCSV = jet1btag_CSV;
@@ -405,7 +429,7 @@ void bestJets_commonNtp::finalize() {
 	jet2_btag_ptCSV = jet1_pt;
       }
     }
-    if( v_looseCSV.size()>1 ) {
+    if( v_mediumCSV.size()>1 ) {
       jet1_btag_ptCSV = jet1btag_CSV;
       jet2_btag_ptCSV = jet2btag_CSV;
     }
@@ -415,34 +439,34 @@ void bestJets_commonNtp::finalize() {
     t4jet2_btag_ptCSV.SetPtEtaPhiE(ptcorrjet[jet2_btag_ptCSV],etajet[jet2_btag_ptCSV],phijet[jet2_btag_ptCSV],ecorrjet[jet2_btag_ptCSV]);
     TLorentzVector t4diJet_btag_ptCSV = t4jet1_btag_ptCSV + t4jet2_btag_ptCSV;
 
-    // -----------------------------------------
 
+    // -----------------------------------------
     // 2a) now apply the same criteria as above but giving priorities to the btagged jets: 
     //     pair giving the highest pT(jj)/mjj, of which at least 1 is btag
     int jet1_btag_ptjj = -1;
     int jet2_btag_ptjj = -1;
     float maxPt2 = -999.;
-    if( v_looseCSV.size()==1 ) {
+    if( v_mediumCSV.size()==1 ) {
       for (int jet=0; jet<(v_puIdJets.size()); jet++) {
 	int index = v_puIdJets[jet];
-	if (index==jet1btag_CSV) continue;
+	if (index==jet1btag_pt) continue;
 	TLorentzVector t4jet, t4bjet;
 	t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
-	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_CSV],etajet[jet1btag_CSV],phijet[jet1btag_CSV],ecorrjet[jet1btag_CSV]);      
+	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_pt],etajet[jet1btag_pt],phijet[jet1btag_pt],ecorrjet[jet1btag_pt]);      
 	TLorentzVector t4_bnotb = t4jet + t4bjet; 
 	if ( t4_bnotb.Pt() > maxPt2) {
 	  maxPt2 = t4_bnotb.Pt();
-	  jet1_btag_ptjj = jet1btag_CSV;
+	  jet1_btag_ptjj = jet1btag_pt;
 	  jet2_btag_ptjj = index;
 	}
       }
     }
-    else if( v_looseCSV.size()>1 ) {
-      for (int jetA=0; jetA<(v_looseCSV.size()-1); jetA++) { 
-	for (int jetB=jetA+1; jetB<v_looseCSV.size(); jetB++) { 
+    else if( v_mediumCSV.size()>1 ) {
+      for (int jetA=0; jetA<(v_mediumCSV.size()-1); jetA++) { 
+	for (int jetB=jetA+1; jetB<v_mediumCSV.size(); jetB++) { 
 	  TLorentzVector t4jetA, t4jetB;
-	  int indexA = v_looseCSV[jetA];
-	  int indexB = v_looseCSV[jetB];
+	  int indexA = v_mediumCSV[jetA];
+	  int indexB = v_mediumCSV[jetB];
 	  t4jetA.SetPtEtaPhiE(ptcorrjet[indexA],etajet[indexA],phijet[indexA],ecorrjet[indexA]);
 	  t4jetB.SetPtEtaPhiE(ptcorrjet[indexB],etajet[indexB],phijet[indexB],ecorrjet[indexB]);
 	  TLorentzVector t4AB = t4jetA + t4jetB;
@@ -467,27 +491,27 @@ void bestJets_commonNtp::finalize() {
     int jet1_btag_ptmjj = -1;
     int jet2_btag_ptmjj = -1;
     float maxPtMjj2 = -999.;
-    if( v_looseCSV.size()==1 ) {
+    if( v_mediumCSV.size()==1 ) {
       for (int jet=0; jet<(v_puIdJets.size()); jet++) {
 	int index = v_puIdJets[jet];
-	if (index==jet1btag_CSV) continue;
+	if (index==jet1btag_pt) continue;
 	TLorentzVector t4jet, t4bjet;
 	t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
-	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_CSV],etajet[jet1btag_CSV],phijet[jet1btag_CSV],ecorrjet[jet1btag_CSV]);      
+	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_pt],etajet[jet1btag_pt],phijet[jet1btag_pt],ecorrjet[jet1btag_pt]);      
 	TLorentzVector t4_bnotb = t4jet + t4bjet; 
 	if ( (t4_bnotb.Pt()/t4_bnotb.M()) > maxPtMjj2) {
 	  maxPtMjj2 = t4_bnotb.Pt()/t4_bnotb.M();
-	  jet1_btag_ptmjj = jet1btag_CSV;
+	  jet1_btag_ptmjj = jet1btag_pt;
 	  jet2_btag_ptmjj = index;
 	}
       }
     }
-    else if( v_looseCSV.size()>1 ) {
-      for (int jetA=0; jetA<(v_looseCSV.size()-1); jetA++) { 
-	for (int jetB=jetA+1; jetB<v_looseCSV.size(); jetB++) { 
+    else if( v_mediumCSV.size()>1 ) {
+      for (int jetA=0; jetA<(v_mediumCSV.size()-1); jetA++) { 
+	for (int jetB=jetA+1; jetB<v_mediumCSV.size(); jetB++) { 
 	  TLorentzVector t4jetA, t4jetB;
-	  int indexA = v_looseCSV[jetA];
-	  int indexB = v_looseCSV[jetB];
+	  int indexA = v_mediumCSV[jetA];
+	  int indexB = v_mediumCSV[jetB];
 	  t4jetA.SetPtEtaPhiE(ptcorrjet[indexA],etajet[indexA],phijet[indexA],ecorrjet[indexA]);
 	  t4jetB.SetPtEtaPhiE(ptcorrjet[indexB],etajet[indexB],phijet[indexB],ecorrjet[indexB]);
 	  TLorentzVector t4AB = t4jetA + t4jetB;
@@ -512,28 +536,28 @@ void bestJets_commonNtp::finalize() {
     int jet1_btag_mgg = -1;
     int jet2_btag_mgg = -1;
     float minDMgg2    = 999.;
-    if( v_looseCSV.size()==1 ) {
+    if( v_mediumCSV.size()==1 ) {
       for (int jet=0; jet<(v_puIdJets.size()); jet++) {
 	int index = v_puIdJets[jet];
-	if (index==jet1btag_CSV) continue;
+	if (index==jet1btag_pt) continue;
 	TLorentzVector t4jet, t4bjet;
 	t4jet.SetPtEtaPhiE(ptcorrjet[index],etajet[index],phijet[index],ecorrjet[index]);
-	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_CSV],etajet[jet1btag_CSV],phijet[jet1btag_CSV],ecorrjet[jet1btag_CSV]);      
+	t4bjet.SetPtEtaPhiE(ptcorrjet[jet1btag_pt],etajet[jet1btag_pt],phijet[jet1btag_pt],ecorrjet[jet1btag_pt]);      
 	TLorentzVector t4_bnotb = t4jet + t4bjet; 
 	float massJJ = t4_bnotb.M();
 	float massGG = t4diPhot.M();
 	if ( fabs(massJJ-massGG) < minDMgg2 ) {
 	  minDMgg2 = fabs(massJJ-massGG);
-	  jet1_btag_mgg = jet1btag_CSV;
+	  jet1_btag_mgg = jet1btag_pt;
 	  jet2_btag_mgg = index;
 	}
       }
-    } else if (v_looseCSV.size()>1 ) {
-      for (int jetA=0; jetA<(v_looseCSV.size()-1); jetA++) { 
-	for (int jetB=jetA+1; jetB<v_looseCSV.size(); jetB++) { 
+    } else if (v_mediumCSV.size()>1 ) {
+      for (int jetA=0; jetA<(v_mediumCSV.size()-1); jetA++) { 
+	for (int jetB=jetA+1; jetB<v_mediumCSV.size(); jetB++) { 
 	  TLorentzVector t4jetA, t4jetB;
-	  int indexA = v_looseCSV[jetA];
-	  int indexB = v_looseCSV[jetB];
+	  int indexA = v_mediumCSV[jetA];
+	  int indexB = v_mediumCSV[jetB];
 	  t4jetA.SetPtEtaPhiE(ptcorrjet[indexA],etajet[indexA],phijet[indexA],ecorrjet[indexA]);
 	  t4jetB.SetPtEtaPhiE(ptcorrjet[indexB],etajet[indexB],phijet[indexB],ecorrjet[indexB]);
 	  TLorentzVector t4AB = t4jetA + t4jetB;
@@ -554,7 +578,7 @@ void bestJets_commonNtp::finalize() {
     TLorentzVector t4diJet_btag_mgg = t4jet1_btag_mgg + t4jet2_btag_mgg;
 
     
-    // several invariant masses cut on jets 
+    // several invariant masses combinations
     invMassJJ_pt         = t4diJet_pt.M();
     invMassJJ_maxptjj    = t4diJet_maxptjj.M();
     invMassJJ_maxptmjj   = t4diJet_maxptmjj.M();
@@ -573,7 +597,7 @@ void bestJets_commonNtp::finalize() {
     invMassJJ_gen        = t4diJet_genJ.M();
 
 
-    // counters
+    // counters: best criterium with/wo btag 
     if ( jet1_genJ>=0 && jet2_genJ>=0 &&
 	 jet1_pt>=0 && jet2_pt>=0 && 
 	 jet1_maxptjj>=0 && jet2_maxptjj>=0 && 
@@ -584,32 +608,29 @@ void bestJets_commonNtp::finalize() {
 	 jet1_btag_ptmjj>=0 && jet2_btag_ptmjj>=0 && 
 	 jet1_btag_mgg>=0 && jet2_btag_mgg>=0) {
 
-      counter++; 
-      if ( (jet1_pt==jet1_genJ && jet2_pt==jet2_genJ) || (jet1_pt==jet2_genJ && jet2_pt==jet1_genJ) ) counter_pt++;
-      if ( (jet1_maxptjj==jet1_genJ && jet2_maxptjj==jet2_genJ) || (jet1_maxptjj==jet2_genJ && jet2_maxptjj==jet1_genJ) ) counter_ptjj++;
+      counter1++; 
+      if ( (jet1_pt==jet1_genJ       && jet2_pt==jet2_genJ)       || (jet1_pt==jet2_genJ       && jet2_pt==jet1_genJ) )       counter_pt++;
+      if ( (jet1_maxptjj==jet1_genJ  && jet2_maxptjj==jet2_genJ)  || (jet1_maxptjj==jet2_genJ  && jet2_maxptjj==jet1_genJ) )  counter_ptjj++;
       if ( (jet1_maxptmjj==jet1_genJ && jet2_maxptmjj==jet2_genJ) || (jet1_maxptmjj==jet2_genJ && jet2_maxptmjj==jet1_genJ) ) counter_ptmjj++;
-      if ( (jet1_mgg==jet1_genJ && jet2_mgg==jet2_genJ) || (jet1_mgg==jet2_genJ && jet2_mgg==jet1_genJ) ) counter_mgg++;
-      if ( (jet1_btag_pt==jet1_genJ && jet2_btag_pt==jet2_genJ) || (jet1_btag_pt==jet2_genJ && jet2_btag_pt==jet1_genJ) ) counter_btag_pt++;
-      if ( (jet1_btag_ptjj==jet1_genJ && jet2_btag_ptjj==jet2_genJ) || (jet1_btag_ptjj==jet2_genJ && jet2_btag_ptjj==jet1_genJ) ) counter_btag_ptjj++;
+      if ( (jet1_mgg==jet1_genJ      && jet2_mgg==jet2_genJ)      || (jet1_mgg==jet2_genJ      && jet2_mgg==jet1_genJ) )      counter_mgg++;
+      if ( (jet1_btag_pt==jet1_genJ    && jet2_btag_pt==jet2_genJ)    || (jet1_btag_pt==jet2_genJ    && jet2_btag_pt==jet1_genJ) )    counter_btag_pt++;
+      if ( (jet1_btag_ptjj==jet1_genJ  && jet2_btag_ptjj==jet2_genJ)  || (jet1_btag_ptjj==jet2_genJ  && jet2_btag_ptjj==jet1_genJ) )  counter_btag_ptjj++;
       if ( (jet1_btag_ptmjj==jet1_genJ && jet2_btag_ptmjj==jet2_genJ) || (jet1_btag_ptmjj==jet2_genJ && jet2_btag_ptmjj==jet1_genJ) ) counter_btag_ptmjj++;
-      if ( (jet1_btag_mgg==jet1_genJ && jet2_btag_mgg==jet2_genJ) || (jet1_btag_mgg==jet2_genJ && jet2_btag_mgg==jet1_genJ) )  counter_btag_mgg++;
+      if ( (jet1_btag_mgg==jet1_genJ   && jet2_btag_mgg==jet2_genJ)   || (jet1_btag_mgg==jet2_genJ   && jet2_btag_mgg==jet1_genJ) )   counter_btag_mgg++;
+    }
 
-      // if ( (jet1_btag_mgg!=jet1_genJ || jet2_btag_mgg!=jet2_genJ) && (jet1_btag_mgg!=jet2_genJ || jet2_btag_mgg!=jet1_genJ)) {
-      // cout << endl;
-      // cout << "gen1: "      << jet1_genJ << ", gen2: " << jet2_genJ << ", reco1: " << jet1_btag_mgg << ", reco2: " << jet2_btag_mgg << endl;
-      // cout << "gen1. pt: "  << ptcorrjet[jet1_genJ] << ", eta: " << etajet[jet1_genJ] << endl;
-      // cout << "reco1. pt: " << ptcorrjet[jet1_btag_mgg]  << ", eta: " << etajet[jet1_btag_mgg]  << endl;
-      // cout << "gen2. pt: "  << ptcorrjet[jet2_genJ] << ", eta: " << etajet[jet2_genJ] << endl;
-      // cout << "reco2. pt: " << ptcorrjet[jet2_btag_mgg]  << ", eta: " << etajet[jet2_btag_mgg]  << endl;
-      // }
+    // best criterium for btagging: pt vs CSV output
+    if (jet1_genJ>0 && jet2_genJ>0 && jet1btag_CSV>0 && jet2btag_CSV>0 && jet1btag_pt>0 && jet2btag_pt>0) {
+      counter2++;
+      if ( (jet1btag_CSV==jet1_genJ && jet2btag_CSV==jet2_genJ) || (jet1btag_CSV==jet2_genJ && jet2btag_CSV==jet1_genJ) ) counter_btagBasedOnCSV++;
+      if ( (jet1btag_pt==jet1_genJ  && jet2btag_pt==jet2_genJ)  || (jet1btag_pt==jet2_genJ  && jet2btag_pt==jet1_genJ) )  counter_btagBasedOnPt++;
     }
 
 
     // ---------------------------------------------------------------
     // counting the number of bjets to categorize the events
     int btagCategory = -1;
-    if (bTaggerType_=="JP")       { btagCategory = (v_looseJP.size()<=2) ? v_looseJP.size() : 2; }
-    else if (bTaggerType_=="CSV") { btagCategory = (v_looseCSV.size()<=2) ? v_looseCSV.size() : 2; }
+    if (bTaggerType_=="CSV") { btagCategory = (v_mediumCSV.size()<=2) ? v_mediumCSV.size() : 2; }
     else cout << "this btag algo does not exist" << endl;
 
 
@@ -619,10 +640,12 @@ void bestJets_commonNtp::finalize() {
 
 
     // filling the tree for selected events 
-    btagCategory_t = btagCategory;
-    ngoodJets_t    = v_puIdJets.size(); 
-    dMmin_t        = minDMgg;
-    dMmin_btag_t   = minDMgg2;
+    btagCategory_t  = btagCategory;
+    ngoodJets_t     = v_puIdJets.size(); 
+    dMmin_t         = minDMgg;
+    dMmin_btag_t    = minDMgg2;
+    minDrGenReco1_t = minDrGenJ1;
+    minDrGenReco2_t = minDrGenJ2;
 
     myTrees->Fill();
 
@@ -630,15 +653,18 @@ void bestJets_commonNtp::finalize() {
 
 
   // summary:
-  cout << "max pt: "    << counter_pt/counter << endl; 
-  cout << "max ptjj: "  << counter_ptjj/counter << endl; 
-  cout << "max ptmjj: " << counter_ptmjj/counter << endl; 
-  cout << "min dm gg: " << counter_mgg/counter << endl; 
-  cout << "btag, max pt: "    << counter_btag_pt/counter << endl; 
-  cout << "btag, max ptjj: "  << counter_btag_ptjj/counter << endl; 
-  cout << "btag, max ptmjj: " << counter_btag_ptmjj/counter << endl; 
-  cout << "btag, min dm gg: " << counter_btag_mgg/counter << endl; 
-
+  cout << "max pt: "    << counter_pt/counter1    << endl; 
+  cout << "max ptjj: "  << counter_ptjj/counter1  << endl; 
+  cout << "max ptmjj: " << counter_ptmjj/counter1 << endl; 
+  cout << "min dm gg: " << counter_mgg/counter1   << endl; 
+  cout << "btag, max pt: "    << counter_btag_pt/counter1    << endl; 
+  cout << "btag, max ptjj: "  << counter_btag_ptjj/counter1  << endl; 
+  cout << "btag, max ptmjj: " << counter_btag_ptmjj/counter1 << endl; 
+  cout << "btag, min dm gg: " << counter_btag_mgg/counter1   << endl; 
+  cout << endl;
+  cout << "best btag choice:" << endl;
+  cout << "CSV: " << counter_btagBasedOnCSV/counter2 << endl;
+  cout << "Pt: "  << counter_btagBasedOnPt/counter2  << endl;
 
   outFile_->cd();
   myTrees->Write();
@@ -686,6 +712,12 @@ void bestJets_commonNtp::Init() {
   tree_->SetBranchAddress("pu_n", &pu_n, &b_pu_n);
   tree_->SetBranchAddress("nvtx", &nvtx, &b_nvtx);
   tree_->SetBranchAddress("rho", &rho, &b_rho);
+  tree_->SetBranchAddress("met_pfmet", &met_pfmet, &b_met_pfmet);
+  tree_->SetBranchAddress("met_phi_pfmet", &met_phi_pfmet, &b_met_phi_pfmet);
+  tree_->SetBranchAddress("met_corr_pfmet", &met_corr_pfmet, &b_met_corr_pfmet);
+  tree_->SetBranchAddress("met_corr_phi_pfmet", &met_corr_phi_pfmet, &b_met_corr_phi_pfmet);
+  tree_->SetBranchAddress("met_corr_eta_pfmet", &met_corr_eta_pfmet, &b_met_corr_eta_pfmet);
+  tree_->SetBranchAddress("met_corr_e_pfmet", &met_corr_e_pfmet, &b_met_corr_e_pfmet);
   tree_->SetBranchAddress("category", &category, &b_category);
   tree_->SetBranchAddress("ph1_e", &ph1_e, &b_ph1_e);
   tree_->SetBranchAddress("ph2_e", &ph2_e, &b_ph2_e);
@@ -778,6 +810,20 @@ void bestJets_commonNtp::Init() {
   tree_->SetBranchAddress("j1_csvMvaBtag", &j1_csvMvaBtag, &b_j1_csvMvaBtag);
   tree_->SetBranchAddress("j1_jetProbBtag", &j1_jetProbBtag, &b_j1_jetProbBtag);
   tree_->SetBranchAddress("j1_tcheBtag", &j1_tcheBtag, &b_j1_tcheBtag);
+  tree_->SetBranchAddress("j1_radionMatched", &j1_radionMatched, &b_j1_radionMatched);
+  tree_->SetBranchAddress("j1_ptD", &j1_ptD, &b_j1_ptD);
+  tree_->SetBranchAddress("j1_nSecondaryVertices", &j1_nSecondaryVertices, &b_j1_nSecondaryVertices);
+  tree_->SetBranchAddress("j1_secVtxPt", &j1_secVtxPt, &b_j1_secVtxPt);
+  tree_->SetBranchAddress("j1_secVtx3dL", &j1_secVtx3dL, &b_j1_secVtx3dL);
+  tree_->SetBranchAddress("j1_secVtx3deL", &j1_secVtx3deL, &b_j1_secVtx3deL);
+  tree_->SetBranchAddress("j1_emfrac", &j1_emfrac, &b_j1_emfrac);
+  tree_->SetBranchAddress("j1_hadfrac", &j1_hadfrac, &b_j1_hadfrac);
+  tree_->SetBranchAddress("j1_ntk", &j1_ntk, &b_j1_ntk);
+  tree_->SetBranchAddress("j1_nNeutrals", &j1_nNeutrals, &b_j1_nNeutrals);
+  tree_->SetBranchAddress("j1_nCharged", &j1_nCharged, &b_j1_nCharged);
+  tree_->SetBranchAddress("j1_axis1", &j1_axis1, &b_j1_axis1);
+  tree_->SetBranchAddress("j1_axis2", &j1_axis2, &b_j1_axis2);
+  tree_->SetBranchAddress("j1_pull", &j1_pull, &b_j1_pull);
   tree_->SetBranchAddress("j2_e", &j2_e, &b_j2_e);
   tree_->SetBranchAddress("j2_pt", &j2_pt, &b_j2_pt);
   tree_->SetBranchAddress("j2_phi", &j2_phi, &b_j2_phi);
@@ -790,6 +836,20 @@ void bestJets_commonNtp::Init() {
   tree_->SetBranchAddress("j2_csvMvaBtag", &j2_csvMvaBtag, &b_j2_csvMvaBtag);
   tree_->SetBranchAddress("j2_jetProbBtag", &j2_jetProbBtag, &b_j2_jetProbBtag);
   tree_->SetBranchAddress("j2_tcheBtag", &j2_tcheBtag, &b_j2_tcheBtag);
+  tree_->SetBranchAddress("j2_radionMatched", &j2_radionMatched, &b_j2_radionMatched);
+  tree_->SetBranchAddress("j2_ptD", &j2_ptD, &b_j2_ptD);
+  tree_->SetBranchAddress("j2_nSecondaryVertices", &j2_nSecondaryVertices, &b_j2_nSecondaryVertices);
+  tree_->SetBranchAddress("j2_secVtxPt", &j2_secVtxPt, &b_j2_secVtxPt);
+  tree_->SetBranchAddress("j2_secVtx3dL", &j2_secVtx3dL, &b_j2_secVtx3dL);
+  tree_->SetBranchAddress("j2_secVtx3deL", &j2_secVtx3deL, &b_j2_secVtx3deL);
+  tree_->SetBranchAddress("j2_emfrac", &j2_emfrac, &b_j2_emfrac);
+  tree_->SetBranchAddress("j2_hadfrac", &j2_hadfrac, &b_j2_hadfrac);
+  tree_->SetBranchAddress("j2_ntk", &j2_ntk, &b_j2_ntk);
+  tree_->SetBranchAddress("j2_nNeutrals", &j2_nNeutrals, &b_j2_nNeutrals);
+  tree_->SetBranchAddress("j2_nCharged", &j2_nCharged, &b_j2_nCharged);
+  tree_->SetBranchAddress("j2_axis1", &j2_axis1, &b_j2_axis1);
+  tree_->SetBranchAddress("j2_axis2", &j2_axis2, &b_j2_axis2);
+  tree_->SetBranchAddress("j2_pull", &j2_pull, &b_j2_pull);
   tree_->SetBranchAddress("j3_e", &j3_e, &b_j3_e);
   tree_->SetBranchAddress("j3_pt", &j3_pt, &b_j3_pt);
   tree_->SetBranchAddress("j3_phi", &j3_phi, &b_j3_phi);
@@ -802,6 +862,20 @@ void bestJets_commonNtp::Init() {
   tree_->SetBranchAddress("j3_csvMvaBtag", &j3_csvMvaBtag, &b_j3_csvMvaBtag);
   tree_->SetBranchAddress("j3_jetProbBtag", &j3_jetProbBtag, &b_j3_jetProbBtag);
   tree_->SetBranchAddress("j3_tcheBtag", &j3_tcheBtag, &b_j3_tcheBtag);
+  tree_->SetBranchAddress("j3_radionMatched", &j3_radionMatched, &b_j3_radionMatched);
+  tree_->SetBranchAddress("j3_ptD", &j3_ptD, &b_j3_ptD);
+  tree_->SetBranchAddress("j3_nSecondaryVertices", &j3_nSecondaryVertices, &b_j3_nSecondaryVertices);
+  tree_->SetBranchAddress("j3_secVtxPt", &j3_secVtxPt, &b_j3_secVtxPt);
+  tree_->SetBranchAddress("j3_secVtx3dL", &j3_secVtx3dL, &b_j3_secVtx3dL);
+  tree_->SetBranchAddress("j3_secVtx3deL", &j3_secVtx3deL, &b_j3_secVtx3deL);
+  tree_->SetBranchAddress("j3_emfrac", &j3_emfrac, &b_j3_emfrac);
+  tree_->SetBranchAddress("j3_hadfrac", &j3_hadfrac, &b_j3_hadfrac);
+  tree_->SetBranchAddress("j3_ntk", &j3_ntk, &b_j3_ntk);
+  tree_->SetBranchAddress("j3_nNeutrals", &j3_nNeutrals, &b_j3_nNeutrals);
+  tree_->SetBranchAddress("j3_nCharged", &j3_nCharged, &b_j3_nCharged);
+  tree_->SetBranchAddress("j3_axis1", &j3_axis1, &b_j3_axis1);
+  tree_->SetBranchAddress("j3_axis2", &j3_axis2, &b_j3_axis2);
+  tree_->SetBranchAddress("j3_pull", &j3_pull, &b_j3_pull);
   tree_->SetBranchAddress("j4_e", &j4_e, &b_j4_e);
   tree_->SetBranchAddress("j4_pt", &j4_pt, &b_j4_pt);
   tree_->SetBranchAddress("j4_phi", &j4_phi, &b_j4_phi);
@@ -814,6 +888,20 @@ void bestJets_commonNtp::Init() {
   tree_->SetBranchAddress("j4_csvMvaBtag", &j4_csvMvaBtag, &b_j4_csvMvaBtag);
   tree_->SetBranchAddress("j4_jetProbBtag", &j4_jetProbBtag, &b_j4_jetProbBtag);
   tree_->SetBranchAddress("j4_tcheBtag", &j4_tcheBtag, &b_j4_tcheBtag);
+  tree_->SetBranchAddress("j4_radionMatched", &j4_radionMatched, &b_j4_radionMatched);
+  tree_->SetBranchAddress("j4_ptD", &j4_ptD, &b_j4_ptD);
+  tree_->SetBranchAddress("j4_nSecondaryVertices", &j4_nSecondaryVertices, &b_j4_nSecondaryVertices);
+  tree_->SetBranchAddress("j4_secVtxPt", &j4_secVtxPt, &b_j4_secVtxPt);
+  tree_->SetBranchAddress("j4_secVtx3dL", &j4_secVtx3dL, &b_j4_secVtx3dL);
+  tree_->SetBranchAddress("j4_secVtx3deL", &j4_secVtx3deL, &b_j4_secVtx3deL);
+  tree_->SetBranchAddress("j4_emfrac", &j4_emfrac, &b_j4_emfrac);
+  tree_->SetBranchAddress("j4_hadfrac", &j4_hadfrac, &b_j4_hadfrac);
+  tree_->SetBranchAddress("j4_ntk", &j4_ntk, &b_j4_ntk);
+  tree_->SetBranchAddress("j4_nNeutrals", &j4_nNeutrals, &b_j4_nNeutrals);
+  tree_->SetBranchAddress("j4_nCharged", &j4_nCharged, &b_j4_nCharged);
+  tree_->SetBranchAddress("j4_axis1", &j4_axis1, &b_j4_axis1);
+  tree_->SetBranchAddress("j4_axis2", &j4_axis2, &b_j4_axis2);
+  tree_->SetBranchAddress("j4_pull", &j4_pull, &b_j4_pull);
   tree_->SetBranchAddress("JetsMass", &JetsMass, &b_JetsMass);
   tree_->SetBranchAddress("dijet_E", &dijet_E, &b_dijet_E);
   tree_->SetBranchAddress("dijet_Pt", &dijet_Pt, &b_dijet_Pt);

@@ -14,9 +14,11 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TRandom3.h>
+#include "TMVA/Reader.h"
 
 #include "RedNtpFinalizer_commonNtp.h"
 
+using namespace TMVA;
 using namespace std;
 
 class fillPlot2012_radion_commonNtp : public RedNtpFinalizer_commonNtp {
@@ -36,6 +38,12 @@ public :
    Float_t         nvtx;
    Float_t         rho;
    Int_t           category;
+   Float_t         met_pfmet;
+   Float_t         met_phi_pfmet;
+   Float_t         met_corr_pfmet;
+   Float_t         met_corr_phi_pfmet;
+   Float_t         met_corr_eta_pfmet;
+   Float_t         met_corr_e_pfmet;
    Float_t         ph1_e;
    Float_t         ph2_e;
    Float_t         ph1_pt;
@@ -115,6 +123,9 @@ public :
    Float_t         vtx_pulltoconv;
    Float_t         vtx_prob;
    Int_t           njets_passing_kLooseID;
+   Int_t           njets_passing_kLooseID_and_CSVL;
+   Int_t           njets_passing_kLooseID_and_CSVM;
+   Int_t           njets_passing_kLooseID_and_CSVT;
    Float_t         j1_e;
    Float_t         j1_pt;
    Float_t         j1_phi;
@@ -127,6 +138,20 @@ public :
    Float_t         j1_csvMvaBtag;
    Float_t         j1_jetProbBtag;
    Float_t         j1_tcheBtag;
+   Float_t         j1_radionMatched;
+   Float_t         j1_ptD;
+   Float_t         j1_nSecondaryVertices;
+   Float_t         j1_secVtxPt;
+   Float_t         j1_secVtx3dL;
+   Float_t         j1_secVtx3deL;
+   Float_t         j1_emfrac;
+   Float_t         j1_hadfrac;
+   Int_t           j1_ntk;
+   Int_t           j1_nNeutrals;
+   Int_t           j1_nCharged;
+   Float_t         j1_axis1;
+   Float_t         j1_axis2;
+   Float_t         j1_pull;
    Float_t         j2_e;
    Float_t         j2_pt;
    Float_t         j2_phi;
@@ -139,6 +164,20 @@ public :
    Float_t         j2_csvMvaBtag;
    Float_t         j2_jetProbBtag;
    Float_t         j2_tcheBtag;
+   Float_t         j2_radionMatched;
+   Float_t         j2_ptD;
+   Float_t         j2_nSecondaryVertices;
+   Float_t         j2_secVtxPt;
+   Float_t         j2_secVtx3dL;
+   Float_t         j2_secVtx3deL;
+   Float_t         j2_emfrac;
+   Float_t         j2_hadfrac;
+   Int_t           j2_ntk;
+   Int_t           j2_nNeutrals;
+   Int_t           j2_nCharged;
+   Float_t         j2_axis1;
+   Float_t         j2_axis2;
+   Float_t         j2_pull;
    Float_t         j3_e;
    Float_t         j3_pt;
    Float_t         j3_phi;
@@ -151,6 +190,20 @@ public :
    Float_t         j3_csvMvaBtag;
    Float_t         j3_jetProbBtag;
    Float_t         j3_tcheBtag;
+   Float_t         j3_radionMatched;
+   Float_t         j3_ptD;
+   Float_t         j3_nSecondaryVertices;
+   Float_t         j3_secVtxPt;
+   Float_t         j3_secVtx3dL;
+   Float_t         j3_secVtx3deL;
+   Float_t         j3_emfrac;
+   Float_t         j3_hadfrac;
+   Int_t           j3_ntk;
+   Int_t           j3_nNeutrals;
+   Int_t           j3_nCharged;
+   Float_t         j3_axis1;
+   Float_t         j3_axis2;
+   Float_t         j3_pull;
    Float_t         j4_e;
    Float_t         j4_pt;
    Float_t         j4_phi;
@@ -163,6 +216,20 @@ public :
    Float_t         j4_csvMvaBtag;
    Float_t         j4_jetProbBtag;
    Float_t         j4_tcheBtag;
+   Float_t         j4_radionMatched;
+   Float_t         j4_ptD;
+   Float_t         j4_nSecondaryVertices;
+   Float_t         j4_secVtxPt;
+   Float_t         j4_secVtx3dL;
+   Float_t         j4_secVtx3deL;
+   Float_t         j4_emfrac;
+   Float_t         j4_hadfrac;
+   Int_t           j4_ntk;
+   Int_t           j4_nNeutrals;
+   Int_t           j4_nCharged;
+   Float_t         j4_axis1;
+   Float_t         j4_axis2;
+   Float_t         j4_pull;
    Float_t         JetsMass;
    Float_t         dijet_E;
    Float_t         dijet_Pt;
@@ -222,6 +289,12 @@ public :
    TBranch        *b_nvtx;   //!
    TBranch        *b_rho;   //!
    TBranch        *b_category;   //!
+   TBranch        *b_met_pfmet;   //! 
+   TBranch        *b_met_phi_pfmet;   //!  
+   TBranch        *b_met_corr_pfmet;   //! 
+   TBranch        *b_met_corr_phi_pfmet;   //!
+   TBranch        *b_met_corr_eta_pfmet;   //!  
+   TBranch        *b_met_corr_e_pfmet;   //!    
    TBranch        *b_ph1_e;   //!
    TBranch        *b_ph2_e;   //!
    TBranch        *b_ph1_pt;   //!
@@ -301,6 +374,9 @@ public :
    TBranch        *b_vtx_pulltoconv;   //!
    TBranch        *b_vtx_prob;   //!
    TBranch        *b_njets_passing_kLooseID;   //!
+   TBranch        *b_njets_passing_kLooseID_and_CSVL;   //!   
+   TBranch        *b_njets_passing_kLooseID_and_CSVM;   //!              
+   TBranch        *b_njets_passing_kLooseID_and_CSVT;   //!   
    TBranch        *b_j1_e;   //!
    TBranch        *b_j1_pt;   //!
    TBranch        *b_j1_phi;   //!
@@ -313,6 +389,20 @@ public :
    TBranch        *b_j1_csvMvaBtag;   //!
    TBranch        *b_j1_jetProbBtag;   //!
    TBranch        *b_j1_tcheBtag;   //!
+   TBranch        *b_j1_radionMatched;   //! 
+   TBranch        *b_j1_ptD;   //! 
+   TBranch        *b_j1_nSecondaryVertices;   //!    
+   TBranch        *b_j1_secVtxPt;   //!
+   TBranch        *b_j1_secVtx3dL;   //!
+   TBranch        *b_j1_secVtx3deL;   //!  
+   TBranch        *b_j1_emfrac;   //! 
+   TBranch        *b_j1_hadfrac;   //!     
+   TBranch        *b_j1_ntk;   //! 
+   TBranch        *b_j1_nNeutrals;   //! 
+   TBranch        *b_j1_nCharged;   //! 
+   TBranch        *b_j1_axis1;   //!  
+   TBranch        *b_j1_axis2;   //!   
+   TBranch        *b_j1_pull;   //!  
    TBranch        *b_j2_e;   //!
    TBranch        *b_j2_pt;   //!
    TBranch        *b_j2_phi;   //!
@@ -325,6 +415,20 @@ public :
    TBranch        *b_j2_csvMvaBtag;   //!
    TBranch        *b_j2_jetProbBtag;   //!
    TBranch        *b_j2_tcheBtag;   //!
+   TBranch        *b_j2_radionMatched;   //! 
+   TBranch        *b_j2_ptD;   //! 
+   TBranch        *b_j2_nSecondaryVertices;   //!    
+   TBranch        *b_j2_secVtxPt;   //!
+   TBranch        *b_j2_secVtx3dL;   //!
+   TBranch        *b_j2_secVtx3deL;   //!  
+   TBranch        *b_j2_emfrac;   //! 
+   TBranch        *b_j2_hadfrac;   //!     
+   TBranch        *b_j2_ntk;   //! 
+   TBranch        *b_j2_nNeutrals;   //! 
+   TBranch        *b_j2_nCharged;   //! 
+   TBranch        *b_j2_axis1;   //!  
+   TBranch        *b_j2_axis2;   //!   
+   TBranch        *b_j2_pull;   //!  
    TBranch        *b_j3_e;   //!
    TBranch        *b_j3_pt;   //!
    TBranch        *b_j3_phi;   //!
@@ -337,6 +441,20 @@ public :
    TBranch        *b_j3_csvMvaBtag;   //!
    TBranch        *b_j3_jetProbBtag;   //!
    TBranch        *b_j3_tcheBtag;   //!
+   TBranch        *b_j3_radionMatched;   //! 
+   TBranch        *b_j3_ptD;   //! 
+   TBranch        *b_j3_nSecondaryVertices;   //!    
+   TBranch        *b_j3_secVtxPt;   //!
+   TBranch        *b_j3_secVtx3dL;   //!
+   TBranch        *b_j3_secVtx3deL;   //!  
+   TBranch        *b_j3_emfrac;   //! 
+   TBranch        *b_j3_hadfrac;   //!     
+   TBranch        *b_j3_ntk;   //! 
+   TBranch        *b_j3_nNeutrals;   //! 
+   TBranch        *b_j3_nCharged;   //! 
+   TBranch        *b_j3_axis1;   //!  
+   TBranch        *b_j3_axis2;   //!   
+   TBranch        *b_j3_pull;   //!  
    TBranch        *b_j4_e;   //!
    TBranch        *b_j4_pt;   //!
    TBranch        *b_j4_phi;   //!
@@ -349,6 +467,20 @@ public :
    TBranch        *b_j4_csvMvaBtag;   //!
    TBranch        *b_j4_jetProbBtag;   //!
    TBranch        *b_j4_tcheBtag;   //!
+   TBranch        *b_j4_radionMatched;   //! 
+   TBranch        *b_j4_ptD;   //! 
+   TBranch        *b_j4_nSecondaryVertices;   //!    
+   TBranch        *b_j4_secVtxPt;   //!
+   TBranch        *b_j4_secVtx3dL;   //!
+   TBranch        *b_j4_secVtx3deL;   //!  
+   TBranch        *b_j4_emfrac;   //! 
+   TBranch        *b_j4_hadfrac;   //!     
+   TBranch        *b_j4_ntk;   //! 
+   TBranch        *b_j4_nNeutrals;   //! 
+   TBranch        *b_j4_nCharged;   //! 
+   TBranch        *b_j4_axis1;   //!  
+   TBranch        *b_j4_axis2;   //!   
+   TBranch        *b_j4_pull;   //!  
    TBranch        *b_JetsMass;   //!
    TBranch        *b_dijet_E;   //!
    TBranch        *b_dijet_Pt;   //!
@@ -444,6 +576,16 @@ public :
    float ptcorrjet[4], ecorrjet[4];
    float etajet[4], phijet[4];              
    float btagjprobjet[4], btagcsvjet[4];
+   float cefjet[4], chfjet[4];
+   float vtxPtjet[4], vtx3dljet[4];
+   float nconstjet[4];
+
+   // for jet regression
+   TMVA::Reader *readerRegres;
+   float fRegr_pt, fRegr_eta, fRegr_cef, fRegr_chf; 
+   float fRegr_nconst;
+   float fRegr_vtxPt, fRegr_vtx3dl;
+   float fRegr_met, fRegr_dPhiMet;
 };
 
 #endif

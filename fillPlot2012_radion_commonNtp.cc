@@ -4,6 +4,8 @@
 
 #include "../HelicityLikelihoodDiscriminant/HelicityLikelihoodDiscriminant.h"
 
+using namespace TMVA;
+
 using namespace std;
 
 fillPlot2012_radion_commonNtp::fillPlot2012_radion_commonNtp( const std::string& dataset, const std::string& selectionType, const std::string& bTaggerType ) : RedNtpFinalizer_commonNtp( "Radion", dataset ) {
@@ -11,6 +13,21 @@ fillPlot2012_radion_commonNtp::fillPlot2012_radion_commonNtp( const std::string&
   bTaggerType_ = bTaggerType;
   
   setSelectionType(selectionType);
+
+  // jet regression 
+  readerRegres = new Reader( "!Color:!Silent" );
+
+  readerRegres->AddVariable( "hJet_pt",  &fRegr_pt);
+  readerRegres->AddVariable( "hJet_eta", &fRegr_eta);
+  readerRegres->AddVariable( "hJet_cef", &fRegr_cef);
+  readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
+  readerRegres->AddVariable( "hJet_chf",    &fRegr_chf);
+  readerRegres->AddVariable( "hJet_vtxPt",  &fRegr_vtxPt);
+  readerRegres->AddVariable( "hJet_vtx3dL", &fRegr_vtx3dl);
+  readerRegres->AddVariable( "MET", &fRegr_met);
+  readerRegres->AddVariable( "hJet_dPhiMETJet", &fRegr_dPhiMet);
+
+  readerRegres->BookMVA("BDTG method","data/regrWeights/TMVARegression_BDTG.weights.xml");  
 }
 
 fillPlot2012_radion_commonNtp::~fillPlot2012_radion_commonNtp() {
@@ -28,8 +45,6 @@ double fillPlot2012_radion_commonNtp::delta_phi(double phi1, double phi2) {
 }
 
 void fillPlot2012_radion_commonNtp::finalize() {
-
-  cout << "running the analysis on common ntuples" << endl;
 
   this->Init();
 
@@ -351,21 +366,54 @@ void fillPlot2012_radion_commonNtp::finalize() {
     h1_mgg_preselG->Fill( PhotonsMass, weight_t );
 
 
-
     // ------------------------------ jets ------------------------------------------
-    // jets, no btagging, passing cut based jetID                                                                                 
-
-    // preparing vectors with the infos used later on
+    // jets: preparing vectors with the infos used later on
     ecorrjet[0]     = j1_e;           ecorrjet[1]     = j2_e;           ecorrjet[2]     = j3_e;           ecorrjet[3]     = j4_e;
     ptcorrjet[0]    = j1_pt;          ptcorrjet[1]    = j2_pt;          ptcorrjet[2]    = j3_pt;          ptcorrjet[3]    = j4_pt;
     etajet[0]       = j1_eta;         etajet[1]       = j2_eta;         etajet[2]       = j3_eta;         etajet[3]       = j4_eta;
     phijet[0]       = j1_phi;         phijet[1]       = j2_phi;         phijet[2]       = j3_phi;         phijet[3]       = j4_phi;
     btagjprobjet[0] = j1_jetProbBtag; btagjprobjet[1] = j2_jetProbBtag; btagjprobjet[2] = j3_jetProbBtag; btagjprobjet[3] = j4_jetProbBtag;
     btagcsvjet[0]   = j1_csvBtag;     btagcsvjet[1]   = j2_csvBtag;     btagcsvjet[2]   = j3_csvBtag;     btagcsvjet[3]   = j4_csvBtag;
+    cefjet[0]       = j1_emfrac;      cefjet[1]       = j2_emfrac;      cefjet[2]       = j3_emfrac;      cefjet[3]       = j4_emfrac; 
+    chfjet[0]       = j1_hadfrac;     chfjet[1]       = j2_hadfrac;     chfjet[2]       = j3_hadfrac;     chfjet[3]       = j4_hadfrac; 
+    vtxPtjet[0]     = j1_secVtxPt;    vtxPtjet[1]     = j2_secVtxPt;    vtxPtjet[2]     = j3_secVtxPt;    vtxPtjet[3]     = j4_secVtxPt; 
+    vtx3dljet[0]    = j1_secVtx3dL;   vtx3dljet[1]    = j2_secVtx3dL;   vtx3dljet[2]    = j3_secVtx3dL;   vtx3dljet[3]    = j4_secVtx3dL; 
+    nconstjet[0]    = (float)(j1_nNeutrals + j1_nCharged);   // + j1_ntk?? chiara!
+    nconstjet[1]    = (float)(j2_nNeutrals + j2_nCharged);
+    nconstjet[2]    = (float)(j3_nNeutrals + j3_nCharged);
+    nconstjet[3]    = (float)(j4_nNeutrals + j4_nCharged);
 
+    // applying jet regression
+    TVector3 tempT3jet, t3met;
+    // t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   // chiara
+    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);   // chiara
+    for (int ii=0; ii<4; ii++) {
+      if ( ptcorrjet[ii]<-1) continue;
+
+      fRegr_pt      = ptcorrjet[ii]; 
+      fRegr_eta     = etajet[ii];
+      fRegr_cef     = cefjet[ii];
+      fRegr_nconst  = nconstjet[ii];
+      fRegr_chf     = chfjet[ii];
+      fRegr_vtxPt   = vtxPtjet[ii];
+      fRegr_vtx3dl  = vtx3dljet[ii];
+      // fRegr_met     = met_corr_pfmet;      // chiara
+      fRegr_met     = met_pfmet;      // chiara
+      tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
+      fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
+      float thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
+
+      // corrected pT and energy
+      // float correctionFactor = thePtCorr/ptcorrjet[ii];
+      // ptcorrjet[ii] = thePtCorr;
+      // ecorrjet[ii] *= correctionFactor; 
+    }
+
+    // jets, no btagging, passing cut based jetID                                                                                 
     vector<int> v_puIdJets;
     for (int ij=0; ij<4; ij++) { 
       if ( ptcorrjet[ij]<-1)               continue;
+      if ( btagcsvjet[ij]<=0)              continue;
       if ( ptcorrjet[ij] < ptjetacccut )   continue;
       if ( fabs(etajet[ij])>etajetacccut ) continue;
       if ( !passCutBasedJetId(ij) )        continue;
@@ -400,8 +448,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
     }
 
     // at least 2 preselected jets                                                                                                
-    if (v_puIdJets.size()<2) continue;
-
+    if (v_puIdJets.size()<2)  continue;
 
     // choice of analysis jets ---------------------                                                                              
     
@@ -679,6 +726,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
     }
     */
 
+
+    /*
     // -------------------------------------------------------------   
     // invariant mass of jets by btag category                                                                                    
     if( btagCategory==0 ) {
@@ -713,6 +762,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
       h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight_t );
     }
 
+    */
 
     // filling the tree for selected events                                                                                       
     massggnewvtx_t = PhotonsMass;
@@ -882,6 +932,12 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("nvtx", &nvtx, &b_nvtx);
   tree_->SetBranchAddress("rho", &rho, &b_rho);
   tree_->SetBranchAddress("category", &category, &b_category);
+  tree_->SetBranchAddress("met_pfmet", &met_pfmet, &b_met_pfmet);
+  tree_->SetBranchAddress("met_phi_pfmet", &met_phi_pfmet, &b_met_phi_pfmet);
+  tree_->SetBranchAddress("met_corr_pfmet", &met_corr_pfmet, &b_met_corr_pfmet);
+  tree_->SetBranchAddress("met_corr_phi_pfmet", &met_corr_phi_pfmet, &b_met_corr_phi_pfmet);
+  tree_->SetBranchAddress("met_corr_eta_pfmet", &met_corr_eta_pfmet, &b_met_corr_eta_pfmet);
+  tree_->SetBranchAddress("met_corr_e_pfmet", &met_corr_e_pfmet, &b_met_corr_e_pfmet);
   tree_->SetBranchAddress("ph1_e", &ph1_e, &b_ph1_e);
   tree_->SetBranchAddress("ph2_e", &ph2_e, &b_ph2_e);
   tree_->SetBranchAddress("ph1_pt", &ph1_pt, &b_ph1_pt);
@@ -961,6 +1017,9 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("vtx_pulltoconv", &vtx_pulltoconv, &b_vtx_pulltoconv);
   tree_->SetBranchAddress("vtx_prob", &vtx_prob, &b_vtx_prob);
   tree_->SetBranchAddress("njets_passing_kLooseID", &njets_passing_kLooseID, &b_njets_passing_kLooseID);
+  tree_->SetBranchAddress("njets_passing_kLooseID_and_CSVL", &njets_passing_kLooseID_and_CSVL, &b_njets_passing_kLooseID_and_CSVL);
+  tree_->SetBranchAddress("njets_passing_kLooseID_and_CSVM", &njets_passing_kLooseID_and_CSVM, &b_njets_passing_kLooseID_and_CSVM);
+  tree_->SetBranchAddress("njets_passing_kLooseID_and_CSVT", &njets_passing_kLooseID_and_CSVT, &b_njets_passing_kLooseID_and_CSVT);
   tree_->SetBranchAddress("j1_e", &j1_e, &b_j1_e);
   tree_->SetBranchAddress("j1_pt", &j1_pt, &b_j1_pt);
   tree_->SetBranchAddress("j1_phi", &j1_phi, &b_j1_phi);
@@ -973,6 +1032,20 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("j1_csvMvaBtag", &j1_csvMvaBtag, &b_j1_csvMvaBtag);
   tree_->SetBranchAddress("j1_jetProbBtag", &j1_jetProbBtag, &b_j1_jetProbBtag);
   tree_->SetBranchAddress("j1_tcheBtag", &j1_tcheBtag, &b_j1_tcheBtag);
+  tree_->SetBranchAddress("j1_radionMatched", &j1_radionMatched, &b_j1_radionMatched);
+  tree_->SetBranchAddress("j1_ptD", &j1_ptD, &b_j1_ptD);
+  tree_->SetBranchAddress("j1_nSecondaryVertices", &j1_nSecondaryVertices, &b_j1_nSecondaryVertices);
+  tree_->SetBranchAddress("j1_secVtxPt", &j1_secVtxPt, &b_j1_secVtxPt);
+  tree_->SetBranchAddress("j1_secVtx3dL", &j1_secVtx3dL, &b_j1_secVtx3dL);
+  tree_->SetBranchAddress("j1_secVtx3deL", &j1_secVtx3deL, &b_j1_secVtx3deL);
+  tree_->SetBranchAddress("j1_emfrac", &j1_emfrac, &b_j1_emfrac);
+  tree_->SetBranchAddress("j1_hadfrac", &j1_hadfrac, &b_j1_hadfrac);
+  tree_->SetBranchAddress("j1_ntk", &j1_ntk, &b_j1_ntk);
+  tree_->SetBranchAddress("j1_nNeutrals", &j1_nNeutrals, &b_j1_nNeutrals);
+  tree_->SetBranchAddress("j1_nCharged", &j1_nCharged, &b_j1_nCharged);
+  tree_->SetBranchAddress("j1_axis1", &j1_axis1, &b_j1_axis1);
+  tree_->SetBranchAddress("j1_axis2", &j1_axis2, &b_j1_axis2);
+  tree_->SetBranchAddress("j1_pull", &j1_pull, &b_j1_pull);
   tree_->SetBranchAddress("j2_e", &j2_e, &b_j2_e);
   tree_->SetBranchAddress("j2_pt", &j2_pt, &b_j2_pt);
   tree_->SetBranchAddress("j2_phi", &j2_phi, &b_j2_phi);
@@ -985,6 +1058,21 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("j2_csvMvaBtag", &j2_csvMvaBtag, &b_j2_csvMvaBtag);
   tree_->SetBranchAddress("j2_jetProbBtag", &j2_jetProbBtag, &b_j2_jetProbBtag);
   tree_->SetBranchAddress("j2_tcheBtag", &j2_tcheBtag, &b_j2_tcheBtag);
+
+  tree_->SetBranchAddress("j2_radionMatched", &j2_radionMatched, &b_j2_radionMatched);
+  tree_->SetBranchAddress("j2_ptD", &j2_ptD, &b_j2_ptD);
+  tree_->SetBranchAddress("j2_nSecondaryVertices", &j2_nSecondaryVertices, &b_j2_nSecondaryVertices);
+  tree_->SetBranchAddress("j2_secVtxPt", &j2_secVtxPt, &b_j2_secVtxPt);
+  tree_->SetBranchAddress("j2_secVtx3dL", &j2_secVtx3dL, &b_j2_secVtx3dL);
+  tree_->SetBranchAddress("j2_secVtx3deL", &j2_secVtx3deL, &b_j2_secVtx3deL);
+  tree_->SetBranchAddress("j2_emfrac", &j2_emfrac, &b_j2_emfrac);
+  tree_->SetBranchAddress("j2_hadfrac", &j2_hadfrac, &b_j2_hadfrac);
+  tree_->SetBranchAddress("j2_ntk", &j2_ntk, &b_j2_ntk);
+  tree_->SetBranchAddress("j2_nNeutrals", &j2_nNeutrals, &b_j2_nNeutrals);
+  tree_->SetBranchAddress("j2_nCharged", &j2_nCharged, &b_j2_nCharged);
+  tree_->SetBranchAddress("j2_axis1", &j2_axis1, &b_j2_axis1);
+  tree_->SetBranchAddress("j2_axis2", &j2_axis2, &b_j2_axis2);
+  tree_->SetBranchAddress("j2_pull", &j2_pull, &b_j2_pull);
   tree_->SetBranchAddress("j3_e", &j3_e, &b_j3_e);
   tree_->SetBranchAddress("j3_pt", &j3_pt, &b_j3_pt);
   tree_->SetBranchAddress("j3_phi", &j3_phi, &b_j3_phi);
@@ -997,6 +1085,20 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("j3_csvMvaBtag", &j3_csvMvaBtag, &b_j3_csvMvaBtag);
   tree_->SetBranchAddress("j3_jetProbBtag", &j3_jetProbBtag, &b_j3_jetProbBtag);
   tree_->SetBranchAddress("j3_tcheBtag", &j3_tcheBtag, &b_j3_tcheBtag);
+  tree_->SetBranchAddress("j3_radionMatched", &j3_radionMatched, &b_j3_radionMatched);
+  tree_->SetBranchAddress("j3_ptD", &j3_ptD, &b_j3_ptD);
+  tree_->SetBranchAddress("j3_nSecondaryVertices", &j3_nSecondaryVertices, &b_j3_nSecondaryVertices);
+  tree_->SetBranchAddress("j3_secVtxPt", &j3_secVtxPt, &b_j3_secVtxPt);
+  tree_->SetBranchAddress("j3_secVtx3dL", &j3_secVtx3dL, &b_j3_secVtx3dL);
+  tree_->SetBranchAddress("j3_secVtx3deL", &j3_secVtx3deL, &b_j3_secVtx3deL);
+  tree_->SetBranchAddress("j3_emfrac", &j3_emfrac, &b_j3_emfrac);
+  tree_->SetBranchAddress("j3_hadfrac", &j3_hadfrac, &b_j3_hadfrac);
+  tree_->SetBranchAddress("j3_ntk", &j3_ntk, &b_j3_ntk);
+  tree_->SetBranchAddress("j3_nNeutrals", &j3_nNeutrals, &b_j3_nNeutrals);
+  tree_->SetBranchAddress("j3_nCharged", &j3_nCharged, &b_j3_nCharged);
+  tree_->SetBranchAddress("j3_axis1", &j3_axis1, &b_j3_axis1);
+  tree_->SetBranchAddress("j3_axis2", &j3_axis2, &b_j3_axis2);
+  tree_->SetBranchAddress("j3_pull", &j3_pull, &b_j3_pull);
   tree_->SetBranchAddress("j4_e", &j4_e, &b_j4_e);
   tree_->SetBranchAddress("j4_pt", &j4_pt, &b_j4_pt);
   tree_->SetBranchAddress("j4_phi", &j4_phi, &b_j4_phi);
@@ -1009,6 +1111,20 @@ void fillPlot2012_radion_commonNtp::Init() {
   tree_->SetBranchAddress("j4_csvMvaBtag", &j4_csvMvaBtag, &b_j4_csvMvaBtag);
   tree_->SetBranchAddress("j4_jetProbBtag", &j4_jetProbBtag, &b_j4_jetProbBtag);
   tree_->SetBranchAddress("j4_tcheBtag", &j4_tcheBtag, &b_j4_tcheBtag);
+  tree_->SetBranchAddress("j4_radionMatched", &j4_radionMatched, &b_j4_radionMatched);
+  tree_->SetBranchAddress("j4_ptD", &j4_ptD, &b_j4_ptD);
+  tree_->SetBranchAddress("j4_nSecondaryVertices", &j4_nSecondaryVertices, &b_j4_nSecondaryVertices);
+  tree_->SetBranchAddress("j4_secVtxPt", &j4_secVtxPt, &b_j4_secVtxPt);
+  tree_->SetBranchAddress("j4_secVtx3dL", &j4_secVtx3dL, &b_j4_secVtx3dL);
+  tree_->SetBranchAddress("j4_secVtx3deL", &j4_secVtx3deL, &b_j4_secVtx3deL);
+  tree_->SetBranchAddress("j4_emfrac", &j4_emfrac, &b_j4_emfrac);
+  tree_->SetBranchAddress("j4_hadfrac", &j4_hadfrac, &b_j4_hadfrac);
+  tree_->SetBranchAddress("j4_ntk", &j4_ntk, &b_j4_ntk);
+  tree_->SetBranchAddress("j4_nNeutrals", &j4_nNeutrals, &b_j4_nNeutrals);
+  tree_->SetBranchAddress("j4_nCharged", &j4_nCharged, &b_j4_nCharged);
+  tree_->SetBranchAddress("j4_axis1", &j4_axis1, &b_j4_axis1);
+  tree_->SetBranchAddress("j4_axis2", &j4_axis2, &b_j4_axis2);
+  tree_->SetBranchAddress("j4_pull", &j4_pull, &b_j4_pull);
   tree_->SetBranchAddress("JetsMass", &JetsMass, &b_JetsMass);
   tree_->SetBranchAddress("dijet_E", &dijet_E, &b_dijet_E);
   tree_->SetBranchAddress("dijet_Pt", &dijet_Pt, &b_dijet_Pt);
