@@ -6,22 +6,44 @@ using namespace TMVA;
 
 bestJets_commonNtp::bestJets_commonNtp( const std::string& dataset, const std::string& selectionType, const std::string& bTaggerType ) : RedNtpFinalizer_commonNtp( "Radion", dataset ) {
   
+  // chiara
+  usePhilReg    = false;
+  useOlivierReg = true;
+  if (usePhilReg && useOlivierReg) cout << "problem. Can not use two regressions at the same time" << endl; 
+
   bTaggerType_ = bTaggerType;
   
   setSelectionType(selectionType);
 
-  // jet regression                                                                                                   
-  readerRegres = new Reader( "!Color:!Silent" );
-  readerRegres->AddVariable( "hJet_pt",  &fRegr_pt);
-  readerRegres->AddVariable( "hJet_eta", &fRegr_eta);
-  readerRegres->AddVariable( "hJet_cef", &fRegr_cef);
-  readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
-  readerRegres->AddVariable( "hJet_chf",    &fRegr_chf);
-  readerRegres->AddVariable( "hJet_vtxPt",  &fRegr_vtxPt);
-  readerRegres->AddVariable( "hJet_vtx3dL", &fRegr_vtx3dl);
-  readerRegres->AddVariable( "MET", &fRegr_met);
-  readerRegres->AddVariable( "hJet_dPhiMETJet", &fRegr_dPhiMet);
-  readerRegres->BookMVA("BDTG method","data/regrWeights/TMVARegression_BDTG.weights.xml");
+  // jet regression - Phil                                                                                                    
+  if (usePhilReg) {
+    readerRegres = new Reader( "!Color:!Silent" );
+    readerRegres->AddVariable( "hJet_pt",            &fRegr_pt);
+    readerRegres->AddVariable( "hJet_eta",           &fRegr_eta);
+    readerRegres->AddVariable( "hJet_cef",           &fRegr_cef);
+    readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
+    readerRegres->AddVariable( "hJet_chf",           &fRegr_chf);
+    readerRegres->AddVariable( "hJet_vtxPt",         &fRegr_vtxPt);
+    readerRegres->AddVariable( "hJet_vtx3dL",        &fRegr_vtx3dl);
+    readerRegres->AddVariable( "MET",                &fRegr_met);
+    readerRegres->AddVariable( "hJet_dPhiMETJet",    &fRegr_dPhiMet);
+    readerRegres->BookMVA("BDTG method","data/regrWeightsPhil/TMVARegression_BDTG.weights.xml");
+  }
+
+  // jet regression - Olivier
+  if (useOlivierReg) {
+    readerRegres = new Reader( "!Color:!Silent" );
+    readerRegres->AddVariable( "jet_pt",            &fRegr_pt);
+    readerRegres->AddVariable( "jet_eta",           &fRegr_eta);
+    readerRegres->AddVariable( "jet_emfrac",        &fRegr_cef);
+    readerRegres->AddVariable( "jet_nConstituents", &fRegr_nconst);
+    readerRegres->AddVariable( "jet_hadfrac",       &fRegr_chf);
+    readerRegres->AddVariable( "jet_secVtxPt",      &fRegr_vtxPt);
+    readerRegres->AddVariable( "jet_secVtx3dL",     &fRegr_vtx3dl);
+    readerRegres->AddVariable( "ev_met_corr_pfmet",  &fRegr_met);
+    readerRegres->AddVariable( "jet_dPhiMet",        &fRegr_dPhiMet);
+    readerRegres->BookMVA("BDT","data/regrWeightsOlivier/factoryJetRegGen2_globeinputs_BDT.weights.xml");
+  }
 }
 
 bestJets_commonNtp::~bestJets_commonNtp() {
@@ -166,35 +188,40 @@ void bestJets_commonNtp::finalize() {
     chfjet[0]       = j1_hadfrac;     chfjet[1]       = j2_hadfrac;     chfjet[2]       = j3_hadfrac;     chfjet[3]       = j4_hadfrac;
     vtxPtjet[0]     = j1_secVtxPt;    vtxPtjet[1]     = j2_secVtxPt;    vtxPtjet[2]     = j3_secVtxPt;    vtxPtjet[3]     = j4_secVtxPt;
     vtx3dljet[0]    = j1_secVtx3dL;   vtx3dljet[1]    = j2_secVtx3dL;   vtx3dljet[2]    = j3_secVtx3dL;   vtx3dljet[3]    = j4_secVtx3dL;
-    nconstjet[0]    = (float)(j1_nNeutrals + j1_nCharged);   // + j1_ntk?? chiara!                                                                      
+    nconstjet[0]    = (float)(j1_nNeutrals + j1_nCharged);   
     nconstjet[1]    = (float)(j2_nNeutrals + j2_nCharged);
     nconstjet[2]    = (float)(j3_nNeutrals + j3_nCharged);
     nconstjet[3]    = (float)(j4_nNeutrals + j4_nCharged);
 
     // applying the jet regression
-    TVector3 tempT3jet, t3met;
-    // t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   // chiara                                                                            
-    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);                // chiara  
-    for (int ii=0; ii<4; ii++) {
-      if ( ptcorrjet[ii]<-1) continue;
-
-      fRegr_pt      = ptcorrjet[ii];
-      fRegr_eta     = etajet[ii];
-      fRegr_cef     = cefjet[ii];
-      fRegr_nconst  = nconstjet[ii];
-      fRegr_chf     = chfjet[ii];
-      fRegr_vtxPt   = vtxPtjet[ii];
-      fRegr_vtx3dl  = vtx3dljet[ii];
-      // fRegr_met     = met_corr_pfmet;      // chiara                                                                                                 
-      fRegr_met     = met_pfmet;              // chiara
-      tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
-      fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
-      float thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
-
-      // corrected pT and energy                                                                                                                        
-      float correctionFactor = thePtCorr/ptcorrjet[ii];                                                                                              
-      ptcorrjet[ii] = thePtCorr;                                                                                                                     
-      ecorrjet[ii] *= correctionFactor;                                                                                                              
+    if (usePhilReg || useOlivierReg) {
+      TVector3 tempT3jet, t3met;
+      if (useOlivierReg) t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   
+      if (usePhilReg)    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);              
+      for (int ii=0; ii<4; ii++) {
+	if ( ptcorrjet[ii]<-1) continue;
+	
+	fRegr_pt      = ptcorrjet[ii];
+	fRegr_eta     = etajet[ii];
+	fRegr_cef     = cefjet[ii];
+	fRegr_nconst  = nconstjet[ii];
+	fRegr_chf     = chfjet[ii];
+	fRegr_vtxPt   = vtxPtjet[ii];
+	fRegr_vtx3dl  = vtx3dljet[ii];
+	if (useOlivierReg) fRegr_met = met_corr_pfmet;  
+	if (usePhilReg)    fRegr_met = met_pfmet; 
+	tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
+	fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
+	
+	float thePtCorr = 10000;
+	if (usePhilReg)    thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
+	if (useOlivierReg) thePtCorr = (float)(readerRegres->EvaluateMVA("BDT"));
+	
+	// corrected pT and energy 
+	float correctionFactor = thePtCorr/ptcorrjet[ii]; 
+	ptcorrjet[ii] = thePtCorr;  
+	ecorrjet[ii] *= correctionFactor;
+      }
     }
 
     vector<int> v_puIdJets;
