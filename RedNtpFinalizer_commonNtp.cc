@@ -12,7 +12,9 @@ RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyze
   if      ( dataset_tstr.Contains("Radion_M-300_madgraph") )    tree_ = new TChain("Radion_m300_8TeV_nm");   
   else if ( dataset_tstr.Contains("Radion_M-500_madgraph") )    tree_ = new TChain("Radion_m500_8TeV_nm");   
   else if ( dataset_tstr.Contains("Radion_M-700_madgraph") )    tree_ = new TChain("Radion_m700_8TeV_nm");   
-  else if ( dataset_tstr.Contains("Radion_M-1000_madgraph") )   tree_ = new TChain("Radion_m1000_8TeV_nm");   
+  else if ( dataset_tstr.Contains("Radion_M-1000_madgraph") )   tree_ = new TChain("Radion_m1000_8TeV_nm");  
+
+  else if ( dataset_tstr.Contains("Graviton_M-300") )           tree_ = new TChain("Graviton_m300_8TeV");    
 
   else if ( dataset_tstr.Contains("GluGluToHToGG_M-125_8TeV") ) tree_ = new TChain("ggh_m125_8TeV");   
   else if ( dataset_tstr.Contains("VBF_HToGG_M-125_8TeV")  )    tree_ = new TChain("vbf_m125_8TeV");   
@@ -112,6 +114,8 @@ void RedNtpFinalizer_commonNtp::addFile(const std::string& dataset, const std::s
   else if ( dataset_tstr.Contains("Radion_M-500_madgraph") )  treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m500_8TeV_nm";   
   else if ( dataset_tstr.Contains("Radion_M-700_madgraph") )  treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m700_8TeV_nm";   
   else if ( dataset_tstr.Contains("Radion_M-1000_madgraph") ) treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m1000_8TeV_nm";   
+
+  else if ( dataset_tstr.Contains("Graviton_M-300") )         treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Graviton_m300_8TeV";   
 
   else if ( dataset_tstr.Contains("GluGluToHToGG_M-125_8TeV")  ) treeName = redNtpDir_ + "/SMHiggs_m125.root/ggh_m125_8TeV";   
   else if ( dataset_tstr.Contains("VBF_HToGG_M-125_8TeV")  )     treeName = redNtpDir_ + "/SMHiggs_m125.root/vbf_m125_8TeV";   

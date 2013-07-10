@@ -580,7 +580,12 @@ public :
    float vtxPtjet[4], vtx3dljet[4];
    float nconstjet[4];
 
+   // for extra selections
+   bool fitToGG, fitToFourBodies; 
+
    // for jet regression
+   bool useOlivierReg, usePhilReg;
+
    TMVA::Reader *readerRegres;
    float fRegr_pt, fRegr_eta, fRegr_cef, fRegr_chf; 
    float fRegr_nconst;

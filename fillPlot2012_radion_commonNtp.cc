@@ -10,24 +10,51 @@ using namespace std;
 
 fillPlot2012_radion_commonNtp::fillPlot2012_radion_commonNtp( const std::string& dataset, const std::string& selectionType, const std::string& bTaggerType ) : RedNtpFinalizer_commonNtp( "Radion", dataset ) {
   
+  // chiara
+  usePhilReg    = false;
+  useOlivierReg = true;
+  if (usePhilReg && useOlivierReg) cout << "problem. Can not use two regressions at the same time" << endl; 
+    
+  // chiara
+  fitToGG         = true;
+  fitToFourBodies = false;
+  if ( (fitToGG && fitToFourBodies) || (!fitToGG && !fitToFourBodies) ) cout << "problem!" << endl; 
+
   bTaggerType_ = bTaggerType;
   
   setSelectionType(selectionType);
 
-  // jet regression 
-  readerRegres = new Reader( "!Color:!Silent" );
+  // jet regression - Phil
+  if (usePhilReg) {
+    cout << "using Phil's regression" << endl;
+    readerRegres = new Reader( "!Color:!Silent" );
+    readerRegres->AddVariable( "hJet_pt",  &fRegr_pt);
+    readerRegres->AddVariable( "hJet_eta", &fRegr_eta);
+    readerRegres->AddVariable( "hJet_cef", &fRegr_cef);
+    readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
+    readerRegres->AddVariable( "hJet_chf",    &fRegr_chf);
+    readerRegres->AddVariable( "hJet_vtxPt",  &fRegr_vtxPt);
+    readerRegres->AddVariable( "hJet_vtx3dL", &fRegr_vtx3dl);
+    readerRegres->AddVariable( "MET", &fRegr_met);
+    readerRegres->AddVariable( "hJet_dPhiMETJet", &fRegr_dPhiMet);
+    readerRegres->BookMVA("BDTG method","data/regrWeightsPhil/TMVARegression_BDTG.weights.xml");  
+  }
 
-  readerRegres->AddVariable( "hJet_pt",  &fRegr_pt);
-  readerRegres->AddVariable( "hJet_eta", &fRegr_eta);
-  readerRegres->AddVariable( "hJet_cef", &fRegr_cef);
-  readerRegres->AddVariable( "hJet_nconstituents", &fRegr_nconst);
-  readerRegres->AddVariable( "hJet_chf",    &fRegr_chf);
-  readerRegres->AddVariable( "hJet_vtxPt",  &fRegr_vtxPt);
-  readerRegres->AddVariable( "hJet_vtx3dL", &fRegr_vtx3dl);
-  readerRegres->AddVariable( "MET", &fRegr_met);
-  readerRegres->AddVariable( "hJet_dPhiMETJet", &fRegr_dPhiMet);
-
-  readerRegres->BookMVA("BDTG method","data/regrWeights/TMVARegression_BDTG.weights.xml");  
+  // jet regression - Olivier
+  if (useOlivierReg) {
+    cout << "using Olivier's regression" << endl;
+    readerRegres = new Reader( "!Color:!Silent" );
+    readerRegres->AddVariable( "jet_pt",             &fRegr_pt);
+    readerRegres->AddVariable( "jet_eta",            &fRegr_eta);
+    readerRegres->AddVariable( "jet_emfrac",         &fRegr_cef);
+    readerRegres->AddVariable( "jet_nConstituents",  &fRegr_nconst);
+    readerRegres->AddVariable( "jet_hadfrac",        &fRegr_chf);
+    readerRegres->AddVariable( "jet_secVtxPt",       &fRegr_vtxPt);
+    readerRegres->AddVariable( "jet_secVtx3dL",      &fRegr_vtx3dl);
+    readerRegres->AddVariable( "ev_met_corr_pfmet",  &fRegr_met);
+    readerRegres->AddVariable( "jet_dPhiMet",        &fRegr_dPhiMet);
+    readerRegres->BookMVA("BDT","data/regrWeightsOlivier/factoryJetRegGen2_globeinputs_BDT.weights.xml");
+  }
 }
 
 fillPlot2012_radion_commonNtp::~fillPlot2012_radion_commonNtp() {
@@ -155,7 +182,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TH1D* h1_cosThetaStar = new TH1D("cosThetaStar", "", 50, -1.0001, 1.0001);
   h1_cosThetaStar->Sumw2();
 
-  // kin fit study                                                                                                                
+  // kin fit study      
   TH1D* h1_kinfit_chiSquareProbH = new TH1D("kinfit_chiSquareProbH", "", 1000, 0., 1.0001);
   h1_kinfit_chiSquareProbH->Sumw2();
   TH1D* h1_mVstar_kinfit = new TH1D("mVstar_kinfit", "", 100, 100., 600.);
@@ -365,7 +392,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     // control plots after preselection on photons (pT, acceptance and ID)                                                        
     h1_mgg_preselG->Fill( PhotonsMass, weight_t );
 
-
     // ------------------------------ jets ------------------------------------------
     // jets: preparing vectors with the infos used later on
     ecorrjet[0]     = j1_e;           ecorrjet[1]     = j2_e;           ecorrjet[2]     = j3_e;           ecorrjet[3]     = j4_e;
@@ -384,29 +410,34 @@ void fillPlot2012_radion_commonNtp::finalize() {
     nconstjet[3]    = (float)(j4_nNeutrals + j4_nCharged);
 
     // applying jet regression
-    TVector3 tempT3jet, t3met;
-    // t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   // chiara
-    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);   // chiara
-    for (int ii=0; ii<4; ii++) {
-      if ( ptcorrjet[ii]<-1) continue;
+    if (usePhilReg || useOlivierReg) {
+      TVector3 tempT3jet, t3met;
+      if (useOlivierReg) t3met.SetPtEtaPhi(met_corr_pfmet, 0, met_corr_phi_pfmet);   
+      if (usePhilReg)    t3met.SetPtEtaPhi(met_pfmet, 0, met_phi_pfmet);        
 
-      fRegr_pt      = ptcorrjet[ii]; 
-      fRegr_eta     = etajet[ii];
-      fRegr_cef     = cefjet[ii];
-      fRegr_nconst  = nconstjet[ii];
-      fRegr_chf     = chfjet[ii];
-      fRegr_vtxPt   = vtxPtjet[ii];
-      fRegr_vtx3dl  = vtx3dljet[ii];
-      // fRegr_met     = met_corr_pfmet;      // chiara
-      fRegr_met     = met_pfmet;      // chiara
-      tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
-      fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
-      float thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
+      for (int ii=0; ii<4; ii++) {
+	if (ptcorrjet[ii]<-1) continue;
+	fRegr_pt      = ptcorrjet[ii]; 
+	fRegr_eta     = etajet[ii];
+	fRegr_cef     = cefjet[ii];
+	fRegr_nconst  = nconstjet[ii];
+	fRegr_chf     = chfjet[ii];
+	fRegr_vtxPt   = vtxPtjet[ii];
+	fRegr_vtx3dl  = vtx3dljet[ii];
+	if (useOlivierReg) fRegr_met = met_corr_pfmet;  
+	if (usePhilReg)    fRegr_met = met_pfmet; 
+	tempT3jet.SetPtEtaPhi(ptcorrjet[ii], etajet[ii], phijet[ii]);
+	fRegr_dPhiMet = tempT3jet.DeltaPhi(t3met);
 
-      // corrected pT and energy
-      // float correctionFactor = thePtCorr/ptcorrjet[ii];
-      // ptcorrjet[ii] = thePtCorr;
-      // ecorrjet[ii] *= correctionFactor; 
+	float thePtCorr = 10000;
+	if (usePhilReg)    thePtCorr = readerRegres->EvaluateRegression("BDTG method")[0];
+	if (useOlivierReg) thePtCorr = (float)(readerRegres->EvaluateMVA("BDT"));
+
+	// corrected pT and energy
+	float correctionFactor = thePtCorr/ptcorrjet[ii];
+	ptcorrjet[ii] = thePtCorr;
+	ecorrjet[ii] *= correctionFactor; 
+      }
     }
 
     // jets, no btagging, passing cut based jetID                                                                                 
@@ -652,7 +683,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     float cosThetaStar = hangles.helCosThetaStar;
     h1_cosThetaStar -> Fill( hangles.helCosThetaStar, weight_t );
 
-
     // refitted jets                                                                                                              
     TLorentzVector jet1_kinfit, jet2_kinfit;
     jet1_kinfit = jets_kinfitH.first;
@@ -672,22 +702,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
     if ( (isj1btagged==1 && isj2btagged==0) || (isj1btagged==0 && isj2btagged==1) ) btagCategory = 1;
     if (  isj1btagged==0 && isj2btagged==0 ) cout << "this should not happen!" << endl;
 
-    // chiara: mjj and mjjgg optimized windows 
-    // if( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>150.) )  continue;
-    // if( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) )  continue;
-    // if( btagCategory==1 && (radMass<260. || radMass>335.) )         continue;
-    // if( btagCategory==2 && (radMass<255. || radMass>320.) )         continue;
-
-    // chiara: for better yield estimate:
-    // if(v_puIdJets.size()>3) continue;
-    // if(PhotonsMass<115 || PhotonsMass>135) continue;
-    // if(fabs(cosThetaStar)>1.) continue;
-    // if (btagCategory==1 && (ph1_pt*120./PhotonsMass)<50) continue; 
-
-    // if( PhotonsMass<115 || PhotonsMass>135 )     continue;         
-    // if( (t4diJet.M()<90. || t4diJet.M()>150.) )  continue;
-    //  if( radMass<470. || radMass>530. )           continue; 
-
     // categorize the events using gammas
     int myR9=-1;
     if(ph1_r9>.94 && ph2_r9>.94) myR9 = 1;
@@ -698,36 +712,52 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // total category combining photons / jets                                                                                    
     int theCategory = -1;
-    // if (myR9==1 && btagCategory==2) theCategory = 0;
-    // if (myR9==1 && btagCategory==1) theCategory = 1;
-    // if (myR9==0 && btagCategory==2) theCategory = 2;
-    // if (myR9==0 && btagCategory==1) theCategory = 3;
     if (btagCategory==2) theCategory = 0;
     if (btagCategory==1) theCategory = 1;
 
+
     // -------------------------------------------------------------                                                              
-    // here we apply further cuts according to the btag category                                                                  
-    /*
-    if (btagCategory<1 || btagCategory>2) continue;
+    // further cuts
 
-    if (btagCategory==1) {
-      if ( ptdiphotcut_1bj>0  && dipho_pt<ptdiphotcut_1bj ) continue;
-      if ( etadiphotcut_1bj>0 && fabs(dipho_eta)>etadiphotcut_1bj  ) continue;
-      if ( ptphot1cut_1bj>0   && ((120./PhotonsMass)*ph1_pt)<ptphot1cut_1bj ) continue;
-      if ( ptjet1cut_1bj>0    && ptJ1<ptjet1cut_1bj ) continue;
-      if ( costhetascut_1bj>0 && fabs(cosThetaStar)>costhetascut_1bj ) continue;
+    // cosTheta*
+    if ( fabs(cosThetaStar)>=0.9 ) continue;  
 
-    } else if (btagCategory==2) {
-      if ( ptdiphotcut_2bj>0  && dipho_pt<ptdiphotcut_2bj ) continue;
-      if ( etadiphotcut_2bj>0 && fabs(dipho_eta)>etadiphotcut_2bj  ) continue;
-      if ( ptphot1cut_2bj>0   && ((120./PhotonsMass)*ph1_pt)<ptphot1cut_2bj ) continue;
-      if ( ptjet1cut_2bj>0    && ptJ1<ptjet1cut_2bj ) continue;
-      if ( costhetascut_2bj>0 && fabs(cosThetaStar)>costhetascut_2bj ) continue;
+    // mjj optimized window 
+    if (fitToGG) {   
+      if ( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>150.) ) continue;
+      if ( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) ) continue;
     }
-    */
+    else if (fitToFourBodies) {   
+      if ( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>170.) ) continue;
+      if ( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>150.) ) continue;
+    }
 
+    // mggjj cut with kinFit 
+    if (fitToGG) {   
+      float radMassKF = Vstar_kinfit.M();
+       if( btagCategory==1 && (radMassKF<260. || radMassKF>335.) ) continue;
+       if( btagCategory==2 && (radMassKF<255. || radMassKF>320.) ) continue;
+      // if( btagCategory==1 && (radMass<260. || radMass>335.) ) continue;
+      // if( btagCategory==2 && (radMass<255. || radMass>320.) ) continue;
+    }
+    else if (fitToFourBodies) {   
+      if( PhotonsMass<120 || PhotonsMass>130) continue;
+    }
 
-    /*
+    // if we want to use jets after kin fit for minDeltaR
+    // float deltaR_g1b1_Bis  = t3phot1.DeltaR((jet1_kinfit).Vect());
+    // float deltaR_g1b2_Bis  = t3phot1.DeltaR((jet2_kinfit).Vect());
+    // float deltaR_g2b1_Bis  = t3phot2.DeltaR((jet1_kinfit).Vect());
+    // float deltaR_g2b2_Bis  = t3phot2.DeltaR((jet2_kinfit).Vect());
+    // float minDeltaR_gb_Bis = deltaR_g1b1_Bis;
+    // if ( deltaR_g1b2_Bis < minDeltaR_gb_Bis ) minDeltaR_gb_Bis = deltaR_g1b2_Bis;
+    // if ( deltaR_g2b1_Bis < minDeltaR_gb_Bis ) minDeltaR_gb_Bis = deltaR_g2b1_Bis;
+    // if ( deltaR_g2b2_Bis < minDeltaR_gb_Bis ) minDeltaR_gb_Bis = deltaR_g2b2_Bis;
+
+    // others
+    if (minDeltaR_gb<1)            continue;
+    if (njets_passing_kLooseID>=3) continue;
+
     // -------------------------------------------------------------   
     // invariant mass of jets by btag category                                                                                    
     if( btagCategory==0 ) {
@@ -761,8 +791,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
       h1_mggjj_kinfit_2btag        -> Fill( Vstar_kinfit.M(), weight_t );
       h1_mggjj_nokinfit_2btag      -> Fill( radMass, weight_t );
     }
-
-    */
 
     // filling the tree for selected events                                                                                       
     massggnewvtx_t = PhotonsMass;
@@ -1178,7 +1206,6 @@ void fillPlot2012_radion_commonNtp::setSelectionType( const std::string& selecti
   selectionType_ = selectionType;
   
   // default values                                                                                                               
-  dopureeventWeight_ = true;
   cicselection = 4;
   
   ptphot1cut = 40.;
@@ -1186,29 +1213,6 @@ void fillPlot2012_radion_commonNtp::setSelectionType( const std::string& selecti
   
   ptjetacccut  = 25.;
   etajetacccut = 2.5;
-  
-  if( selectionType=="default" ) {
-
-    ptdiphotcut_1bj = 0;
-    ptdiphotcut_2bj = 0;
-    
-    etadiphotcut_1bj = 2.1;
-    etadiphotcut_2bj = 2.0;
-    
-    ptphot1cut_1bj = 52.;
-    ptphot1cut_2bj = 57.;
-    
-    ptjet1cut_1bj = 41.;
-    ptjet1cut_2bj = 48.;
-    
-    costhetascut_1bj = 0.9;
-    costhetascut_2bj = 1.0;
-    
-  } else {
-    
-    std::cout << std::endl << std::endl << "Selection '" << selectionType << "' currently not implemented. Exiting." << std::endl;
-    exit(12345);
-  }
 }
 
 int fillPlot2012_radion_commonNtp::myHighestPtJet(std::vector<int> jets) {
