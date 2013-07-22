@@ -58,6 +58,7 @@ public :
    Float_t         deltaetajj;
    Float_t         mjj;
    Float_t         ptjj;
+   Float_t         minDeltaR_gb;
    Float_t         etajj;
    Float_t         mggjj;
    Float_t         deltaphiggjj;
@@ -69,7 +70,6 @@ public :
    Int_t           nbjets_loose;
    Int_t           nbjets_medium;
    Int_t           nbjets_tight;
-   Float_t         zeppen;
    Float_t         chiSquareProbH;
    Int_t           nvtx;
    Int_t           vertex;
@@ -108,6 +108,7 @@ public :
    TBranch        *b_deltaetajj_t;   //!
    TBranch        *b_invmassjet_t;   //!
    TBranch        *b_ptjj_t;   //!
+   TBranch        *b_minDeltaR_gb_t;   //!
    TBranch        *b_etajj_t;   //!
    TBranch        *b_massggjj_t;   //!
    TBranch        *b_deltaphijjgg_t;   //!
@@ -119,7 +120,6 @@ public :
    TBranch        *b_nbjets_loose_t;   //!
    TBranch        *b_nbjets_medium_t;   //!
    TBranch        *b_nbjets_tight_t;   //!
-   TBranch        *b_zeppen_t;   //!
    TBranch        *b_chiSquareProbH_t;   //!
    TBranch        *b_nvtx_t;   //!
    TBranch        *b_theVertex_t;   //!
@@ -151,9 +151,9 @@ addWeightToTree::addWeightToTree(TTree *tree) : fChain(0)
   // if parameter tree is not specified (or zero), connect the file
   // used to generate this class and read the Tree.
   if (tree == 0) {
-    TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../finalizedTrees_Radion_presel_CS/Radion_Data2012_default_CSV.root");
+    TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit_CS/Radion_DataABCD_regr_default_CSV.root");
     if (!f || !f->IsOpen()) {
-      f = new TFile("../finalizedTrees_Radion_presel_CS/Radion_Data2012_default_CSV.root");
+      f = new TFile("../finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit_CS/Radion_DataABCD_regr_default_CSV.root");
     }
     f->GetObject("myTrees",tree);
     
@@ -229,6 +229,7 @@ void addWeightToTree::Init(TTree *tree)
   fChain->SetBranchAddress("deltaetajj", &deltaetajj, &b_deltaetajj_t);
   fChain->SetBranchAddress("mjj", &mjj, &b_invmassjet_t);
   fChain->SetBranchAddress("ptjj", &ptjj, &b_ptjj_t);
+  fChain->SetBranchAddress("minDeltaR_gb", &minDeltaR_gb, &b_minDeltaR_gb_t);
   fChain->SetBranchAddress("etajj", &etajj, &b_etajj_t);
   fChain->SetBranchAddress("mggjj", &mggjj, &b_massggjj_t);
   fChain->SetBranchAddress("deltaphiggjj", &deltaphiggjj, &b_deltaphijjgg_t);
@@ -240,7 +241,6 @@ void addWeightToTree::Init(TTree *tree)
   fChain->SetBranchAddress("nbjets_loose", &nbjets_loose, &b_nbjets_loose_t);
   fChain->SetBranchAddress("nbjets_medium", &nbjets_medium, &b_nbjets_medium_t);
   fChain->SetBranchAddress("nbjets_tight", &nbjets_tight, &b_nbjets_tight_t);
-  fChain->SetBranchAddress("zeppen", &zeppen, &b_zeppen_t);
   fChain->SetBranchAddress("chiSquareProbH", &chiSquareProbH, &b_chiSquareProbH_t);
   fChain->SetBranchAddress("nvtx", &nvtx, &b_nvtx_t);
   fChain->SetBranchAddress("vertex", &vertex, &b_theVertex_t);
@@ -288,6 +288,8 @@ void addWeightToTree::createBranches(TTree* treeWithWeights){
   treeWithWeights->Branch("absCosThetaStar", &absCosThetaStar, "absCosThetaStar/F");
   treeWithWeights->Branch("ptPhot1", &ptPhot1, "ptPhot1/F");
   treeWithWeights->Branch("ptPhot2", &ptPhot2, "ptphot2/F");
+  treeWithWeights->Branch("ptgg", &ptgg, "ptgg/F");
+  treeWithWeights->Branch("ptjj", &ptjj, "ptjj/F");
   treeWithWeights->Branch("etaPhot1", &etaPhot1, "etaphot1/F");
   treeWithWeights->Branch("etaPhot2", &etaPhot2, "etaphot2/F");
   treeWithWeights->Branch("r9Phot1", &r9Phot1, "r9phot1/F");
@@ -302,6 +304,7 @@ void addWeightToTree::createBranches(TTree* treeWithWeights){
   treeWithWeights->Branch("deltaphiggjj", &deltaphiggjj, "deltaphijjgg/F");
   treeWithWeights->Branch("btagCategory", &btagCategory, "btagCategory/I");
   treeWithWeights->Branch("HT_jet", &HT_jet, "HT_jet/F");
+  treeWithWeights->Branch("minDeltaR_gb", &minDeltaR_gb, "minDeltaR_gb/F");
   treeWithWeights->Branch("weight", &weight, "weight/F");
   treeWithWeights->Branch("pt_scaled_2D_weight_data", &pt_scaled_2D_weight_data_t, "pt_scaled_2D_weight_data/F");
   treeWithWeights->Branch("eta_scaled_2D_weight_data", &eta_scaled_2D_weight_data_t, "eta_scaled_2D_weight_data/F");

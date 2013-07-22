@@ -1,16 +1,16 @@
 {
   gStyle->SetOptStat(0);
   
-  TFile* dataFile=TFile::Open("../finalizedTrees_Radion_presel/Radion_Data2012_default_CSV.root");
+  TFile* dataFile=TFile::Open("../finalizedTrees_m300_noCutPerOptim_conRegression/Radion_DataABCD_regr_default_CSV.root");
   TTree* tree_data=(TTree*)dataFile->Get("myTrees");
 
-  TFile* csFile=TFile::Open("../finalizedTrees_Radion_presel_CS/Radion_Data2012_default_CSV.root");
+  TFile* csFile=TFile::Open("../finalizedTrees_m300_noCutPerOptim_conRegression_CS/Radion_DataABCD_regr_default_CSV.root");
   TTree* tree_cs=(TTree*)csFile->Get("myTrees");
 
-  TFile* csFileWeightG=TFile::Open("treesFromCS_presel_withWeights/csWithWeightFromGammas.root");
+  TFile* csFileWeightG=TFile::Open("treesFromCS_presel_withWeights_noPreselCut/csWithWeightFromGammas.root");
   TTree* tree_cswG=(TTree*)csFileWeightG->Get("myTrees_withWeight");
 
-  TFile* csFileWeightJ=TFile::Open("treesFromCS_presel_withWeights/csWithWeightFromJets.root");
+  TFile* csFileWeightJ=TFile::Open("treesFromCS_presel_withWeights_noPreselCut/csWithWeightFromJets.root");
   TTree* tree_cswJ=(TTree*)csFileWeightJ->Get("myTrees_withWeight");
 
 
@@ -161,11 +161,11 @@
 
   // ------------------------------------------------------------------------------
   // mjj  
-  tree_data -> Draw("mjj>>h1_mjj_data(30,0.,300.)", "weight*(massggnewvtx>100 && massggnewvtx<180 && (massggnewvtx>135 || massggnewvtx<115))");
-  tree_cs   -> Draw("mjj>>h1_mjj_cs(30,0.,300.)",   "weight*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mjj>>h1_mjj_csw1(30,0.,300.)", "weight*pt_eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mjj>>h1_mjj_csw2(30,0.,300.)", "weight*pt_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mjj>>h1_mjj_csw3(30,0.,300.)", "weight*eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_data -> Draw("mjj>>h1_mjj_data(30,0.,400.)", "weight*(massggnewvtx>100 && massggnewvtx<180 && (massggnewvtx>135 || massggnewvtx<115))");
+  tree_cs   -> Draw("mjj>>h1_mjj_cs(30,0.,400.)",   "weight*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mjj>>h1_mjj_csw1(30,0.,400.)", "weight*pt_eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mjj>>h1_mjj_csw2(30,0.,400.)", "weight*pt_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mjj>>h1_mjj_csw3(30,0.,400.)", "weight*eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
   h1_mjj_data -> Sumw2();
   h1_mjj_cs   -> Sumw2();
   h1_mjj_csw1 -> Sumw2();
@@ -187,11 +187,11 @@
 
   // ------------------------------------------------------------------------------
   // mggjj  
-  tree_data -> Draw("mggjj>>h1_mggjj_data(30,100.,600.)", "weight*(massggnewvtx>100 && massggnewvtx<180 && (massggnewvtx>135 || massggnewvtx<115))");
-  tree_cs   -> Draw("mggjj>>h1_mggjj_cs(30,100.,600.)",   "weight*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mggjj>>h1_mggjj_csw1(30,100.,600.)", "weight*pt_eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mggjj>>h1_mggjj_csw2(30,100.,600.)", "weight*pt_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
-  tree_cswG -> Draw("mggjj>>h1_mggjj_csw3(30,100.,600.)", "weight*eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_data -> Draw("mggjj>>h1_mggjj_data(30,100.,800.)", "weight*(massggnewvtx>100 && massggnewvtx<180 && (massggnewvtx>135 || massggnewvtx<115))");
+  tree_cs   -> Draw("mggjj>>h1_mggjj_cs(30,100.,800.)",   "weight*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mggjj>>h1_mggjj_csw1(30,100.,800.)", "weight*pt_eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mggjj>>h1_mggjj_csw2(30,100.,800.)", "weight*pt_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
+  tree_cswG -> Draw("mggjj>>h1_mggjj_csw3(30,100.,800.)", "weight*eta_scaled_2D_weight_data*(massggnewvtx>100 && massggnewvtx<180)");
   h1_mggjj_data -> Sumw2();
   h1_mggjj_cs   -> Sumw2();
   h1_mggjj_csw1 -> Sumw2();
@@ -294,7 +294,7 @@
   leg4->SetBorderSize(0);
   leg4->SetTextSize(0.05);
   leg4->SetFillColor(0);
-  leg4->AddEntry(h1_mgg_csw2,  "pT(g1) x pT(g2) weight", "f");
+  leg4->AddEntry(h1_mgg_csw2,  "p_{T}#gamma1 x p_{T}#gamma2 weight", "f");
 
   TLegend *leg5;
   leg5 = new TLegend(0.5,0.5,0.75,0.75);
@@ -436,4 +436,46 @@
   c7a->SaveAs("mggjj_perCat.png");
   c7a->SaveAs("mggjj_perCat.pdf");
   c7a->SaveAs("mggjj_perCat.eps");
+
+
+  /// utili da evidenziare
+  TCanvas c10("c10","mgg",1);
+  h1_mgg_csw2->SetTitle("");
+  h1_mgg_data->SetTitle("");
+  h1_mgg_csw2->DrawNormalized("hist"); 
+  h1_mgg_data->DrawNormalized("same pE"); 
+  leg4->Draw();
+  c10->SaveAs("mgg_chosen.png");
+  c10->SaveAs("mgg_chosen.pdf");
+  c10->SaveAs("mgg_chosen.root");
+
+  TCanvas c11("c11","mggjj",1);
+  h1_mggjj_csw2->SetTitle("");
+  h1_mggjj_data->SetTitle("");
+  h1_mggjj_csw2->DrawNormalized("hist"); 
+  h1_mggjj_data->DrawNormalized("same pE"); 
+  leg4->Draw();
+  c11->SaveAs("mggjj_chosen.png");
+  c11->SaveAs("mggjj_chosen.pdf");
+  c11->SaveAs("mggjj_chosen.root");
+
+  TCanvas c12("c12","mjj",1);
+  h1_mjj_csw2->SetTitle("");
+  h1_mjj_data->SetTitle("");
+  h1_mjj_csw2->DrawNormalized("hist"); 
+  h1_mjj_data->DrawNormalized("same pE"); 
+  leg4->Draw();
+  c12->SaveAs("mjj_chosen.png");
+  c12->SaveAs("mjj_chosen.pdf");
+  c12->SaveAs("mjj_chosen.root");
+
+  TCanvas c13("c13","btag",1);
+  h1_btag_csG->SetTitle("");
+  h1_btag_data->SetTitle("");
+  h1_btag_csG->DrawNormalized("hist"); 
+  h1_btag_data->DrawNormalized("same pE");
+  leg4->Draw();
+  c13->SaveAs("btag_chosen.png");
+  c13->SaveAs("btag_chosen.pdf");
+  c13->SaveAs("btag_chosen.root");
 }

@@ -13,10 +13,10 @@ void addWeightToTree::Loop()
   if (fChain == 0) return;
   
   // pt and eta weight files
-  std::string ptweight2DFileName_data  = "weights/scales_2D_pt_data_4GeVbinning.root";
-  std::string etaweight2DFileName_data = "weights/scales_2D_eta_data_01binning.root";
-  // std::string ptweight2DFileName_data  = "weights/scales_2D_ptJ_data_4GeVbinning.root";
-  // std::string etaweight2DFileName_data = "weights/scales_2D_etaJ_data_01binning.root";
+  std::string ptweight2DFileName_data  = "weights_withRegression_withKinFit_noPreselCut/scales_2D_pt_data_4GeVbinning.root";
+  std::string etaweight2DFileName_data = "weights_withRegression_withKinFit_noPreselCut/scales_2D_eta_data_01binning.root";
+  // std::string ptweight2DFileName_data  = "weights_withRegression_withKinFit_noPreselCut/scales_2D_ptJ_data_4GeVbinning.root";
+  // std::string etaweight2DFileName_data = "weights_withRegression_withKinFit_noPreselCut/scales_2D_etaJ_data_01binning.root";
   
   TFile* ptweight2DFile_data  = TFile::Open(ptweight2DFileName_data.c_str());
   TFile* etaweight2DFile_data = TFile::Open(etaweight2DFileName_data.c_str()); 

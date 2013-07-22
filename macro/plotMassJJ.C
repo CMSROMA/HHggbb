@@ -11,6 +11,7 @@ void plotMassJJ::Loop() {
 
   // histos, 1 btag
   TH1F *H1_mjj_gen        = new TH1F("H1_mjj_gen",       "H1_mjj_gen",       25,0.,250.);
+  // 
   TH1F *H1_mjj_pt         = new TH1F("H1_mjj_pt",        "H1_mjj_pt",        25,0.,250.);
   TH1F *H1_mjj_maxptjj    = new TH1F("H1_mjj_maxptjj",   "H1_mjj_maxptjj",   25,0.,250.);
   TH1F *H1_mjj_maxptmjj   = new TH1F("H1_mjj_maxptmjj",  "H1_mjj_maxptmjj",  25,0.,250.);
@@ -26,6 +27,7 @@ void plotMassJJ::Loop() {
 
   // histos, 2 btag
   TH1F *H2_mjj_gen        = new TH1F("H2_mjj_gen",       "H2_mjj_gen",       25,0.,250.);
+  // 
   TH1F *H2_mjj_pt         = new TH1F("H2_mjj_pt",        "H2_mjj_pt",        25,0.,250.);
   TH1F *H2_mjj_maxptjj    = new TH1F("H2_mjj_maxptjj",   "H2_mjj_maxptjj",   25,0.,250.);
   TH1F *H2_mjj_maxptmjj   = new TH1F("H2_mjj_maxptmjj",  "H2_mjj_maxptmjj",  25,0.,250.);
@@ -48,31 +50,33 @@ void plotMassJJ::Loop() {
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
     if (btagCategory==1) {
-      H1_mjj_gen        -> Fill(mjj_gen,        weight);
-      H1_mjj_pt         -> Fill(mjj_pt,         weight);
-      H1_mjj_maxptjj    -> Fill(mjj_maxptjj,    weight);
-      H1_mjj_maxptmjj   -> Fill(mjj_maxptmjj,   weight);
-      H1_mjj_mgg        -> Fill(mjj_mgg,        weight);
+      H1_mjj_gen        -> Fill(mjj_gen);
       // 
-      H1_mjj_btag_pt    -> Fill(mjj_btag_pt,    weight);
-      H1_mjj_btag_ptjj  -> Fill(mjj_btag_ptjj,  weight);
-      H1_mjj_btag_ptmjj -> Fill(mjj_btag_ptmjj, weight);
-      H1_mjj_btag_mgg   -> Fill(mjj_btag_mgg,   weight);
+      H1_mjj_pt         -> Fill(mjj_pt);
+      H1_mjj_maxptjj    -> Fill(mjj_maxptjj);
+      H1_mjj_maxptmjj   -> Fill(mjj_maxptmjj);
+      H1_mjj_mgg        -> Fill(mjj_mgg);
+      // 
+      H1_mjj_btag_pt    -> Fill(mjj_btag_pt);
+      H1_mjj_btag_ptjj  -> Fill(mjj_btag_ptjj);
+      H1_mjj_btag_ptmjj -> Fill(mjj_btag_ptmjj);
+      H1_mjj_btag_mgg   -> Fill(mjj_btag_mgg);
       //
       H1_dMmin          -> Fill(dMmin);
       H1_dMmin_btag     -> Fill(dMmin_btag);
 
     } else if (btagCategory==2) {
-      H2_mjj_gen        -> Fill(mjj_gen,        weight);
-      H2_mjj_pt         -> Fill(mjj_pt,         weight);
-      H2_mjj_maxptjj    -> Fill(mjj_maxptjj,    weight);
-      H2_mjj_maxptmjj   -> Fill(mjj_maxptmjj,   weight);
-      H2_mjj_mgg        -> Fill(mjj_mgg,        weight);
+      H2_mjj_gen        -> Fill(mjj_gen);
+      // 
+      H2_mjj_pt         -> Fill(mjj_pt);
+      H2_mjj_maxptjj    -> Fill(mjj_maxptjj);
+      H2_mjj_maxptmjj   -> Fill(mjj_maxptmjj);
+      H2_mjj_mgg        -> Fill(mjj_mgg);
       //
-      H2_mjj_btag_pt    -> Fill(mjj_btag_pt,    weight);
-      H2_mjj_btag_ptjj  -> Fill(mjj_btag_ptjj,  weight);
-      H2_mjj_btag_ptmjj -> Fill(mjj_btag_ptmjj, weight);
-      H2_mjj_btag_mgg   -> Fill(mjj_btag_mgg,   weight);
+      H2_mjj_btag_pt    -> Fill(mjj_btag_pt);
+      H2_mjj_btag_ptjj  -> Fill(mjj_btag_ptjj);
+      H2_mjj_btag_ptmjj -> Fill(mjj_btag_ptmjj);
+      H2_mjj_btag_mgg   -> Fill(mjj_btag_mgg);
       // 
       H2_dMmin          -> Fill(dMmin);
       H2_dMmin_btag     -> Fill(dMmin_btag);
@@ -143,7 +147,7 @@ void plotMassJJ::Loop() {
 
   // histos
   TH1F *myHS = new TH1F("myHS","",100,0,250);
-  myHS->SetMaximum(0.25);
+  myHS->SetMaximum(0.30);
   TH1F *myHB = new TH1F("myHB","",100,0,250);
   myHB->SetMaximum(0.15);    
   myHS->GetXaxis()->SetTitle("mjj [GeV]");
@@ -151,31 +155,31 @@ void plotMassJJ::Loop() {
 
   // legend
   TLegend *leg1;
-  leg1 = new TLegend(0.6,0.6,0.85,0.85);
+  leg1 = new TLegend(0.5,0.5,0.85,0.85);
   leg1->SetFillStyle(0);
   leg1->SetBorderSize(0);
   leg1->SetTextSize(0.05);
   leg1->SetFillColor(0);
   leg1->AddEntry(H2_mjj_gen,        "best MC truth match",   "l");  
-  leg1->AddEntry(H2_mjj_pt,         "2 highest pt jets",   "l");  
-  leg1->AddEntry(H2_mjj_maxptjj,    "highest pt(jj)",   "l");  
-  leg1->AddEntry(H2_mjj_maxptmjj,   "highest pt(jj)/mjj",   "l");  
-  leg1->AddEntry(H2_mjj_mgg,        "closest to mgg", "l");
+  leg1->AddEntry(H2_mjj_pt,         "max pt jets",   "l");  
+  leg1->AddEntry(H2_mjj_maxptjj,    "max pt(jj)",   "l");  
+  leg1->AddEntry(H2_mjj_maxptmjj,   "max pt(jj)/mjj",   "l");  
+  leg1->AddEntry(H2_mjj_mgg,        "min |mgg-mjj|", "l");
 
   TLegend *leg2;
-  leg2 = new TLegend(0.6,0.6,0.85,0.85);
+  leg2 = new TLegend(0.5,0.5,0.85,0.85);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.05);
   leg2->SetFillColor(0);
   leg2->AddEntry(H2_mjj_gen,        "best MC truth match",   "l");  
-  leg2->AddEntry(H2_mjj_btag_pt,    "btag, 2 highest pt jets",   "l");  
-  leg2->AddEntry(H2_mjj_btag_ptjj,  "btag, highest pt(jj)",   "l");  
-  leg2->AddEntry(H2_mjj_btag_ptmjj, "btag, highest pt(jj)/mjj",   "l");  
-  leg2->AddEntry(H2_mjj_btag_mgg,   "btag, closest to mgg", "l");
+  leg2->AddEntry(H2_mjj_btag_pt,    "max pt jets",   "l");  
+  leg2->AddEntry(H2_mjj_btag_ptjj,  "max pt(jj)",   "l");  
+  leg2->AddEntry(H2_mjj_btag_ptmjj, "max pt(jj)/mjj",   "l");  
+  leg2->AddEntry(H2_mjj_btag_mgg,   "min |mgg-mjj|", "l");
 
   TLegend *leg3;
-  leg3 = new TLegend(0.6,0.6,0.85,0.85);
+  leg3 = new TLegend(0.5,0.5,0.85,0.85);
   leg3->SetFillStyle(0);
   leg3->SetBorderSize(0);
   leg3->SetTextSize(0.05);
@@ -184,6 +188,8 @@ void plotMassJJ::Loop() {
   leg3->AddEntry(H1_dMmin_btag,"min dM, btag",   "l");  
 
   // plots
+  gStyle->SetOptStat(0);
+
   TCanvas c1("c1","1 bjet, no btag",1);
   myHS->Draw();
   H1_mjj_gen        -> DrawNormalized("same");  
@@ -224,17 +230,15 @@ void plotMassJJ::Loop() {
   leg2->Draw();
   c22.SaveAs("H2_withBtag.root");
 
-  /*
-  TCanvas c11("c11","1 bjet",1);
+  TCanvas c3("c3","1 bjet",1);
   H1_dMmin      -> DrawNormalized();
   H1_dMmin_btag -> DrawNormalized("same");
   leg3->Draw();
-  c11.SaveAs("dMmin1.root");
+  c3.SaveAs("dMmin1.root");
 
-  TCanvas c21("c21","2 bjet",1);
+  TCanvas c33("c33","2 bjet",1);
   H2_dMmin      -> DrawNormalized();
   H2_dMmin_btag -> DrawNormalized("same");
   leg3->Draw();
-  c21.SaveAs("dMmin2.root");
-  */
+  c33.SaveAs("dMmin2.root");
 }

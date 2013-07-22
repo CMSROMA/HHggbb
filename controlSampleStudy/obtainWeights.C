@@ -1,9 +1,9 @@
 {
   // weights_from_data
-  TFile* dataFile=TFile::Open("../finalizedTrees_Radion_presel/Radion_Data2012_default_CSV.root");
+  TFile* dataFile=TFile::Open("../finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit/Radion_DataABCD_regr_default_CSV.root");
   TTree* tree_data=(TTree*)dataFile->Get("myTrees");
 
-  TFile* csFile=TFile::Open("../finalizedTrees_Radion_presel_CS/Radion_Data2012_default_CSV.root");
+  TFile* csFile=TFile::Open("../finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit_CS/Radion_DataABCD_regr_default_CSV.root");
   TTree* tree_cs=(TTree*)csFile->Get("myTrees");
   
   // pt gamma 

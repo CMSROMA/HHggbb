@@ -12,27 +12,38 @@ void doPlotUL() {
   float ul_1b_3var[5] = { 98.5612, 90.5495, 84.6464, 85.6297, 85.4228 };
   float ul_1b_4var[5] = { 88.8435, 83.8169, 82.3924, 83.135,  83.8256 };
   float ul_2b_3var[5] = { 25.2893, 23.6267, 22.1692, 21.5376, 23.3353 };
-  float ul_2b_4var[5] = { 24.4318, 23.3642, 21.7822, 23.2495, 23.9495 } ;
+  float ul_2b_4var[5] = { 24.4318, 23.3642, 21.7822, 23.2495, 23.9495 };
+
+  float ul_1b_3varMM[5] = { 41.,37.,36.,37.,38};
+  float ul_2b_3varMM[5] = { 19.8,19.9,17.6,17.9,23.9};
 
   float err[5] = { 0., 0., 0., 0., 0. };
 
-  TGraphErrors *grUL_1b_3var = new TGraphErrors(5, eff, ul_1b_3var, err, err);
-  TGraphErrors *grUL_1b_4var = new TGraphErrors(5, eff, ul_1b_4var, err, err);
-  TGraphErrors *grUL_2b_3var = new TGraphErrors(5, eff, ul_2b_3var, err, err);
-  TGraphErrors *grUL_2b_4var = new TGraphErrors(5, eff, ul_2b_4var, err, err);
+  TGraphErrors *grUL_1b_3var   = new TGraphErrors(5, eff, ul_1b_3var, err, err);
+  TGraphErrors *grUL_1b_4var   = new TGraphErrors(5, eff, ul_1b_4var, err, err);
+  TGraphErrors *grUL_2b_3var   = new TGraphErrors(5, eff, ul_2b_3var, err, err);
+  TGraphErrors *grUL_2b_4var   = new TGraphErrors(5, eff, ul_2b_4var, err, err);
+  TGraphErrors *grUL_1b_3varMM = new TGraphErrors(5, eff, ul_1b_3varMM, err, err);
+  TGraphErrors *grUL_2b_3varMM = new TGraphErrors(5, eff, ul_2b_3varMM, err, err);
 
   grUL_1b_3var -> SetMarkerColor(2);
   grUL_1b_3var -> SetMarkerStyle(20);
   grUL_1b_4var -> SetMarkerColor(4);
   grUL_1b_4var -> SetMarkerStyle(21);
+  grUL_1b_3varMM -> SetMarkerColor(2);
+  grUL_1b_3varMM -> SetMarkerStyle(20);
 
   grUL_2b_3var -> SetMarkerColor(2);
   grUL_2b_3var -> SetMarkerStyle(20);
   grUL_2b_4var -> SetMarkerColor(4);
   grUL_2b_4var -> SetMarkerStyle(21);
+  grUL_2b_3varMM -> SetMarkerColor(2);
+  grUL_2b_3varMM -> SetMarkerStyle(20);
 
   TH2F *myH_1b = new TH2F("myH_1b","myH_1b",100, 0.45, 0.95, 100, 80., 100.);
   TH2F *myH_2b = new TH2F("myH_2b","myH_2b",100, 0.45, 0.95, 100, 15., 35.);
+  TH2F *myH_1bMM = new TH2F("myH_1bMM","myH_1bMM",100, 0.45, 0.95, 100, 30., 45.);
+  TH2F *myH_2bMM = new TH2F("myH_2bMM","myH_2bMM",100, 0.45, 0.95, 100, 15., 30.);
 
   myH_1b->SetTitle("1b-jet category");
   myH_1b->GetXaxis()->SetTitle("signal eff");
@@ -66,6 +77,18 @@ void doPlotUL() {
   grUL_2b_4var->Draw("Psame");
   leg->Draw();
   myC2.SaveAs("UL_2b.png");
+
+  TCanvas myC1mm("c_1bmm", "c_1bmm", 1);
+  myH_1bMM->Draw();
+  grUL_1b_3varMM->Draw("Psame");
+  myC1mm.SaveAs("UL_1b_mm.png");
+  myC1mm.SaveAs("UL_1b_mm.pdf");
+
+  TCanvas myC2mm("c_2bmm", "c_2bmm", 1);
+  myH_2bMM->Draw();
+  grUL_2b_3varMM->Draw("Psame");
+  myC2mm.SaveAs("UL_2bmm.png");
+  myC2mm.SaveAs("UL_2bmm.pdf");
   
 
 }
