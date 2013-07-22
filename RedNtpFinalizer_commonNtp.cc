@@ -53,7 +53,11 @@ RedNtpFinalizer_commonNtp::RedNtpFinalizer_commonNtp( const std::string& analyze
   else if( dataset_tstr.Contains("Data2012") ) tree_ = new TChain("Data");
 
   // to study the regression
-  else if ( dataset_tstr.Contains("Radion_M-300_regr") ) tree_ = new TChain("Radion_m300_8TeV_nm");   
+  else if ( dataset_tstr.Contains("Radion_M-300_regr") )  tree_ = new TChain("Radion_m300_8TeV_nm");   
+  else if ( dataset_tstr.Contains("Radion_M-500_regr") )  tree_ = new TChain("Radion_m500_8TeV_nm");   
+  else if ( dataset_tstr.Contains("Radion_M-700_regr") )  tree_ = new TChain("Radion_m700_8TeV_nm");   
+  else if ( dataset_tstr.Contains("Radion_M-1000_regr") ) tree_ = new TChain("Radion_m1000_8TeV_nm");   
+  else if ( dataset_tstr.Contains("DataABCD_regr") )      tree_ = new TChain("Data");
 
   else cout << "wrong dataset name" << endl;
 
@@ -154,7 +158,11 @@ void RedNtpFinalizer_commonNtp::addFile(const std::string& dataset, const std::s
   else if( dataset_tstr.Contains("Data2012") ) treeName = redNtpDir_ + "/Data_full2012.root/Data";
   
   // to study regression
-  else if( dataset_tstr.Contains("Radion_M-300_regr") ) treeName = redNtpDir_ + "/Radion_m300_withRegression.root/Radion_m300_8TeV_nm";   
+  else if( dataset_tstr.Contains("Radion_M-300_regr") )  treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m300_8TeV_nm";   
+  else if( dataset_tstr.Contains("Radion_M-500_regr") )  treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m500_8TeV_nm";   
+  else if( dataset_tstr.Contains("Radion_M-700_regr") )  treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m700_8TeV_nm";   
+  else if( dataset_tstr.Contains("Radion_M-1000_regr") ) treeName = redNtpDir_ + "/Graviton_Radion-nm.root/Radion_m1000_8TeV_nm";   
+  else if( dataset_tstr.Contains("DataABCD_regr") )     treeName = redNtpDir_ + "/dataABCD.root/Data";   
 
   else cout << "wrong dataset name" << endl;
   

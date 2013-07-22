@@ -42,6 +42,9 @@ int main( int argc, char* argv[] ) {
   if( dataset=="Data2012" ) {  
     finalize_oneDataset_commonNtp(redntpVersion, "Data2012", selectionType, bTaggerType, datasets); 
     
+  } else if( dataset=="DataABCD_regr" ) {  
+    finalize_oneDataset_commonNtp(redntpVersion, "DataABCD_regr", selectionType, bTaggerType, datasets); 
+
   } else if( dataset=="DiPhotonBox_8TeV-pythia6" ) {
     // finalize_oneDataset_commonNtp(redntpVersion, "DiPhotonBox_Pt-10To25_8TeV-pythia6",   selectionType, bTaggerType, datasets);
     finalize_oneDataset_commonNtp(redntpVersion, "DiPhotonBox_Pt-250ToInf_8TeV-pythia", selectionType, bTaggerType, datasets);
@@ -148,6 +151,18 @@ int main( int argc, char* argv[] ) {
 
     finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-300_regr", selectionType, bTaggerType, datasets);    
 
+  } else if( dataset=="Radion_M-500_regr" ) {  
+
+    finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-500_regr", selectionType, bTaggerType, datasets);    
+
+  } else if( dataset=="Radion_M-700_regr" ) {  
+
+    finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-700_regr", selectionType, bTaggerType, datasets);    
+
+  } else if( dataset=="Radion_M-1000_regr" ) {  
+
+    finalize_oneDataset_commonNtp(redntpVersion, "Radion_M-1000_regr", selectionType, bTaggerType, datasets);    
+
   } else if( dataset=="Graviton_M-300" ) {  
 
     finalize_oneDataset_commonNtp(redntpVersion, "Graviton_M-300", selectionType, bTaggerType, datasets);    
@@ -234,6 +249,13 @@ RedntpDirStruct get_dirs_commonNtp( const std::string& prodVersion ) {
     returnStruct.mainmcdir   = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
     returnStruct.datadir     = "dataCommonNtp";
     returnStruct.mcdir       = "dataCommonNtp";
+
+  } else if ( prodVersion=="Radion_V05" ) {
+
+    returnStruct.maindatadir = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.mainmcdir   = "/afs/cern.ch/work/c/crovelli/Radion/CMSSW_5_3_6/src/HHggbb";
+    returnStruct.datadir     = "dataCommonNtp_v05";
+    returnStruct.mcdir       = "dataCommonNtp_v05";
 
   } else {
 
