@@ -41,10 +41,11 @@ int main(int argc, char* argv[]) {
   db_nostack->set_outputdir(outputdir_str);
   db_stack->set_outputdir(outputdir_str);
 
-  int signalFillColor300  = 46;
-  int signalFillColor500  = 4;
-  int signalFillColor700  = 3;
-  int signalFillColor1000 = 6;
+  int signalFillColor300  = kRed-7;
+  int signalFillColor500  = kRed-7;
+  int signalFillColor700  = kRed-7;
+  int signalFillColor1000 = kRed-7;
+
 
   std::string RadionFileName300 = "finalizedTrees_Radion_presel/Radion_";
   RadionFileName300 += "Radion_M-300_madgraph";
@@ -193,10 +194,10 @@ int main(int argc, char* argv[]) {
   // db_nostack->add_mcFile( RadionFile500,  "Radion", "Radion (500)",  signalFillColor500,  0);
   // db_nostack->add_mcFile( RadionFile700,  "Radion", "Radion (700)",  signalFillColor700,  0);
   // db_nostack->add_mcFile( RadionFile1000, "Radion", "Radion (1000)", signalFillColor1000, 0);
-  db_nostack->add_mcFile( HglugluToGGFile, "HToGG ggFusion", "H (125), gg", 55);
-  db_nostack->add_mcFile( HvhToGGFile,  "HToGG VH", "H (125), VH", 38);
-  db_nostack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), TTH", 44);
-  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton",    31);
+  db_nostack->add_mcFile( HglugluToGGFile, "HToGG ggFusion", "H (125), gg", kCyan-9);
+  db_nostack->add_mcFile( HvhToGGFile,  "HToGG VH", "H (125), VH", kBlue-9);
+  db_nostack->add_mcFile( HtthToGGFile, "HToGG TTH", "H (125), TTH", kMagenta-2);
+  db_nostack->add_mcFile( DiPhotonFile, "DiPhoton", "Diphoton",    kGreen-6);
 
   db_nostack->drawHisto("njets", "Number of Jets", "", "Events");
   db_nostack->drawHisto("nbjets_loose",  "Number of b-Jets (Loose)",  "", "Events");
@@ -232,6 +233,8 @@ int main(int argc, char* argv[]) {
   db_nostack->drawHisto("deltaR",    "#DeltaR(dijet-diphoton)", "");
   db_nostack->drawHisto("deltaPhi", "#Delta#Phi(dijet-diphoton)", "rad");
   db_nostack->drawHisto("deltaEta", "#Delta#Eta(dijet-diphoton)", "");
+  db_nostack->drawHisto("deltaR_gg", "#DeltaR(#gamma,#gamma)", "");
+  db_nostack->drawHisto("minDeltaR_gb", "min(#DeltaR(#gamma,jet))", "");
 
   db_nostack->set_rebin(2);
   db_nostack->drawHisto("cosThetaStar");
