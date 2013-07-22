@@ -12,13 +12,13 @@ fillPlot2012_radion_commonNtp::fillPlot2012_radion_commonNtp( const std::string&
   
   // chiara
   usePhilReg    = false;
-  useOlivierReg = true;
-  if (usePhilReg && useOlivierReg) cout << "problem. Can not use two regressions at the same time" << endl; 
+  useOlivierReg = true;  
+  if (usePhilReg && useOlivierReg) cout << "problem! Can not use two regressions at the same time" << endl; 
     
   // chiara
-  fitToGG         = true;
-  fitToFourBodies = false;
-  if ( (fitToGG && fitToFourBodies) || (!fitToGG && !fitToFourBodies) ) cout << "problem!" << endl; 
+  fitToGG         = false;
+  fitToFourBodies = true;
+  if ( (fitToGG && fitToFourBodies) || (!fitToGG && !fitToFourBodies) ) cout << "problem! Can not fit two variables at the same time" << endl; 
 
   bTaggerType_ = bTaggerType;
   
@@ -55,6 +55,11 @@ fillPlot2012_radion_commonNtp::fillPlot2012_radion_commonNtp( const std::string&
     readerRegres->AddVariable( "jet_dPhiMet",        &fRegr_dPhiMet);
     readerRegres->BookMVA("BDT","data/regrWeightsOlivier/factoryJetRegGen2_globeinputs_BDT.weights.xml");
   }
+
+  // which fit
+  if (fitToGG)         cout << "fitting mgg spectrum"   << endl;
+  if (fitToFourBodies) cout << "fitting mggjj spectrum" << endl;
+  cout << endl;
 }
 
 fillPlot2012_radion_commonNtp::~fillPlot2012_radion_commonNtp() {
@@ -289,7 +294,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   myTrees->Branch( "minDeltaR_gb", &minDeltaR_gb_t, "minDeltaR_gb/F" );
   myTrees->Branch( "weight", &weight_t, "weight_t/F" );
 
-
   /*
   // tree to compute final limits in Alexandra's stuff                                                          
   TTree* TCVARS = new TTree("TCVARS","two photon two jet selection");                                                          
@@ -300,7 +304,6 @@ void fillPlot2012_radion_commonNtp::finalize() {
   TCVARS->Branch( "cut_based_ct", &theCategory_t,  "theCategory_t/I" );                                                        
   TCVARS->Branch( "evWeight",     &weight_t,       "weight_t/F" );   
   */
-
 
   // ------------------------------------------------------                                                                       
   // for the kinematic fits, assuming the two jets come from a 125 GeV Higgs                                                      
@@ -343,8 +346,8 @@ void fillPlot2012_radion_commonNtp::finalize() {
       if(!(idphot2)) continue;
     }
 
-    /*
     // chiara: photonID for control sample
+    /*
     bool idphot1(0), idphot2(0);
     bool looseidphot1(0), looseidphot2(0);
     idphot1 = (ph1_ciclevel >= cicselection);
@@ -724,21 +727,21 @@ void fillPlot2012_radion_commonNtp::finalize() {
 
     // mjj optimized window 
     if (fitToGG) {   
-      if ( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>150.) ) continue;
-      if ( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>140.) ) continue;
+      if ( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>175.) ) continue;
+      if ( btagCategory==2 && (t4diJet.M()<100. || t4diJet.M()>160.) ) continue;
     }
     else if (fitToFourBodies) {   
       if ( btagCategory==1 && (t4diJet.M()<90. || t4diJet.M()>170.) ) continue;
-      if ( btagCategory==2 && (t4diJet.M()<95. || t4diJet.M()>150.) ) continue;
+      if ( btagCategory==2 && (t4diJet.M()<100. || t4diJet.M()>160.) ) continue;
     }
 
     // mggjj cut with kinFit 
     if (fitToGG) {   
       float radMassKF = Vstar_kinfit.M();
-       if( btagCategory==1 && (radMassKF<260. || radMassKF>335.) ) continue;
-       if( btagCategory==2 && (radMassKF<255. || radMassKF>320.) ) continue;
-      // if( btagCategory==1 && (radMass<260. || radMass>335.) ) continue;
-      // if( btagCategory==2 && (radMass<255. || radMass>320.) ) continue;
+      // if( btagCategory==1 && (radMassKF<260. || radMassKF>335.) ) continue;
+      // if( btagCategory==2 && (radMassKF<255. || radMassKF>320.) ) continue;
+      if( btagCategory==1 && (radMass<260. || radMass>335.) ) continue;
+      if( btagCategory==2 && (radMass<255. || radMass>320.) ) continue;
     }
     else if (fitToFourBodies) {   
       if( PhotonsMass<120 || PhotonsMass>130) continue;
@@ -856,6 +859,7 @@ void fillPlot2012_radion_commonNtp::finalize() {
   } // loop over entries  
   
   outFile_->cd();
+
   // TCVARS->Write();                                                                                                             
 
   myTrees->Write();
