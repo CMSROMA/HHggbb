@@ -47,25 +47,31 @@ pair<float,float> runOptimization(TTree *theTree, TString cut0, TString cut1) {
   float afterCut   = mjj1->Integral();
   float efficiency = mjj1->Integral()/mjj0->Integral();
 
-  cout << "cut = " << cut1 << ", eff = " << efficiency << ", mjj->Integral() = " << mjj1->Integral() << endl;
-
+  cout << "cut = " << cut1 << ", eff = " << efficiency << ", mjj->Integral() = " << mjj1->Integral() << endl << ", # entries = " << mjj1->GetEntries() << endl;
+    
   return std::make_pair<float,float>(afterCut, efficiency);  
 }
 
 int main(int argc, char* argv[]) {
 
   // chiara
-  bool isCS = false; 
+  bool isCS        = true; 
+  bool fitToMgg    = true;
+  bool fitToMggjj  = false;
+  bool windowMggjj = true;
+  if ( fitToMggjj &&  fitToMgg)  cout << "choose 1 fit"      << endl;
+  if (!fitToMggjj && !fitToMgg)  cout << "choose only 1 fit" << endl;
+  if ( windowMggjj && !fitToMgg) cout << "are you sure?? Fit to mgg and cut on mggjj" << endl;
   int theMass = 300;
- 
+  // -----------------------------
+
+  
+  // files
   TFile *fileSig, *fileBkg;
   TTree *treeSig, *treeBkg;
-  if (!isCS) fileBkg = TFile::Open("finalizedTrees_Radion_presel/Radion_Data2012_default_CSV.root");
-  if ( isCS) fileBkg = TFile::Open("controlSampleStudy/treesFromCS_presel_withWeights/csWithWeightFromGammas.root");
-  fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-300_madgraph_default_CSV.root");
-  // fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-500_madgraph_default_CSV.root");
-  // fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-700_madgraph_default_CSV.root");
-  // fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-1000_madgraph_default_CSV.root");
+  if (!isCS) fileBkg = TFile::Open("finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit/Radion_DataABCD_regr_default_CSV.root");
+  if ( isCS) fileBkg = TFile::Open("controlSampleStudy/treesFromCS_presel_withWeights_noPreselCut_withKinFit/csWithWeightFromGammas.root");
+  fileSig = TFile::Open("finalizedTrees_m300_noCutPerOptim_conRegression_conKinFit/Radion_Radion_M-300_regr_default_CSV.root");
 
   if( fileSig && fileBkg) {
     fileBkg->cd();
@@ -89,88 +95,90 @@ int main(int argc, char* argv[]) {
   cout << endl;
 
   // to run cuts optimization 
-  // chiara: for mjj
-  /*
-  TH2F *signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 45., 95., 10, 130., 180.); 
-  TH2F *backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 45., 95., 10, 130., 180.); 
-  TH2F *ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 45., 95., 10, 130., 180.); 
-  TH2F *signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 45., 95., 10, 130., 180.); 
-  TH2F *SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 45., 95., 10, 130., 180.); 
-  TH2F *SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 45., 95., 10, 130., 180.); 
+  TH2F *signEffMap_1btag, *backEffMap_1btag;
+  TH2F *ulMap_1btag, *signifMap_1btag, *SsqrtBMap_1btag, *SoverBMap_1btag;
+  TH2F *signEffMap_2btag, *backEffMap_2btag;
+  TH2F *ulMap_2btag, *signifMap_2btag, *SsqrtBMap_2btag, *SoverBMap_2btag;
 
-  TH2F *signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 50., 100., 10, 115., 165.); 
-  TH2F *backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 50., 100., 10, 115., 165.); 
-  TH2F *ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 50., 100., 10, 115., 165.); 
-  TH2F *signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 50., 100., 10, 115., 165.); 
-  TH2F *SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 50., 100., 10, 115., 165.); 
-  TH2F *SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 50., 100., 10, 115., 165.); 
-  */
+  if (!windowMggjj) { // window for mjj
+    signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 75., 125., 10, 140., 190.); 
+    backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 75., 125., 10, 140., 190.); 
+    ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 75., 125., 10, 140., 190.); 
+    signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 75., 125., 10, 140., 190.); 
+    SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 75., 125., 10, 140., 190.); 
+    SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 75., 125., 10, 140., 190.); 
+    
+    signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 65., 115., 10, 135., 185.); 
+    backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 65., 115., 10, 135., 185.); 
+    ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 65., 115., 10, 135., 185.); 
+    signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 65., 115., 10, 135., 185.); 
+    SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 65., 115., 10, 135., 185.); 
+    SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 65., 115., 10, 135., 185.); 
+  }
 
-  // chiara: for mggjj @ 300 GeV
-  TH2F *signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 230., 280., 10, 330., 380.); 
-  TH2F *backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 230., 280., 10, 330., 380.); 
-  TH2F *ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 230., 280., 10, 330., 380.); 
-  TH2F *signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
-  TH2F *SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
-  TH2F *SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
+  if (windowMggjj && theMass==300) { // window for mggjj, 300 GeV
+    signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 230., 280., 10, 330., 380.); 
+    backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 230., 280., 10, 330., 380.); 
+    ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 230., 280., 10, 330., 380.); 
+    signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
+    SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
+    SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 230., 280., 10, 330., 380.); 
+    
+    signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 250., 300., 10, 305., 355.); 
+    backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 250., 300., 10, 305., 355.); 
+    ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 250., 300., 10, 305., 355.); 
+    signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 250., 300., 10, 305., 355.); 
+    SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 250., 300., 10, 305., 355.); 
+    SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 250., 300., 10, 305., 355.); 
+  } 
 
-  TH2F *signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 250., 300., 10, 315., 365.); 
-  TH2F *backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 250., 300., 10, 315., 365.); 
-  TH2F *ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 250., 300., 10, 315., 365.); 
-  TH2F *signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 250., 300., 10, 315., 365.); 
-  TH2F *SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 250., 300., 10, 315., 365.); 
-  TH2F *SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 250., 300., 10, 315., 365.); 
+  if (windowMggjj && theMass==500) { // window for mggjj, 500 GeV
+    signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 430., 480., 10, 530., 580.); 
+    backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 430., 480., 10, 530., 580.); 
+    ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 430., 480., 10, 530., 580.); 
+    signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
+    SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
+    SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
+    
+    signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 430., 480., 10, 515., 565.); 
+    backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 430., 480., 10, 515., 565.); 
+    ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 430., 480., 10, 515., 565.); 
+    signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
+    SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
+    SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
+  }
 
-  /*
-  // chiara: for mggjj @ 500 GeV
-  TH2F *signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 430., 480., 10, 530., 580.); 
-  TH2F *backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 430., 480., 10, 530., 580.); 
-  TH2F *ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 430., 480., 10, 530., 580.); 
-  TH2F *signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
-  TH2F *SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
-  TH2F *SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 430., 480., 10, 530., 580.); 
+  if (windowMggjj && theMass==700) { // window for mggjj, 700 GeV
+    signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 630., 680., 10, 730., 780.); 
+    backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 630., 680., 10, 730., 780.); 
+    ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 630., 680., 10, 730., 780.); 
+    signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
+    SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
+    SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
+    
+    signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 630., 680., 10, 715., 765.); 
+    backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 630., 680., 10, 715., 765.); 
+    ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 630., 680., 10, 715., 765.); 
+    signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
+    SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
+    SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
+  }
 
-  TH2F *signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 430., 480., 10, 515., 565.); 
-  TH2F *backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 430., 480., 10, 515., 565.); 
-  TH2F *ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 430., 480., 10, 515., 565.); 
-  TH2F *signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
-  TH2F *SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
-  TH2F *SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 430., 480., 10, 515., 565.); 
-  */
-
-  /*
-  // chiara: for mggjj @ 700 GeV
-  TH2F *signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 630., 680., 10, 730., 780.); 
-  TH2F *backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 630., 680., 10, 730., 780.); 
-  TH2F *ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 630., 680., 10, 730., 780.); 
-  TH2F *signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
-  TH2F *SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
-  TH2F *SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 630., 680., 10, 730., 780.); 
-
-  TH2F *signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 630., 680., 10, 715., 765.); 
-  TH2F *backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 630., 680., 10, 715., 765.); 
-  TH2F *ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 630., 680., 10, 715., 765.); 
-  TH2F *signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
-  TH2F *SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
-  TH2F *SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 630., 680., 10, 715., 765.); 
-  */
-
-  /*
-  // chiara: for mggjj @ 1000 GeV
-  TH2F *signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 930., 980., 10, 1030., 1080.); 
-  TH2F *backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 930., 980., 10, 1030., 1080.); 
-  TH2F *ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 930., 980., 10, 1030., 1080.); 
-  TH2F *signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
-  TH2F *SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
-  TH2F *SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
-
-  TH2F *signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 930., 980., 10, 1015., 1065.); 
-  TH2F *backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 930., 980., 10, 1015., 1065.); 
-  TH2F *ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 930., 980., 10, 1015., 1065.); 
-  TH2F *signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
-  TH2F *SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
-  TH2F *SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
-  */
+  if (windowMggjj && theMass==1000) { // window for mggjj, 1000 GeV
+    signEffMap_1btag = new TH2F ("signEffMap_1btag", "",10, 930., 980., 10, 1030., 1080.); 
+    backEffMap_1btag = new TH2F ("backEffMap_1btag", "",10, 930., 980., 10, 1030., 1080.); 
+    ulMap_1btag      = new TH2F ("ulMap_1btag",      "",10, 930., 980., 10, 1030., 1080.); 
+    signifMap_1btag  = new TH2F ("signifMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
+    SsqrtBMap_1btag  = new TH2F ("SsqrtBMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
+    SoverBMap_1btag  = new TH2F ("SoverBMap_1btag",  "",10, 930., 980., 10, 1030., 1080.); 
+    
+    signEffMap_2btag = new TH2F ("signEffMap_2btag", "",10, 930., 980., 10, 1015., 1065.); 
+    backEffMap_2btag = new TH2F ("backEffMap_2btag", "",10, 930., 980., 10, 1015., 1065.); 
+    ulMap_2btag      = new TH2F ("ulMap_2btag",      "",10, 930., 980., 10, 1015., 1065.); 
+    signifMap_2btag  = new TH2F ("signifMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
+    SsqrtBMap_2btag  = new TH2F ("SsqrtBMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
+    SoverBMap_2btag  = new TH2F ("SoverBMap_2btag",  "",10, 930., 980., 10, 1015., 1065.); 
+  }
 
   ulMap_1btag ->GetXaxis() -> SetTitle("inf cut");
   ulMap_1btag ->GetYaxis() -> SetTitle("sup cut");
@@ -180,16 +188,26 @@ int main(int argc, char* argv[]) {
   for (int mjjInf=0; mjjInf<10; mjjInf++) {
     for (int mjjSup=0; mjjSup<10; mjjSup++) {
       
-      // chiara
-      float mjjInfCutInf_1 = 230. + mjjInf*5.;
-      float mjjInfCutSup_1 = 230. + (mjjInf+1.)*5.;
-      float mjjSupCutInf_1 = 330. + mjjSup*5.;
-      float mjjSupCutSup_1 = 330. + (mjjSup+1.)*5.;
+      // chiara: to be changed together with histos
+      float inf1 = 0.;
+      float inf2 = 0.;
+      float sup1 = 0.;
+      float sup2 = 0.;
+      if (!windowMggjj)                  {  inf1 = 75.;   sup1 = 140.;   inf2 = 65.;   sup2 = 135.; }
+      if ( windowMggjj && theMass==300)  { inf1 = 230.;   sup1 = 330.;  inf2 = 250.;   sup2 = 305.; }
+      if ( windowMggjj && theMass==500)  { inf1 = 430.;   sup1 = 530.;  inf2 = 430.;   sup2 = 515.; }
+      if ( windowMggjj && theMass==700)  { inf1 = 630.;   sup1 = 730.;  inf2 = 630.;   sup2 = 715.; }
+      if ( windowMggjj && theMass==1000) { inf1 = 930.;  sup1 = 1030.;  inf2 = 930.;  sup2 = 1015.; }
+	
+      float mjjInfCutInf_1 = inf1 + mjjInf*5.;
+      float mjjInfCutSup_1 = inf1 + (mjjInf+1.)*5.;
+      float mjjSupCutInf_1 = sup1 + mjjSup*5.;
+      float mjjSupCutSup_1 = sup1 + (mjjSup+1.)*5.;
 
-      float mjjInfCutInf_2 = 250. + mjjInf*5.;
-      float mjjInfCutSup_2 = 250. + (mjjInf+1.)*5.;
-      float mjjSupCutInf_2 = 315. + mjjSup*5.;
-      float mjjSupCutSup_2 = 315. + (mjjSup+1.)*5.;
+      float mjjInfCutInf_2 = inf2 + mjjInf*5.;
+      float mjjInfCutSup_2 = inf2 + (mjjInf+1.)*5.;
+      float mjjSupCutInf_2 = sup2 + mjjSup*5.;
+      float mjjSupCutSup_2 = sup2 + (mjjSup+1.)*5.;
 
       float binMjjInf_1 = (mjjInfCutInf_1+mjjInfCutSup_1)/2.;  
       float binMjjSup_1 = (mjjSupCutInf_1+mjjSupCutSup_1)/2.;  
@@ -217,31 +235,57 @@ int main(int argc, char* argv[]) {
       vector<TString> cutOpt0,  cutOpt1; 
       vector<TString> cutOpt0b, cutOpt1b;
 
-      // chiara: for mjj
-      /*
-      cutOpt0.push_back( TString("1.*weight*(btagCategory==1)") );
-      cutOpt0.push_back( TString("1.*weight*(btagCategory==2)") );
-      cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
-      cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+      // mjj window, when fitting mggjj
+      if (!windowMggjj && fitToMggjj) { // here I add a cut on mgg
+	cout << endl;	
+	cout << "mjj window, fit to mggjj" << endl;
+	cout << endl;
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && massggnewvtx<135 && massggnewvtx>115)") );
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && massggnewvtx<135 && massggnewvtx>115)") );
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && massggnewvtx<135 && massggnewvtx>115 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && massggnewvtx<135 && massggnewvtx>115 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+	
+	// 0.777 stimato da rapporto aree con 115<mgg<135 (da usare per CS)
+	cutOpt0b.push_back( TString("0.777*pt_scaled_2D_weight_data*(btagCategory==1 && massggnewvtx<135 && massggnewvtx>115)") );
+	cutOpt0b.push_back( TString("0.777*pt_scaled_2D_weight_data*(btagCategory==2 && massggnewvtx<135 && massggnewvtx>115)") );
+	cutOpt1b.push_back( TString("0.777*pt_scaled_2D_weight_data*(btagCategory==1 && massggnewvtx<135 && massggnewvtx>115 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1b.push_back( TString("0.777*pt_scaled_2D_weight_data*(btagCategory==2 && massggnewvtx<135 && massggnewvtx>115 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+      }
 
-      // chiara: 0.7 stimato da rapporto aree (da usare per CS)
-      cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1)") );
-      cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2)") );
-      cutOpt1b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
-      cutOpt1b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
-      */
+      // mjj window, when fitting mgg
+      if (!windowMggjj && fitToMgg) { // here no cut on mgg
+	cout << endl;
+	cout << "mjj window, fit to mgg" << endl;
+	cout << endl;
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==1)") );
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==2)") );
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+	
+	// 0.730 stimato da rapporto aree senza tagli (da usare per CS). Vale sia con kinfit che senza
+	cutOpt0b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==1)") );
+	cutOpt0b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==2)") );
+	cutOpt1b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>") + ssMjjInfCutInf_1.str() + TString(" && mjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>") + ssMjjInfCutInf_2.str() + TString(" && mjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+      }
 
-      // chiara: for mggjj
-      cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90 && mjj<150)") );
-      cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95 && mjj<140)") );
-      cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>90 && mjj<150 && mggjj>") + ssMjjInfCutInf_1.str() + TString(" && mggjj<") + ssMjjSupCutInf_1.str() +TString(")"));
-      cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>95 && mjj<140 && mggjj>") + ssMjjInfCutInf_2.str() + TString(" && mggjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+      // mggjj window, when fitting mgg   
+       if (windowMggjj && fitToMgg) { // here no cut on mgg  and use the previously chosen mjj
+	cout << endl;
+	cout << "mggjj window, fit to mgg" << endl;
+	cout << endl;
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90  && mjj<175)") );
+	cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>100 && mjj<160)") );
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>90  && mjj<175 && mggjj>") + ssMjjInfCutInf_1.str() + TString(" && mggjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>100 && mjj<160 && mggjj>") + ssMjjInfCutInf_2.str() + TString(" && mggjj<") + ssMjjSupCutInf_2.str() +TString(")"));
 
-      // chiara: 0.7 stimato da rapporto aree (da usare per CS)
-      cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90 && mjj<150)") );
-      cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95 && mjj<140)") );
-      cutOpt1b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90 && mjj<150 && mggjj>") + ssMjjInfCutInf_1.str() + TString(" && mggjj<") + ssMjjSupCutInf_1.str() +TString(")"));
-      cutOpt1b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95 && mjj<140 && mggjj>") + ssMjjInfCutInf_2.str() + TString(" && mggjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+	// 0.730 stimato da rapporto aree (da usare per CS)
+	cutOpt0b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90 && mjj<175)") );
+	cutOpt0b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>100 && mjj<160)") );
+	cutOpt1b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90 && mjj<175 && mggjj>") + ssMjjInfCutInf_1.str() + TString(" && mggjj<") + ssMjjSupCutInf_1.str() +TString(")"));
+	cutOpt1b.push_back( TString("0.730*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>100 && mjj<160 && mggjj>") + ssMjjInfCutInf_2.str() + TString(" && mggjj<") + ssMjjSupCutInf_2.str() +TString(")"));
+      }
+
 
       vector<TString> cutOptAll0;
       for(int i=0;i<(int)cutOpt0.size();++i) cutOptAll0.push_back(cutOpt0[i]);

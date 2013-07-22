@@ -43,7 +43,7 @@ pair<float,float> runOptimization(TTree *theTree, TString cut0, TString cut1) {
 int main(int argc, char* argv[]) {
 
   // chiara
-  bool isCS = true;
+  bool isCS = false;
   int theMass = 300;
 
   // loading files
@@ -51,7 +51,8 @@ int main(int argc, char* argv[]) {
   TTree *treeSig, *treeBkg;
   if (!isCS) fileBkg = TFile::Open("finalizedTrees_Radion_presel/Radion_Data2012_default_CSV.root");
   // if (!isCS) fileBkg = TFile::Open("finalizedTrees_Radion_presel/Radion_HToGG_M-125_8TeV-pythia6_default_CSV.root");
-  if ( isCS) fileBkg = TFile::Open("controlSampleStudy/treesFromCS_presel_withWeights/csWithWeightFromGammas.root");
+  // if (!isCS) fileBkg = TFile::Open("finalizedTrees_Radion_presel/Radion_GluGluToHToGG_M-125_8TeV_default_CSV.root"); 
+  if ( isCS) fileBkg = TFile::Open("controlSampleStudy/treesFromCS_presel_withWeights_fitToMggbb/csWithWeightFromGammas.root");
   fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-300_madgraph_default_CSV.root");
   // fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-500_madgraph_default_CSV.root");                                  
   // fileSig = TFile::Open("finalizedTrees_Radion_presel/Radion_Radion_M-700_madgraph_default_CSV.root");                                  
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
 
   // to run cuts optimization 
   /*
+  // per costheta*
   TH1F *signEffMap_1btag = new TH1F("signEffMap_1btag", "",14, 0.3, 1.);
   TH1F *backEffMap_1btag = new TH1F("backEffMap_1btag", "",14, 0.3, 1.);
   TH1F *ulMap_1btag      = new TH1F("ulMap_1btag",      "",14, 0.3, 1.);
@@ -87,64 +89,84 @@ int main(int argc, char* argv[]) {
   TH1F *backEffMap_2btag = new TH1F("backEffMap_2btag", "",14, 0.3, 1.);
   TH1F *ulMap_2btag      = new TH1F("ulMap_2btag",      "",14, 0.3, 1.);
   */
+  /* 
+  // per pT(gg) e pT(jj)    
   TH1F *signEffMap_1btag = new TH1F("signEffMap_1btag", "",14, 20., 90.);
   TH1F *backEffMap_1btag = new TH1F("backEffMap_1btag", "",14, 20., 90.);
   TH1F *ulMap_1btag      = new TH1F("ulMap_1btag",      "",14, 20., 90.);
   TH1F *signEffMap_2btag = new TH1F("signEffMap_2btag", "",14, 20., 90.);
   TH1F *backEffMap_2btag = new TH1F("backEffMap_2btag", "",14, 20., 90.);
   TH1F *ulMap_2btag      = new TH1F("ulMap_2btag",      "",14, 20., 90.);
+  */
+  // per minDeltaR
+  TH1F *signEffMap_1btag = new TH1F("signEffMap_1btag", "",14, 0.2, 2.4);
+  TH1F *backEffMap_1btag = new TH1F("backEffMap_1btag", "",14, 0.2, 2.4);
+  TH1F *ulMap_1btag      = new TH1F("ulMap_1btag",      "",14, 0.2, 2.4);
+  TH1F *signEffMap_2btag = new TH1F("signEffMap_2btag", "",14, 0.2, 2.4);
+  TH1F *backEffMap_2btag = new TH1F("backEffMap_2btag", "",14, 0.2, 2.4);
+  TH1F *ulMap_2btag      = new TH1F("ulMap_2btag",      "",14, 0.2, 2.4);  
 
-  ulMap_1btag ->GetXaxis() -> SetTitle("sup cut");
-  ulMap_2btag ->GetXaxis() -> SetTitle("sup cut");
+  ulMap_1btag ->GetXaxis() -> SetTitle("inf cut [GeV]");
+  ulMap_2btag ->GetXaxis() -> SetTitle("inf cut [GeV]");
   
   for (int ii=0; ii<15; ii++ ){
 
-    float thePtGamma1Cut        = 40.;   // 40.;
-    float thePtJet1Cut          = 0.;    // 0.;
-    float theAbsCosThetaStarCut = 0.8;    // 1.;
+    float thePtDigammaCut       = 0.;     // 0.;
+    float thePtDijetCut         = 0.;     // 0.;
+    float theAbsCosThetaStarCut = 0.9;    // 0.9;
+    float theDeltaRbgCut        = 0.;     // 5.;
     
-    float thisJetPtCut = 20. + ii*5;
-    // float thisJetPtCut = thePtJet1Cut;
+    // float thisDijetPtCut = 20. + ii*5;
+    float thisDijetPtCut = thePtDijetCut;
     stringstream ssJetPtCut (stringstream::in | stringstream::out);
-    ssJetPtCut << thisJetPtCut;
+    ssJetPtCut << thisDijetPtCut;
     
-    // float thisGammaPtCut = 40. + ii*5;
-    float thisGammaPtCut = thePtGamma1Cut;
+    // float thisDigammaPtCut = 20. + ii*5;
+    float thisDigammaPtCut = thePtDigammaCut;
     stringstream ssGammaPtCut (stringstream::in | stringstream::out);
-    ssGammaPtCut << thisGammaPtCut;
+    ssGammaPtCut << thisDigammaPtCut;
 
     // float thisAbsCosThetaStarCut = 0.3 + ii*0.05;
     float thisAbsCosThetaStarCut = theAbsCosThetaStarCut;
     stringstream ssAbsCosThetaStarCut (stringstream::in | stringstream::out);
     ssAbsCosThetaStarCut << thisAbsCosThetaStarCut;
 
+    float thisDeltaRbgCut = 0.2 + ii*0.16;
+    // float thisDeltaRbgCut = theDeltaRbgCut;
+    stringstream ssDeltaRbgCut (stringstream::in | stringstream::out);
+    ssDeltaRbgCut << thisDeltaRbgCut;
+
 
     // cuts
     vector<TString> cutOpt0,  cutOpt1;
     vector<TString> cutOpt0b, cutOpt1b;
     
-    // cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
-    cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    // cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(")") );
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptjj>") + ssJetPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(")") );
+    cutOpt0.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
     
-    // cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
-    cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    // cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(")") );
 
-    // cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
-    cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    // cutOpt0b.push_back( TString("1*0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(")") );
-    
-    // cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
-    cutOpt0b.push_back( TString("0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    // cutOpt0b.push_back( TString("1*0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(")") );
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptjj>") + ssJetPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    // cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(")") );
+    cutOpt0.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+
+    // cutOpt0b.push_back( TString("0.59*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptjj>") + ssJetPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
+    // cutOpt0b.push_back( TString("0.59*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    // cutOpt0b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(")") );
+    cutOpt0b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );    
+
+    // cutOpt0b.push_back( TString("0.59*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptjj>") + ssJetPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")"));
+    // cutOpt0b.push_back( TString("0.59*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    // cutOpt0b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(")") );
+    cutOpt0b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
 
 
-
-    cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    cutOpt1b.push_back( TString("1*0.7*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<150. && mggjj>260. && mggjj<335. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
-    cutOpt1b.push_back( TString("1*0.7*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<140. && mggjj>255. && mggjj<320. && runptPhot1>") + ssGammaPtCut.str() + TString(" && runPtCorrJet1>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    cutOpt1.push_back( TString("1.*weight*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    cutOpt1.push_back( TString("1.*weight*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    cutOpt1b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==1 && mjj>90. && mjj<170. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
+    cutOpt1b.push_back( TString("1*0.59*pt_scaled_2D_weight_data*(btagCategory==2 && mjj>95. && mjj<150. && mggjj>270. && mggjj<330. && ptgg>") + ssGammaPtCut.str() + TString(" && minDeltaR_gb>") + ssDeltaRbgCut.str() + TString(" && ptjj>") + ssJetPtCut.str() + TString(" && absCosThetaStar<") + ssAbsCosThetaStarCut.str() + TString(")") );
     
     vector<TString> cutOptAll0,  cutOptAll1;
     vector<TString> cutOptAll0b, cutOptAll1b;
@@ -177,6 +199,9 @@ int main(int argc, char* argv[]) {
 
     float theB_1btag    = thisBpair_1btag.first;
     float theB_2btag    = thisBpair_2btag.first;
+    // to deal with low stat
+    if (theB_1btag<1) { cout << "increasing back to 1" << endl; theB_1btag=1; }
+    if (theB_2btag<1) { cout << "increasing back to 1" << endl; theB_2btag=1; }
     float theBeff_1btag = thisBpair_1btag.second;
     float theBeff_2btag = thisBpair_2btag.second;
     
